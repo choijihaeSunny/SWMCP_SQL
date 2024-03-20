@@ -1,5 +1,3 @@
--- swmcp.tb_rack definition
-
 CREATE TABLE `tb_rack` (
   `COMP_ID` varchar(10) NOT NULL COMMENT '사업장코드',
   `RACK_CODE` varchar(20) not null COMMENT '창고랙코드',
@@ -24,4 +22,4 @@ CREATE TABLE `tb_rack` (
   `UPD_ID` varchar(30) NOT NULL COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
   PRIMARY KEY (`COMP_ID`,`RACK_CODE`,`RACK_NAME`,`RACK_DIV`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='설비코드';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='창고위치';
