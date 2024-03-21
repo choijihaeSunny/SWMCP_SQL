@@ -22,6 +22,8 @@ begin
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
+  
+    SET A_RACK_CODE := CONCAT(A_RACK_DIV, LPAD(A_FLOOR, 2, '0'), LPAD(A_ROOM, 2, '0'));
   	
     INSERT INTO TB_RACK (
     	COMP_ID
