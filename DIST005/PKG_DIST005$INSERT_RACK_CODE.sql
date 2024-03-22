@@ -52,7 +52,7 @@ begin
     	,A_SIZE_V
     	,A_SIZE_H
     	,A_RMK
-    	,A_SYS_EMP_ID
+    	,A_SYS_EMP_NO
     	,A_SYS_ID
     	,SYSDATE()
     )

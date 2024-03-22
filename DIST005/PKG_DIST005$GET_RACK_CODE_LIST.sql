@@ -19,7 +19,7 @@ PROC:begin
 		   A.SIZE_H,
 		   A.RMK
 	from TB_RACK A
-	where A.RACK_DIV = A_RACK_DIV
+	where A.RACK_DIV LIKE CONCAT('%', A_RACK_DIV, '%')
 	;
 
 	set N_RETURN := 0;

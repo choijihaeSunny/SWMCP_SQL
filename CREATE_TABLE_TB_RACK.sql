@@ -18,8 +18,8 @@ CREATE TABLE `tb_rack` (
   `SYS_EMP_NO` varchar(10) NOT NULL COMMENT '등록사번',
   `SYS_ID` varchar(30) NOT NULL COMMENT '등록ID',
   `SYS_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '등록일자',
-  `UPD_EMP_NO` varchar(10) NOT NULL COMMENT '수정사번',
-  `UPD_ID` varchar(30) NOT NULL COMMENT '수정ID',
+  `UPD_EMP_NO` varchar(10) default null COMMENT '수정사번',
+  `UPD_ID` varchar(30) default null COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
   PRIMARY KEY (`COMP_ID`,`RACK_CODE`,`RACK_NAME`,`RACK_DIV`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='창고위치';

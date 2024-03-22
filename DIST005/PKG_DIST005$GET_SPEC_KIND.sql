@@ -6,15 +6,15 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
-	select 'SPEC1' as CODE, '용량1' as NAME
+	select '100' as CODE, '용량1' as NAME
 	union all
-	select 'SPEC2' as CODE, '용량2' as NAME
+	select '200' as CODE, '용량2' as NAME
 	union all
-	select 'SPEC3' as CODE, '용량3' as NAME
+	select '300' as CODE, '용량3' as NAME
 	union all
-	select 'SPEC4' as CODE, '용량4' as NAME
+	select '400' as CODE, '용량4' as NAME
 	union all
-	select 'SPEC5' as CODE, '용량5' as NAME
+	select '500' as CODE, '용량5' as NAME
 	;
 	
 	SET N_RETURN = 0;
