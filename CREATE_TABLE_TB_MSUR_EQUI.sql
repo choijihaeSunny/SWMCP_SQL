@@ -1,5 +1,3 @@
--- swmcp.tb_msur_equi definition
-
 CREATE TABLE `tb_msur_equi` (
   `COMP_ID` varchar(10) NOT NULL COMMENT '사업장코드',
   `EQUI_CODE` varchar(20) NOT NULL COMMENT '관리번호',
@@ -9,7 +7,7 @@ CREATE TABLE `tb_msur_equi` (
   `EQUI_NAME` varchar(50) DEFAULT NULL COMMENT '검사장비명',
   `EQUI_SPEC` varchar(200) DEFAULT NULL COMMENT '규격',
   `EQUI_NUM` varchar(20) DEFAULT NULL COMMENT '기기번호',
-  `MAKE_COMP` varchar(50) DEFAULT NULL COMMENT '규격',
+  `MAKE_COMP` varchar(50) DEFAULT NULL COMMENT '제조사',
   `MODEL_NAME` varchar(50) DEFAULT NULL COMMENT '모델명',
   `BUY_AMT` decimal(16,2) DEFAULT 0.00 COMMENT '구입가격',
   `BUY_COMP` varchar(50) DEFAULT NULL COMMENT '구입처',

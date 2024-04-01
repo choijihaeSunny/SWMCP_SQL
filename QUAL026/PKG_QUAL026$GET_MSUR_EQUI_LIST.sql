@@ -1,5 +1,6 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$GET_MSUR_EQUI_LIST`(
 			IN A_CLASS1 		bigint(20),
+			IN A_EQUI_NAME		VARCHAR(50),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
@@ -36,6 +37,7 @@ PROC:begin
 		  A.REAL_FILE_NAME
 	from TB_MSUR_EQUI A
 	where A.CLASS1 LIKE CONCAT('%', A_CLASS1, '%')
+	  and A.EQUI_NAME like CONCAT('%', A_EQUI_NAME, '%')
 	;
 	set N_RETURN := 0;
     set V_RETURN := '조회 되었습니다';
