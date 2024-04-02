@@ -5,6 +5,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$UPDATE_MSUR_EQUICHECK
 	IN A_CYCLE decimal(3, 0),
 	IN A_FINAL_DATE timestamp,
 	IN A_NEXT_DATE timestamp,
+	IN A_CHECK_DEPT varchar(10),
 	IN A_ETC_RMK varchar(200),
 	IN A_UPD_EMP_NO varchar(10),
 	IN A_UPD_ID varchar(30),
@@ -25,6 +26,7 @@ begin
 	    	,CYCLE = A_CYCLE
 	    	,FINAL_DATE = A_FINAL_DATE
 	    	,NEXT_DATE = A_NEXT_DATE
+	    	,CHECK_DEPT = A_CHECK_DEPT
 	    	,ETC_RMK = A_ETC_RMK
 	    	,UPD_EMP_NO = A_UPD_EMP_NO
 	    	,UPD_ID = A_UPD_ID

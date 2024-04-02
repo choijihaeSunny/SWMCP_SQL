@@ -28,37 +28,37 @@ begin
 		union all
 		select 10 as CLASS1, 15 as CODE, '중분류1_5' as NAME
 		union all
-		select 20 as CLASS2, 21 as CODE, '중분류2_1' as NAME
+		select 20 as CLASS1, 21 as CODE, '중분류2_1' as NAME
 		union all
-		select 20 as CLASS2, 23 as CODE, '중분류2_2' as NAME
+		select 20 as CLASS1, 23 as CODE, '중분류2_2' as NAME
 		union all
-		select 20 as CLASS2, 25 as CODE, '중분류2_3' as NAME
+		select 20 as CLASS1, 25 as CODE, '중분류2_3' as NAME
 		union all
-		select 20 as CLASS2, 27 as CODE, '중분류2_4' as NAME
+		select 20 as CLASS1, 27 as CODE, '중분류2_4' as NAME
 		union all
-		select 20 as CLASS2, 29 as CODE, '중분류2_5' as NAME
+		select 20 as CLASS1, 29 as CODE, '중분류2_5' as NAME
 		union all
-		select 30 as CLASS3, 32 as CODE, '증분류3_1' as NAME
+		select 30 as CLASS1, 32 as CODE, '증분류3_1' as NAME
 		union all
-		select 30 as CLASS3, 34 as CODE, '증분류3_2' as NAME
+		select 30 as CLASS1, 34 as CODE, '증분류3_2' as NAME
 		union all
-		select 30 as CLASS3, 36 as CODE, '증분류3_3' as NAME
+		select 30 as CLASS1, 36 as CODE, '증분류3_3' as NAME
 		union all
-		select 30 as CLASS3, 38 as CODE, '증분류3_4' as NAME
+		select 30 as CLASS1, 38 as CODE, '증분류3_4' as NAME
 		union all
-		select 30 as CLASS3, 30 as CODE, '증분류3_5' as NAME
+		select 30 as CLASS1, 30 as CODE, '증분류3_5' as NAME
 		union all
-		select 40 as CLASS4, 46 as CODE, '중분류4_1' as NAME
+		select 40 as CLASS1, 46 as CODE, '중분류4_1' as NAME
 		union all
-		select 40 as CLASS4, 47 as CODE, '중분류4_2' as NAME
+		select 40 as CLASS1, 47 as CODE, '중분류4_2' as NAME
 		union all
-		select 40 as CLASS4, 48 as CODE, '중분류4_3' as NAME
+		select 40 as CLASS1, 48 as CODE, '중분류4_3' as NAME
 		union all
-		select 40 as CLASS4, 49 as CODE, '중분류4_4' as NAME
+		select 40 as CLASS1, 49 as CODE, '중분류4_4' as NAME
 		union all
-		select 40 as CLASS4, 40 as CODE, '중분류4_5' as NAME
+		select 40 as CLASS1, 40 as CODE, '중분류4_5' as NAME
 		union all
-		select 50 as CLASS5, 51 as CODE, '중분류_0' as NAME	
+		select 50 as CLASS1, 51 as CODE, '중분류_0' as NAME	
 	) A
 	where A.CLASS1 = A_CLASS1
 	;
