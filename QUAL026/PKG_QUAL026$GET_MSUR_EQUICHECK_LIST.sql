@@ -11,6 +11,7 @@ PROC:begin
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	select
+		  A.IDX,
 		  A.EQUI_CODE,
 		  A.CHECK_ITEM,
 		  A.CYCLE,

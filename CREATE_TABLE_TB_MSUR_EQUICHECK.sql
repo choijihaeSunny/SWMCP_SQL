@@ -19,5 +19,5 @@ CREATE TABLE `tb_msur_equicheck` (
   `UPD_EMP_NO` varchar(10) DEFAULT NULL COMMENT '수정사번',
   `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
-  PRIMARY KEY (`COMP_ID`)
+  PRIMARY KEY (`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='검사점검항목등록';

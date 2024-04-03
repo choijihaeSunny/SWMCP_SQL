@@ -21,7 +21,7 @@ PROC:begin
 		  A.FINAL_DATE, -- 최종점검일
 		  A.NEXT_DATE, -- 점검예정일
 		  A.ETC_RMK -- 비고
-	from TB_MSUR_EQEUICHECK A
+	from TB_MSUR_EQUICHECK A
 		 left join TB_MSUR_EQUI B
 		 		on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE

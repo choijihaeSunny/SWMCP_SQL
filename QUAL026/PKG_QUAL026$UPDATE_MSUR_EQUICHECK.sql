@@ -1,5 +1,6 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$UPDATE_MSUR_EQUICHECK`(		
 	IN A_COMP_ID varchar(10),
+	IN A_IDX int(11),
 	IN A_EQUI_CODE varchar(20),
 	IN A_CHECK_ITEM varchar(10),
 	IN A_CYCLE decimal(3, 0),
@@ -33,6 +34,7 @@ begin
 	    	,UPD_DATE = SYSDATE()
 	 WHERE COMP_ID = A_COMP_ID
 	   AND EQUI_CODE = A_EQUI_CODE
+	   AND IDX = A_IDX
 	 ;
 	
 	IF ROW_COUNT() = 0 THEN
