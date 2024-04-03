@@ -17,6 +17,11 @@ begin
 	  AND EQUI_CODE = A_EQUI_CODE
 	 ;
 	
+	DELETE FROM TB_MSUR_EQUICHECK
+	 WHERE COMP_ID = A_COMP_ID
+	   AND EQUI_CODE = A_EQUI_CODE
+	 ;
+	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 

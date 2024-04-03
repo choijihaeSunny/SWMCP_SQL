@@ -18,7 +18,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUI`(
 	IN A_BUY_ADDRESS varchar(100),
 	IN A_BUY_PHONE varchar(20),
 	IN A_RES_STATUS bigint(20),
-	IN A_USE_EMP varchar(20),
+	IN A_USE_EMP_NO varchar(20),
+	in A_USE_EMP_NAME varchar(50),
 	IN A_BUY_EMAIL varchar(50),
 	IN A_PREV_EQUI_CODE varchar(20),
 	IN A_FILE_NAME varchar(100),
@@ -36,7 +37,7 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
-    SET A_EQUI_CODE := CONCAT(ALPAD(A_CLASS1, 2, '0'), LPAD(A_CLASS2, 2, '0'), LPAD(A_TEMP_SEQ, 3, '0'));
+    SET A_EQUI_CODE := CONCAT(LPAD(A_CLASS1, 2, '0'), LPAD(A_CLASS2, 2, '0'), LPAD(A_TEMP_SEQ, 3, '0'));
    
   	
     INSERT INTO TB_MSUR_EQUI (
@@ -59,7 +60,8 @@ begin
     	BUY_ADDRESS,
     	BUY_PHONE,
     	RES_STATUS,
-    	USE_EMP,
+    	USE_EMP_NO,
+    	USE_EMP_NAME,
     	BUY_EMAIL,
     	PREV_EQUI_CODE,
     	FILE_NAME,
@@ -87,7 +89,8 @@ begin
     	A_BUY_ADDRESS,
     	A_BUY_PHONE,
     	A_RES_STATUS,
-    	A_USE_EMP,
+    	A_USE_EMP_NO,
+    	A_USE_EMP_NAME,
     	A_BUY_EMAIL,
     	A_PREV_EQUI_CODE,
     	A_FILE_NAME,

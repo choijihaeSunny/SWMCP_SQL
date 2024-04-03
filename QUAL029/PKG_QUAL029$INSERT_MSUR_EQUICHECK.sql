@@ -69,6 +69,16 @@ begin
 	)
 	;
 
+	UPDATE TB_MSUR_EQUICHECK
+		SET 
+	    	FINAL_DATE = SYSDATE()
+	    	,UPD_EMP_NO = A_UPD_EMP_NO
+	    	,UPD_ID = A_UPD_ID
+	    	,UPD_DATE = SYSDATE()
+	 WHERE COMP_ID = A_COMP_ID
+	   AND EQUI_CODE = A_EQUI_CODE
+	 ;
+
 	
 	
 	IF ROW_COUNT() = 0 THEN
