@@ -12,8 +12,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL029$INSERT_MSUR_EQUICHECK
 	IN A_CHECK_HIS varchar(200),
 	IN A_RESULT_HIS varchar(200),
 	IN A_ETC_RMK varchar(200),
-	IN A_UPD_EMP_NO varchar(10),
-	IN A_UPD_ID varchar(30),
+	IN A_SYS_EMP_NO varchar(10),
+	IN A_SYS_ID varchar(30),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
