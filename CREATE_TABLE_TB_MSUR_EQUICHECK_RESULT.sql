@@ -1,5 +1,6 @@
 CREATE TABLE `tb_msur_equicheck_result` (
   `COMP_ID` varchar(10) NOT NULL COMMENT '사업장',
+  `IDX` int(11) NOT NULL AUTO_INCREMENT COMMENT '저장번호',
   `EQUI_CODE` varchar(20) NOT NULL COMMENT '관리번호',
   `CHECK_ITEM` varchar(10) NOT NULL COMMENT '점검항목',
   `CYCLE` decimal(3,0) DEFAULT 0 COMMENT '점검주기(월)',
@@ -26,4 +27,4 @@ CREATE TABLE `tb_msur_equicheck_result` (
   `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
   PRIMARY KEY (`COMP_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='검사점검항목결과';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='검사점검항목등록결과';
