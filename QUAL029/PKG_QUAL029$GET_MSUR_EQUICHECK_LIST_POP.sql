@@ -1,6 +1,6 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL029$GET_MSUR_EQUICHECK_LIST2`(
-			IN A_EQUI_CODE 		varchar(20),
-			IN A_DATE 			TIMESTAMP,
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL029$GET_MSUR_EQUICHECK_LIST_POP`(
+			IN A_ST_DATE 			TIMESTAMP,
+			IN A_ED_DATE			TIMESTAMP,
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
@@ -23,12 +23,8 @@ PROC:begin
 		  A.CHECK_EMP_NO, -- 점검자
 		  A.VALID_TEMP, -- 유효기간
 		  'UPLOADFILE' AS UPLOADFILE, -- 성적서 업로드
-		  'VIEWFILE' AS VIEWFILE, -- 성적서 업로드
-		  IFNULL(A.FILE_NAME, '') as FILE_NAME,
-		  IFNULL(A.REAL_FILE_NAME, '') as REAL_FILE_NAME,
-		  '' as FILE_NAME_DEL,
-		  '' as REAL_FILE_NAME_DEL,
-		  '' as FILE_NAME_OLD,
+		  A.FILE_NAME as FILE_NAME,
+		  A.REAL_FILE_NAME as REAL_FILE_NAME,
 		  A.CHECK_HIS, -- 점검내용
 		  A.RESULT_HIS, -- 조치내용
 		  A.ETC_RMK -- 비고
@@ -36,8 +32,7 @@ PROC:begin
 		 left join tb_msur_equi B
 		 		on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE
-	where DATE_FORMAT(A.SET_DATE, '%Y%m%d') = DATE_FORMAT(A_DATE, '%Y%m%d')
-	  and A.TEMP_SEQ = LPAD(A_EQUI_CODE, 3, '0')
+	where A.FINAL_DATE between A_ST_DATE and A_ED_DATE
 	;
 
 	  		

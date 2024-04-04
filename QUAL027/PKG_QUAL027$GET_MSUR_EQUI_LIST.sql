@@ -28,12 +28,12 @@ PROC:begin
 		  A.USE_DEPT, -- 사용부서
 		  A.RES_STATUS, -- 지원상태
 		  A.ETC_RMK -- 비고
-	from TB_MSUR_EQUI A
-		 left join TB_MSUR_EQUICHECK B
+	from TB_MSUR_EQUICHECK B
+		 left join TB_MSUR_EQUI A
 		 	    on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE
 	where A.CLASS1 LIKE CONCAT('%', A_CLASS1, '%')
-	  and A.EQUI_NAME like CONCAT('%', A_EQUI_NAME, '%')
+	  and A.EQUI_NAME like CONCAT('%', TRIM(A_EQUI_NAME), '%')
 	;
 	set N_RETURN := 0;
     set V_RETURN := '조회 되었습니다';
