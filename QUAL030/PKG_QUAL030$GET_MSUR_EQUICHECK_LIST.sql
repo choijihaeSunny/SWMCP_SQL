@@ -1,6 +1,8 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL029$GET_MSUR_EQUICHECK_LIST2`(
-			IN A_EQUI_CODE 		varchar(3),
-			IN A_DATE 			TIMESTAMP,
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL030$GET_MSUR_EQUICHECK_LIST`(
+			IN A_ST_DATE 		TIMESTAMP,
+			IN A_ED_DATE		TIMESTAMP,
+			IN A_CLASS1 		bigint(20),
+			IN A_EQUI_NAME 		varchar(50),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
@@ -11,6 +13,7 @@ PROC:begin
 
 	select
 		  A.IDX,
+		  A.SYS_DATE, -- 점검일자
 		  A.EQUI_CODE, -- 관리번호
 		  A.CHECK_ITEM, -- 점검항목
 		  B.EQUI_NAME, -- 검사장비명 
@@ -36,8 +39,9 @@ PROC:begin
 		 left join tb_msur_equi B
 		 		on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE
-	where DATE_FORMAT(A.SET_DATE, '%Y%m%d') = DATE_FORMAT(A_DATE, '%Y%m%d')
-	  and A.TEMP_SEQ = LPAD(A_EQUI_CODE, 3, '0')
+	where A.FINAL_DATE between A_ST_DATE and A_ED_DATE
+	  and B.CLASS1 like CONCAT('%', A_CLASS1, '%')
+	  and B.EQUI_NAME like CONCAT('%', A_EQUI_NAME, '%')
 	;
 
 	  		

@@ -1,6 +1,6 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUI`(		
 	IN A_COMP_ID varchar(10),
-	IN A_EQUI_CODE varchar(20),
+	INOUT A_EQUI_CODE varchar(20),
 	IN A_CLASS1 bigint(20),
 	IN A_CLASS2 bigint(20),
 	IN A_TEMP_SEQ varchar(3),

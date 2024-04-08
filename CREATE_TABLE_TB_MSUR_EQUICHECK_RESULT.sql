@@ -3,11 +3,11 @@ CREATE TABLE `tb_msur_equicheck_result` (
   `IDX` int(11) NOT NULL AUTO_INCREMENT COMMENT '저장번호',
   `TEMP_SEQ` varchar(3) NOT NULL COMMENT '순번',
   `EQUI_CODE` varchar(20) NOT NULL COMMENT '관리번호',
-  `SET_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '등록일자',
+  `SET_DATE` varchar(8) DEFAULT NULL COMMENT '등록일자',
   `CHECK_ITEM` varchar(10) NOT NULL COMMENT '점검항목',
   `CYCLE` decimal(3,0) DEFAULT 0 COMMENT '점검주기(월)',
-  `FINAL_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '최종점검일',
-  `NEXT_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '차기점검일',
+  `FINAL_DATE` varchar(8) DEFAULT NULL COMMENT '최종점검일',
+  `NEXT_DATE` varchar(8) DEFAULT NULL COMMENT '차기점검일',
   `CHECK_DEPT` varchar(10) DEFAULT NULL COMMENT '점검기관',
   `CHECK_RESULT` varchar(10) DEFAULT NULL COMMENT '점검결과',
   `CHECK_EMP_NO` varchar(10) DEFAULT NULL COMMENT '점검자',
@@ -30,4 +30,3 @@ CREATE TABLE `tb_msur_equicheck_result` (
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
   PRIMARY KEY (`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='검사점검항목등록결과';
-

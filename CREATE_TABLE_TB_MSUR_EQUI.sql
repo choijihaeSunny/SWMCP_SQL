@@ -11,7 +11,7 @@ CREATE TABLE `tb_msur_equi` (
   `MODEL_NAME` varchar(50) DEFAULT NULL COMMENT '모델명',
   `BUY_AMT` decimal(16,2) DEFAULT 0.00 COMMENT '구입가격',
   `BUY_COMP` varchar(50) DEFAULT NULL COMMENT '구입처',
-  `BUY_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '구입일자',
+  `BUY_DATE` varchar(8) DEFAULT NULL COMMENT '구입일자',
   `USE_DEPT` varchar(10) DEFAULT NULL COMMENT '사용부서',
   `ETC_RMK` varchar(200) DEFAULT NULL COMMENT '비고',
   `BUY_POST_NO` varchar(10) DEFAULT NULL COMMENT '구입처주소_우편번호',
