@@ -1,0 +1,43 @@
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL031$GET_CORRECT_REQ_RESULT_LIST`(
+			IN A_ST_DATE 		TIMESTAMP,
+			IN A_ED_DATE		TIMESTAMP,
+			IN A_ACT_RESULT 	bigint(20), 
+            OUT N_RETURN      	INT,
+            OUT V_RETURN      	VARCHAR(4000)
+)
+PROC:begin
+	
+	declare exit HANDLER for sqlexception
+	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	select
+		  A.REQ_DATE,
+		  A.SEQ_SEQ,
+		  A.REQ_KEY,
+		  A.STATUS_DIV,
+		  A.REQ_EMP_NO,
+		  A.REQ_DEPT,
+		  A.REC_DEPT,
+		  A.REPLY_DATE,
+		  A.TEST_DATE,
+		  A.REQ_RMK,
+		  A.STATUS_NOW,
+		  A.CORRECT_PLAN,
+		  A.REQ_CAUSE,
+		  A.REQ_PLAN,
+		  A.IMP_DATE,
+		  A.ACT_RESULT,
+		  A.CONTINUE_PLAN,
+		  A.ACT_EFFECT,
+		  A.ACT_EFFECT_DETAIL,
+		  A.ACT_EFFECT_MANAGE,
+		  A.REPLY_EMP_NO,
+		  A.CONF_EMP_NO
+	from TB_CORRECT_REQ_RESULT A
+	where A.SYS_DATE between A_ST_DATE and A_ED_DATE
+	  and A.ACT_RESULT = A_ACT_RESULT
+	;
+
+	set N_RETURN := 0;
+    set V_RETURN := '조회 되었습니다';
+END
