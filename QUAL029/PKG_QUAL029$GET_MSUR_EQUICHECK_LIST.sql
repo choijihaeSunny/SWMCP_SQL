@@ -12,14 +12,14 @@ PROC:begin
 	select 
 		  'N' as CHK, -- 선택
 		  A.CHECK_ITEM, -- 점검항목
-		  A.NEXT_DATE, -- 점검예정일
+		  STR_TO_DATE(A.NEXT_DATE, '%Y%m%d') as NEXT_DATE, -- 점검예정일
 		  A.EQUI_CODE, -- 관리번호
 		  B.EQUI_NAME, -- 검사장비명
 		  B.EQUI_SPEC, -- 규격
 		  B.EQUI_NUM, -- 기기번호
 		  A.CYCLE, -- 점검주기(월)
-		  A.FINAL_DATE, -- 최종점검일
-		  A.NEXT_DATE, -- 점검예정일
+		  STR_TO_DATE(A.FINAL_DATE, '%Y%m%d') as FINAL_DATE, -- 최종점검일
+		  STR_TO_DATE(A.NEXT_DATE, '%Y%m%d') as NEXT_DATE, -- 점검예정일
 		  A.ETC_RMK, -- 비고
 		  A.CHECK_DEPT
 	from TB_MSUR_EQUICHECK A

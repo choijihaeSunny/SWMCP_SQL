@@ -17,7 +17,7 @@ PROC:begin
 		  B.EQUI_SPEC, -- 규격
 		  B.EQUI_NUM, -- 기기번호
 		  A.CYCLE, -- 점검주기(월)
-		  A.FINAL_DATE, -- 최종점검일
+		  STR_TO_DATE(A.FINAL_DATE, '%Y%m%d') as FINAL_DATE, -- 최종점검일
 		  A.CHECK_DEPT, -- 점검기관
 		  A.CHECK_RESULT, -- 점검결과
 		  A.CHECK_EMP_NO, -- 점검자

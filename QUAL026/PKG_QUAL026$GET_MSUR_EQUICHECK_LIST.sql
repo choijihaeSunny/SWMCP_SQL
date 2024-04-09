@@ -15,8 +15,8 @@ PROC:begin
 		  A.EQUI_CODE,
 		  A.CHECK_ITEM,
 		  A.CYCLE,
-		  A.FINAL_DATE,
-		  A.NEXT_DATE,
+		  STR_TO_DATE(A.FINAL_DATE, '%Y%m%d') as FINAL_DATE,
+		  STR_TO_DATE(A.NEXT_DATE, '%Y%m%d') as NEXT_DATE,
 		  A.CHECK_DEPT,
 		  A.ETC_RMK
 	from TB_MSUR_EQUICHECK A

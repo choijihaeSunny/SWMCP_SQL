@@ -21,7 +21,7 @@ PROC:begin
 		  A.MODEL_NAME,
 		  A.BUY_AMT,
 		  A.BUY_COMP,
-		  A.BUY_DATE,
+		  STR_TO_DATE(A.BUY_DATE, '%Y%m%d') as BUY_DATE,
 		  A.USE_DEPT,
 		  A.ETC_RMK,
 		  A.BUY_POST_NO,

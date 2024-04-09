@@ -54,7 +54,7 @@ begin
 		A_COMP_ID,
 		A_TEMP_SEQ,
     	A_EQUI_CODE,
-    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
+    	DATE_FORMAT(SYSDATE(), '%Y%m%d'),
     	A_CHECK_ITEM,
     	A_CYCLE,
     	DATE_FORMAT(A_FINAL_DATE, '%Y%m%d'),
