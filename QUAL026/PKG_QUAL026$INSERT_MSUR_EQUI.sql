@@ -82,7 +82,7 @@ begin
     	A_MODEL_NAME,
     	A_BUY_AMT,
     	A_BUY_COMP,
-    	A_BUY_DATE,
+    	DATE_FORMAT(A_BUY_DATE, '%Y%m%d'),
     	A_USE_DEPT,
     	A_ETC_RMK,
     	A_BUY_POST_NO,

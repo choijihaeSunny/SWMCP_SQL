@@ -36,7 +36,7 @@ PROC:begin
 		 left join tb_msur_equi B
 		 		on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE
-	where DATE_FORMAT(A.SET_DATE, '%Y%m%d') = DATE_FORMAT(A_DATE, '%Y%m%d')
+	where A.SET_DATE = DATE_FORMAT(A_DATE, '%Y%m%d')
 	  and A.TEMP_SEQ = LPAD(A_EQUI_CODE, 3, '0')
 	;
 

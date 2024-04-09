@@ -20,12 +20,13 @@ PROC:begin
 		  A.CYCLE, -- 점검주기(월)
 		  A.FINAL_DATE, -- 최종점검일
 		  A.NEXT_DATE, -- 점검예정일
-		  A.ETC_RMK -- 비고
+		  A.ETC_RMK, -- 비고
+		  A.CHECK_DEPT
 	from TB_MSUR_EQUICHECK A
 		 left join TB_MSUR_EQUI B
 		 		on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE
-	where A.NEXT_DATE between A_ST_DATE and A_ED_DATE
+	where A.NEXT_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 	;
 
 	set N_RETURN := 0;

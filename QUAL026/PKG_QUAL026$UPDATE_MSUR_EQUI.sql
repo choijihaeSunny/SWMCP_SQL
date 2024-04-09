@@ -50,7 +50,7 @@ begin
 	    	,MODEL_NAME = A_MODEL_NAME
 	    	,BUY_AMT = A_BUY_AMT
 	    	,BUY_COMP = A_BUY_COMP
-	    	,BUY_DATE = A_BUY_DATE
+	    	,BUY_DATE = DATE_FORMAT(A_BUY_DATE, '%Y%m%d')
 	    	,USE_DEPT = A_USE_DEPT
 	    	,ETC_RMK = A_ETC_RMK
 	    	,BUY_POST_NO = A_BUY_POST_NO

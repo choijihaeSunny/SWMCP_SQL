@@ -37,8 +37,8 @@ begin
     	A_EQUI_CODE,
     	A_CHECK_ITEM,
     	A_CYCLE,
-    	A_FINAL_DATE,
-    	A_NEXT_DATE,
+    	DATE_FORMAT(A_FINAL_DATE, '%Y%m%d'),
+    	DATE_FORMAT(A_NEXT_DATE, '%Y%m%d'),
     	A_CHECK_DEPT,
     	A_ETC_RMK
     	,A_SYS_EMP_NO
