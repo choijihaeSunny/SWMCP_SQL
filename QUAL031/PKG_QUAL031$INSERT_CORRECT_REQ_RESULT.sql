@@ -35,9 +35,12 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
+    set A_REQ_KEY := concat(DATE_FORMAT(A_REQ_DATE, '%Y%m%d'), LPAD(A_REQ_SEQ, 3, '0')) ;
+  
     insert into TB_CORRECT_REQ_RESULT (
-     	  REQ_DATE,
-		  SEQ_SEQ,
+     	  COMP_ID,
+    	  REQ_DATE,
+		  REQ_SEQ,
 		  REQ_KEY,
 		  STATUS_DIV,
 		  REQ_EMP_NO,
@@ -62,8 +65,9 @@ begin
     	  ,SYS_ID
     	  ,SYS_DATE
     ) values (
+    	  A_COMP_ID,
     	  DATE_FORMAT(A_REQ_DATE, '%Y%m%d'),
-		  A_SEQ_SEQ,
+		  A_REQ_SEQ,
 		  A_REQ_KEY,
 		  A_STATUS_DIV,
 		  A_REQ_EMP_NO,

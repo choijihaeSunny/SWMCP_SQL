@@ -38,7 +38,7 @@ begin
     update TB_CORRECT_REQ_RESULT
     	set
     		REQ_DATE = DATE_FORMAT(A_REQ_DATE, '%Y%m%d')
-  		    ,SEQ_SEQ = A_SEQ_SEQ
+  		    ,REQ_SEQ = A_REQ_SEQ
 		    ,REQ_KEY = A_REQ_KEY
 		    ,STATUS_DIV = A_STATUS_DIV
 		    ,REQ_EMP_NO = A_REQ_EMP_NO
