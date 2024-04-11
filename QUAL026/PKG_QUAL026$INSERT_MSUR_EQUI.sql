@@ -9,7 +9,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUI`(
 	IN A_EQUI_NUM varchar(20),
 	IN A_MAKE_COMP varchar(50),
 	IN A_MODEL_NAME varchar(50),
-	IN A_BUY_AMT decimal(16, 2),
+	IN A_BUY_AMT decimal(16, 4),
 	IN A_BUY_COMP varchar(50),
 	IN A_BUY_DATE timestamp,
 	IN A_USE_DEPT varchar(10),
