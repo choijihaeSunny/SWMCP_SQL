@@ -9,7 +9,7 @@ CREATE TABLE `tb_msur_equi` (
   `EQUI_NUM` varchar(20) DEFAULT NULL COMMENT '기기번호',
   `MAKE_COMP` varchar(50) DEFAULT NULL COMMENT '제조사',
   `MODEL_NAME` varchar(50) DEFAULT NULL COMMENT '모델명',
-  `BUY_AMT` decimal(16,2) DEFAULT 0.00 COMMENT '구입가격',
+  `BUY_AMT` decimal(16,4) DEFAULT 0.0000 COMMENT '구입가격',
   `BUY_COMP` varchar(50) DEFAULT NULL COMMENT '구입처',
   `BUY_DATE` varchar(8) DEFAULT NULL COMMENT '구입일자',
   `USE_DEPT` varchar(10) DEFAULT NULL COMMENT '사용부서',

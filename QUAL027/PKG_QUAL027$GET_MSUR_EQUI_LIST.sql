@@ -23,8 +23,8 @@ PROC:begin
 		  A.BUY_DATE, -- 구입일자
 		  B.CHECK_ITEM, -- 점검항목
 		  B.CYCLE, -- 점검주기(월)
-		  B.FINAL_DATE, -- 최종점검일
-		  B.NEXT_DATE, -- 차기점검일
+		  STR_TO_DATE(B.FINAL_DATE, '%Y%m%d') as FINAL_DATE, -- 최종점검일
+		  STR_TO_DATE(B.NEXT_DATE, '%Y%m%d') as BUY_DATE, -- 차기점검일
 		  A.USE_DEPT, -- 사용부서
 		  A.RES_STATUS, -- 지원상태
 		  A.ETC_RMK -- 비고

@@ -37,9 +37,7 @@ begin
   
     update TB_CORRECT_REQ_RESULT
     	set
-    		REQ_DATE = DATE_FORMAT(A_REQ_DATE, '%Y%m%d')
-  		    ,REQ_SEQ = A_REQ_SEQ
-		    ,REQ_KEY = A_REQ_KEY
+  		    REQ_SEQ = A_REQ_SEQ
 		    ,STATUS_DIV = A_STATUS_DIV
 		    ,REQ_EMP_NO = A_REQ_EMP_NO
 		    ,REQ_DEPT = A_REQ_DEPT
@@ -62,6 +60,9 @@ begin
 		    ,UPD_EMP_NO = A_UPD_EMP_NO
 	    	,UPD_ID = A_UPD_ID
 	    	,UPD_DATE = SYSDATE()
+	 where COMP_ID = A_COMP_ID
+	   and REQ_DATE = DATE_FORMAT(A_REQ_DATE, '%Y%m%d')
+	   and REQ_KEY = A_REQ_KEY
 	 ;
 	
 	IF ROW_COUNT() = 0 THEN
