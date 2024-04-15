@@ -17,15 +17,18 @@ PROC:begin
 		  A.SET_NO,
 		  A.MOLD_MORDER_REQ_KEY,
 		  A.MOLD_CODE,
+		  B.MOLD_NAME,
+		  B.MOLD_SPEC,
 		  A.QTY,
 		  STR_TO_DATE(A.DELI_DATE, '%Y%m%d') as DELI_DATE,
 		  A.STOCK_QTY,
 		  A.CUST_CODE,
 		  A.EMP_NO,
 		  A.DEPT_CODE,
-		  A.BAL_QTY,
 		  A.RMK
 	from TB_MOLD_FORDER_REQ A
+		left join TB_MOLD B
+		 	    on A.MOLD_CODE = B.MOLD_CODE
 	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	  and A.SET_SEQ = A_SET_SEQ
 	;
