@@ -6,16 +6,11 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
--- 	select * from SYS_DATA
--- 	where path like 'cfg.qual%'
-	-- and full_path = 'cfg.qual.equi.state'
--- 	;
-
-	select 1 as CODE, '사용' as NAME
-	union all
-	select 0 as CODE, '폐기' as NAME
-	union all
-	select 2 as CODE, '판매' as NAME
+	select 
+		  A.CODE,
+		  A.NAME
+	from sys_data A 
+	where path like 'cfg.qual.equi.state%'
 	;
 	
 	SET N_RETURN = 0;

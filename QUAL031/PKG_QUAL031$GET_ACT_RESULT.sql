@@ -7,9 +7,11 @@ begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN);
 
 
-	select 0 as CODE, '요청' as NAME
-	union all
-	select 1 as CODE, '조치완료' as NAME
+	select 
+		  A.CODE,
+		  A.NAME
+	from sys_data A 
+	where path like 'cfg.qual.equi.act%'
 	;
 	
 	SET N_RETURN = 0;

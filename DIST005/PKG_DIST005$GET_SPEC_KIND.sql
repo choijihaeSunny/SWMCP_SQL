@@ -6,15 +6,11 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
-	select '100' as CODE, '용량1' as NAME
-	union all
-	select '200' as CODE, '용량2' as NAME
-	union all
-	select '300' as CODE, '용량3' as NAME
-	union all
-	select '400' as CODE, '용량4' as NAME
-	union all
-	select '500' as CODE, '용량5' as NAME
+	select 
+		  A.CODE,
+		  A.NAME
+	from sys_data A 
+	where path like 'cfg.dist.rack%'
 	;
 	
 	SET N_RETURN = 0;

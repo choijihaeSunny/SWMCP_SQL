@@ -7,9 +7,11 @@ begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN);
 
 
-	select 1 as CODE, '적합' as NAME
-	union all
-	select 0 as CODE, '부적합' as NAME
+	select 
+		  A.CODE,
+		  A.NAME
+	from sys_data A 
+	where path like 'cfg.qual.equi.effect%'
 	;
 	
 	SET N_RETURN = 0;
