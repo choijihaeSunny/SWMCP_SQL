@@ -2,7 +2,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$UPDATE_MOLD_FORDER_LI
 	IN A_COMP_ID varchar(10),
 	IN A_SET_SEQ varchar(4),
 	IN A_SET_NO varchar(4),
-	IN A_MOLD_MORDER_REQ_KEY varchar(30),
+	IN A_MOLD_MORDER_KEY varchar(30),
 	IN A_MOLD_CODE varchar(20),
 	IN A_CUST_CODE varchar(10),
 	IN A_QTY decimal(10, 0),
@@ -46,7 +46,7 @@ begin
 	    	,UPD_ID = A_UPD_ID
 	    	,UPD_DATE = SYSDATE()
 	WHERE COMP_ID = A_COMP_ID
-	   and MOLD_MORDER_REQ_KEY = A_MOLD_MORDER_REQ_KEY
+	   and MOLD_MORDER_KEY = A_MOLD_MORDER_KEY
 	;
 	
 	IF ROW_COUNT() = 0 THEN
