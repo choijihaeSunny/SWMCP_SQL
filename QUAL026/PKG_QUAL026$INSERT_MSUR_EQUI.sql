@@ -19,7 +19,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUI`(
 	IN A_BUY_PHONE varchar(20),
 	IN A_RES_STATUS bigint(20),
 	IN A_USE_EMP_NO varchar(20),
-	in A_USE_EMP_NAME varchar(50),
 	IN A_BUY_EMAIL varchar(50),
 	IN A_PREV_EQUI_CODE varchar(20),
 	IN A_FILE_NAME varchar(100),
@@ -31,11 +30,24 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUI`(
 	)
 begin
 	
+	DECLARE V_CLASS1 VARCHAR(20);
+	DECLARE V_CLASS2 VARCHAR(20);
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
+  
+    SET V_CLASS1 = (select CODE
+    			    from sys_data
+    			    where path = 'cfg.qual.equi.class1'
+    			      and data_id = A_CLASS1);
+    			     
+    SET V_CLASS2 = (select CODE
+    				from sys_data
+    				where path = CONCAT('cfg.qual.equi.class1.', V_CLASS1)
+    				  and data_id = A_CLASS2);
   
     SET A_EQUI_CODE := CONCAT(LPAD(A_CLASS1, 2, '0'), LPAD(A_CLASS2, 2, '0'), LPAD(A_TEMP_SEQ, 3, '0'));
    
@@ -61,7 +73,6 @@ begin
     	BUY_PHONE,
     	RES_STATUS,
     	USE_EMP_NO,
-    	USE_EMP_NAME,
     	BUY_EMAIL,
     	PREV_EQUI_CODE,
     	FILE_NAME,
@@ -74,7 +85,7 @@ begin
     	A_EQUI_CODE,
     	A_CLASS1,
     	A_CLASS2,
-    	A_TEMP_SEQ,
+    	LPAD(A_TEMP_SEQ, 3, '0'),
     	A_EQUI_NAME,
     	A_EQUI_SPEC,
     	A_EQUI_NUM,
@@ -90,7 +101,6 @@ begin
     	A_BUY_PHONE,
     	A_RES_STATUS,
     	A_USE_EMP_NO,
-    	A_USE_EMP_NAME,
     	A_BUY_EMAIL,
     	A_PREV_EQUI_CODE,
     	A_FILE_NAME,

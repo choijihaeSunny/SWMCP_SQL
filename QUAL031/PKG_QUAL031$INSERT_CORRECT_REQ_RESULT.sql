@@ -67,7 +67,7 @@ begin
     ) values (
     	  A_COMP_ID,
     	  DATE_FORMAT(A_REQ_DATE, '%Y%m%d'),
-		  A_REQ_SEQ,
+		  LPAD(A_REQ_SEQ, 3, '0'),
 		  A_REQ_KEY,
 		  A_STATUS_DIV,
 		  A_REQ_EMP_NO,

@@ -6,8 +6,14 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$GET_MSUR_EQUI_LIST`(
 )
 PROC:begin
 	
+	DECLARE V_CLASS1 VARCHAR(20);
+
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	if A_CLASS1 = 0 then
+		set V_CLASS1 = '';
+	end if;
 
 	select
 		  A.EQUI_CODE,
@@ -29,13 +35,15 @@ PROC:begin
 		  A.BUY_PHONE,
 		  A.RES_STATUS,
 		  A.USE_EMP_NO,
-		  A.USE_EMP_NAME,
+		  (select kor_name
+		   from insa_mst 
+		   where emp_no = A.USE_EMP_NO) as USE_EMP_NAME,
 		  A.BUY_EMAIL,
 		  A.PREV_EQUI_CODE,
 		  A.FILE_NAME,
 		  A.REAL_FILE_NAME
 	from TB_MSUR_EQUI A
-	where A.CLASS1 LIKE CONCAT('%', A_CLASS1, '%')
+	where A.CLASS1 LIKE CONCAT('%', V_CLASS1, '%')
 	  and A.EQUI_NAME like CONCAT('%', A_EQUI_NAME, '%')
 	;
 	set N_RETURN := 0;

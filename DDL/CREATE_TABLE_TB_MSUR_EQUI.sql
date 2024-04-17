@@ -19,7 +19,6 @@ CREATE TABLE `tb_msur_equi` (
   `BUY_PHONE` varchar(20) DEFAULT NULL COMMENT '구입처전화번호',
   `RES_STATUS` bigint(20) DEFAULT NULL COMMENT '자원상태',
   `USE_EMP_NO` varchar(20) DEFAULT NULL COMMENT '담당자',
-  `USE_EMP_NAME` varchar(50) DEFAULT NULL COMMENT '담당자명',
   `BUY_EMAIL` varchar(50) DEFAULT NULL COMMENT '구입처이메일',
   `PREV_EQUI_CODE` varchar(20) NOT NULL COMMENT '이전관리번호',
   `FILE_NAME` varchar(100) DEFAULT NULL COMMENT '파일명',
