@@ -6,10 +6,14 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$GET_MOLD_FORDER_LIST`(
 )
 PROC:begin
 	
-	DECLARE V_RACK_DIV VARCHAR(20);
+	declare V_SET_SEQ varchar(3);
 	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	if trim(A_SET_SEQ) <> '' then
+		set V_SET_SEQ := LPAD(A_SET_SEQ, 3, '0');
+	end if;
 
 	select
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
@@ -20,11 +24,17 @@ PROC:begin
 		  B.MOLD_NAME,
 		  B.MOLD_SPEC,
 		  A.CUST_CODE,
+		  (select CUST_NAME
+		   from tc_cust_code
+		   where cust_code = A.CUST_CODE) as CUST_NAME,
 		  A.QTY,
 		  STR_TO_DATE(A.DELI_DATE, '%Y%m%d') as DELI_DATE,
 		  A.COST,
 		  A.AMT,
 		  A.EMP_NO,
+		  (select kor_name
+		   from insa_mst 
+		   where emp_no = A.EMP_NO) as EMP_NAME,
 		  A.DEPT_CODE,
 		  A.RMK
 	from TB_MOLD_FORDER A

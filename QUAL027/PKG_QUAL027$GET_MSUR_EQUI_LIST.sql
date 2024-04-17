@@ -6,8 +6,6 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL027$GET_MSUR_EQUI_LIST`(
 )
 PROC:begin
 	
-	DECLARE V_RACK_DIV VARCHAR(20);
-	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 

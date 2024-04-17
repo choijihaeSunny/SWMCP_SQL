@@ -38,7 +38,7 @@ PROC:begin
 #	  	 		on A.COMP_ID = C.COMP_ID
 #	  	 		and A.EQUI_CODE = C.EQUI_CODE
 	where A.FINAL_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-	group by A.TEMP_SEQ
+	group by A.FINAL_DATE, A.TEMP_SEQ
 	;
 
 	  		

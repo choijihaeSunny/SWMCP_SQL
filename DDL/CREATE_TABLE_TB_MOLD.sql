@@ -1,5 +1,3 @@
--- swmcp.tb_mold definition
-
 CREATE TABLE `tb_mold` (
   `MOLD_CODE` varchar(20) NOT NULL COMMENT '금형코드',
   `CLASS1` bigint(20) NOT NULL COMMENT '대분류',
@@ -7,7 +5,7 @@ CREATE TABLE `tb_mold` (
   `CLASS_SEQ` varchar(4) NOT NULL COMMENT '순번',
   `MOLD_NAME` varchar(50) NOT NULL COMMENT '금형명',
   `MOLD_SPEC` varchar(50) NOT NULL COMMENT '금형규격',
-  `LOT_YN` varchar(1) DEFAULT 'Y' COMMENT 'LOT관리여부(Y/N)',
+  `LOT_YN` bigint(20) COMMENT 'LOT관리여부(Y/N)',
   `STOCK_SAFE` decimal(10,0) DEFAULT NULL COMMENT '안전재고',
   `CUST_CODE` varchar(10) DEFAULT NULL COMMENT '대표거래처',
   `ITEM_UNIT` decimal(10,0) DEFAULT 0 COMMENT '제품단증',

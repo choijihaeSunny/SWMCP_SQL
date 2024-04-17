@@ -1,10 +1,11 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD001$UPDATE_MOLD`(		
+	IN A_MOLD_CODE varchar(20),
 	IN A_CLASS1 bigint(20),
 	IN A_CLASS2 bigint(20),
 	IN A_CLASS_SEQ varchar(4),
 	IN A_MOLD_NAME varchar(50),
 	IN A_MOLD_SPEC varchar(50),
-	IN A_LOT_YN varchar(1),
+	IN A_LOT_YN bigint(20),
 	IN A_STOCK_SAFE decimal(10, 0),
 	IN A_CUST_CODE varchar(10),
 	IN A_ITEM_UNIT decimal(10, 0),
@@ -43,8 +44,7 @@ begin
 	    	,UPD_EMP_NO = A_UPD_EMP_NO
 	    	,UPD_ID = A_UPD_ID
 	    	,UPD_DATE = SYSDATE()
-	 WHERE COMP_ID = A_COMP_ID
-	   AND EQUI_CODE = A_EQUI_CODE
+	 WHERE MOLD_CODE = A_MOLD_CODE
 	 ;
 	
 	IF ROW_COUNT() = 0 THEN

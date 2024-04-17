@@ -1,7 +1,7 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD002$UPDATE_MOLD_FORDER_REQ_LIST`(		
 	IN A_COMP_ID varchar(10),
-	IN A_SET_SEQ varchar(4),
-	IN A_SET_NO varchar(4),
+#	IN A_SET_SEQ varchar(4),
+#	IN A_SET_NO varchar(4),
 	IN A_MOLD_MORDER_REQ_KEY varchar(30),
 	IN A_MOLD_CODE varchar(20),
 	IN A_QTY decimal(10, 0),
@@ -10,7 +10,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD002$UPDATE_MOLD_FORDER_RE
 	IN A_CUST_CODE varchar(10),
 	IN A_EMP_NO varchar(10),
 	IN A_DEPT_CODE varchar(10),
-	IN A_BAL_QTY decimal(10, 0),
 	IN A_RMK varchar(100),
 	IN A_UPD_EMP_NO varchar(10),
 	IN A_UPD_ID varchar(30),
@@ -40,7 +39,6 @@ begin
 	    	,CUST_CODE = A_CUST_CODE
 	    	,EMP_NO = A_EMP_NO
 	    	,DEPT_CODE = A_DEPT_CODE
-	    	,BAL_QTY = A_BAL_QTY
 	    	,RMK = A_RMK
 	    	,UPD_EMP_NO = A_UPD_EMP_NO
 	    	,UPD_ID = A_UPD_ID
