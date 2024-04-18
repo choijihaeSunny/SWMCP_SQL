@@ -6,8 +6,6 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$GET_MOLD_FORDER_LIST_PO
 )
 PROC:begin
 	
-	DECLARE V_RACK_DIV VARCHAR(20);
-	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -17,15 +15,13 @@ PROC:begin
 		  COUNT(*) as CNT,
 		  SUM(A.QTY) as SUM
 #		  A.SET_NO,
-#		  A.MOLD_MORDER_KEY,
+#		  A.MOLD_MORDER_REQ_KEY,
 #		  A.MOLD_CODE,
 #		  B.MOLD_NAME,
 #		  B.MOLD_SPEC,
-#		  A.CUST_CODE,
-#		  A.QTY,
 #		  STR_TO_DATE(A.DELI_DATE, '%Y%m%d') as DELI_DATE,
-#		  A.COST,
-#		  A.AMT,
+#		  A.STOCK_QTY,
+#		  A.CUST_CODE,
 #		  A.EMP_NO,
 #		  A.DEPT_CODE,
 #		  A.RMK

@@ -27,13 +27,13 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.';
   
-    SET V_SET_NO = (select MAX(set_NO) + 1
+    SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_MOLD_FORDER_REQ
     				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
     				  and SET_SEQ = A_SET_SEQ);
     				 
   
-    SET V_MOLD_MORDER_REQ_KEY = CONCAT('DR', DATE_FORMAT(SYSDATE(), '%Y%m'), LPAD(A_SET_SEQ, 3, '0'), LPAD(A_SET_NO, 3, '0'));
+    SET V_MOLD_MORDER_REQ_KEY = CONCAT('DR', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
   	
     INSERT INTO TB_MOLD_FORDER_REQ (
@@ -57,7 +57,7 @@ begin
     	A_COMP_ID,
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
     	LPAD(A_SET_SEQ, 3, '0'),
-    	A_SET_NO,
+    	V_SET_NO,
     	V_MOLD_MORDER_REQ_KEY,
     	A_MOLD_CODE,
     	A_QTY,
