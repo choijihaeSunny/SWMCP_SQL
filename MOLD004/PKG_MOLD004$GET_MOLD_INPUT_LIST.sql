@@ -23,11 +23,11 @@ PROC:begin
 		  A.MOLD_CODE,
 		  B.MOLD_NAME,
 		  B.MOLD_SPEC,
-#		  A.LOT_NO, -- input_lot?
+		  A.LOT_YN,
 		  A.QTY,
 		  A.COST,
 		  A.AMT,
-#		  A.DELI_DATE ? -- 납기일자? SET_DATE?
+		  A.SET_DATE,
 		  A.DEPT_CODE,
 		  A.RMK
 	from TB_MOLD_INPUT A

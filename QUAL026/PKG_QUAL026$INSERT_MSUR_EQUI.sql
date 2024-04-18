@@ -49,7 +49,7 @@ begin
     				where path = CONCAT('cfg.qual.equi.class1.', V_CLASS1)
     				  and data_id = A_CLASS2);
   
-    SET A_EQUI_CODE := CONCAT(LPAD(A_CLASS1, 2, '0'), LPAD(A_CLASS2, 2, '0'), LPAD(A_TEMP_SEQ, 3, '0'));
+    SET A_EQUI_CODE := CONCAT(LPAD(V_CLASS1, 2, '0'), LPAD(V_CLASS2, 2, '0'), LPAD(A_TEMP_SEQ, 3, '0'));
    
   	
     INSERT INTO TB_MSUR_EQUI (
