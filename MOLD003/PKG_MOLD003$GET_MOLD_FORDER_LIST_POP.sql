@@ -26,8 +26,8 @@ PROC:begin
 #		  A.DEPT_CODE,
 #		  A.RMK
 	from TB_MOLD_FORDER A
-		left join TB_MOLD B
-		 	    on A.MOLD_CODE = B.MOLD_CODE
+#		left join TB_MOLD B
+#		 	    on A.MOLD_CODE = B.MOLD_CODE
 	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 	group by A.SET_DATE, A.SET_SEQ
 	;

@@ -1,31 +1,42 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD002$GET_MOLD_FORDER_REQ_LIST_POP`(
-			IN A_ST_DATE 			TIMESTAMP,
-			IN A_ED_DATE			TIMESTAMP,
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$GET_MOLD_MODI_LIST_POP`(
+			IN A_SET_DATE 		TIMESTAMP,
+			IN A_SET_SEQ		varchar(4),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
 PROC:begin
 	
+	declare V_SET_SEQ varchar(3);
+	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	if trim(A_SET_SEQ) <> '' then
+		set V_SET_SEQ := LPAD(A_SET_SEQ, 3, '0');
+	end if;
 
 	select
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.SET_SEQ,
 		  COUNT(*) as CNT,
-		  SUM(A.QTY) as SUM
-#		  A.SET_NO,
-#		  A.MOLD_MORDER_REQ_KEY,
+		  SUM(A.QTY) as SUM_QTY,
+		  SUM(A.COST) as SUM_COST,
+		  SUM(A.AMT) as SUM_AMT
+#		  A.CUST_CODE,
+#		  (select CUST_NAME
+#		   from tc_cust_code
+#		   where cust_code = A.CUST_CODE) as CUST_NAME,
 #		  A.MOLD_CODE,
 #		  B.MOLD_NAME,
 #		  B.MOLD_SPEC,
-#		  STR_TO_DATE(A.DELI_DATE, '%Y%m%d') as DELI_DATE,
-#		  A.STOCK_QTY,
-#		  A.CUST_CODE,
-#		  A.EMP_NO,
+#		  A.LOT_NO, -- input_lot?
+#		  A.QTY,
+#		  A.COST,
+#		  A.AMT,
+#		  A.DELI_DATE ? -- 납기일자? SET_DATE?
 #		  A.DEPT_CODE,
 #		  A.RMK
-	from TB_MOLD_FORDER_REQ A
+	from TB_MOLD_MODI A
 #		left join TB_MOLD B
 #		 	    on A.MOLD_CODE = B.MOLD_CODE
 	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')

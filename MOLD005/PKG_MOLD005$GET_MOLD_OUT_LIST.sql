@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$GET_MOLD_FORDER_LIST`(
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD005$GET_MOLD_OUT_LIST`(
 			IN A_SET_DATE 		TIMESTAMP,
 			IN A_SET_SEQ		varchar(4),
             OUT N_RETURN      	INT,
@@ -16,28 +16,20 @@ PROC:begin
 	end if;
 
 	select
-		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
-		  A.SET_SEQ,
-		  A.SET_NO,
-		  A.MOLD_MORDER_KEY,
-		  A.MOLD_CODE,
-		  B.MOLD_NAME,
-		  B.MOLD_SPEC,
 		  A.CUST_CODE,
 		  (select CUST_NAME
 		   from tc_cust_code
 		   where cust_code = A.CUST_CODE) as CUST_NAME,
+		  A.MOLD_CODE,
+		  B.MOLD_NAME,
+		  B.MOLD_SPEC,
+		  A.LOT_NO,
 		  A.QTY,
-		  STR_TO_DATE(A.DELI_DATE, '%Y%m%d') as DELI_DATE,
 		  A.COST,
 		  A.AMT,
-		  A.EMP_NO,
-		  (select kor_name
-		   from insa_mst 
-		   where emp_no = A.EMP_NO) as EMP_NAME,
 		  A.DEPT_CODE,
 		  A.RMK
-	from TB_MOLD_FORDER A
+	from TB_MOLD_OUT A
 		left join TB_MOLD B
 		 	    on A.MOLD_CODE = B.MOLD_CODE
 	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
