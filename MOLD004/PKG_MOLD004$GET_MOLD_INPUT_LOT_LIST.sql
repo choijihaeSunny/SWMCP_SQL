@@ -1,18 +1,12 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$GET_MOLD_INPUT_LOT_LIST`(
-			IN MOLD_INPUT_KEY   VARCHAR(30),
+			IN A_MOLD_INPUT_KEY   VARCHAR(30),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
 PROC:begin
 	
-	declare V_SET_SEQ varchar(3);
-	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
-
-	if trim(A_SET_SEQ) <> '' then
-		set V_SET_SEQ := LPAD(A_SET_SEQ, 3, '0');
-	end if;
 
 	select
 		  A.MOLD_INPUT_KEY,

@@ -16,6 +16,7 @@ PROC:begin
 	end if;
 
 	select
+		  A.MOLD_INPUT_KEY,
 		  A.CUST_CODE,
 		  (select CUST_NAME
 		   from tc_cust_code
@@ -27,7 +28,7 @@ PROC:begin
 		  A.QTY,
 		  A.COST,
 		  A.AMT,
-		  A.SET_DATE,
+		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.DEPT_CODE,
 		  A.RMK
 	from TB_MOLD_INPUT A

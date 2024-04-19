@@ -13,6 +13,8 @@ PROC:begin
 
 	if A_CLASS1 = 0 then
 		set V_CLASS1 = '';
+	else
+		set V_CLASS1 = A_CLASS1;
 	end if;
 
 	select

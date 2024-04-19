@@ -35,7 +35,7 @@ PROC:begin
 		  A.CONF_EMP_NO,
 		  A.SYS_DATE
 	from TB_CORRECT_REQ_RESULT A
-	where A.REQ_DATE between A_ST_DATE and A_ED_DATE
+	where A.REQ_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 	  and A.ACT_RESULT = A_ACT_RESULT
 	;
 

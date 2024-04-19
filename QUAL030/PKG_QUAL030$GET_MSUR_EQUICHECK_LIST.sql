@@ -8,8 +8,16 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL030$GET_MSUR_EQUICHECK_LIST
 )
 PROC:begin
 	
+	DECLARE V_CLASS1 VARCHAR(20);
+	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	if A_CLASS1 = 0 then
+		set V_CLASS1 = '';
+	else
+		set V_CLASS1 = A_CLASS1;
+	end if;
 
 	select
 		  A.IDX,
@@ -40,7 +48,7 @@ PROC:begin
 		 		on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE
 	where A.FINAL_DATE between A_ST_DATE and A_ED_DATE
-	  and B.CLASS1 like CONCAT('%', A_CLASS1, '%')
+	  and B.CLASS1 like CONCAT('%', V_CLASS1, '%')
 	  and B.EQUI_NAME like CONCAT('%', A_EQUI_NAME, '%')
 	;
 

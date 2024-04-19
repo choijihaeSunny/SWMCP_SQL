@@ -19,7 +19,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$UPDATE_MSUR_EQUI`(
 	IN A_BUY_PHONE varchar(20),
 	IN A_RES_STATUS bigint(20),
 	IN A_USE_EMP_NO varchar(20),
-	in A_USE_EMP_NAME varchar(50),
 	IN A_BUY_EMAIL varchar(50),
 	IN A_PREV_EQUI_CODE varchar(20),
 	IN A_FILE_NAME varchar(100),
@@ -58,7 +57,6 @@ begin
 	    	,BUY_PHONE = A_BUY_PHONE
 	    	,RES_STATUS = A_RES_STATUS 
 	    	,USE_EMP_NO = A_USE_EMP_NO
-	    	,USE_EMP_NAME = A_USE_EMP_NAME
 	    	,BUY_EMAIL = A_BUY_EMAIL
 	    	,PREV_EQUI_CODE = A_PREV_EQUI_CODE
 	    	,FILE_NAME = A_FILE_NAME
