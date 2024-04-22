@@ -14,7 +14,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`SP_MOLD_SUBUL_CREATE`(
         IN A_CUST_CODE varchar(10),
         IN A_STOCK_QTY decimal(10, 0),
         IN A_WARE_POS varchar(10),
-        
         IN A_SUBUL_YN varchar(1), -- 수불 발생 필요 여부?
         IN A_SAVE_DIV varchar(10), -- insert, update, delete 여부
         IN A_IO_DATE VARCHAR(8), -- 수불 발생 일자?
@@ -22,7 +21,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`SP_MOLD_SUBUL_CREATE`(
         IN A_MOLD_CODE varchar(30),
         IN A_SYS_ID decimal(10,0),
 		IN A_SYS_EMP_NO varchar(10),
-	
         OUT N_RETURN INT,
         OUT V_RETURN VARCHAR(4000)
 	)
@@ -51,7 +49,7 @@ PROC_BODY : begin
 	if A_SUBUL_YN = 'Y' then
 		if A_SAVE_DIV = 'UPDATE' or A_SAVE_DIV = 'DELETE' then
 			-- 수정 또는 삭제할 경우 수불 생성
-			select N_OUT, WARE_CODE, MOLD_CODE, LOT_NO, STOCK_YN, 
+			select IN_OUT, WARE_CODE, MOLD_CODE, LOT_NO, STOCK_YN, 
 				   IO_DATE, IO_QTY
 			into   V_IN_OUT, V_WARE_CODE, V_MOLD_CODE, V_LOT_NO, V_STOCK_YN, 
 				   V_IO_DATE, V_IO_QTY
