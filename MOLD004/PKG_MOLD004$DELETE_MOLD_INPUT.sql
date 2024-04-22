@@ -1,6 +1,6 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$DELETE_MOLD_INPUT`(		
 	IN A_COMP_ID varchar(10),
-	IN A_MOLD_MORDER_KEY varchar(30),
+	IN A_CALL_KEY varchar(30),
 	IN A_MOLD_INPUT_KEY varchar(30),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
@@ -39,7 +39,7 @@ begin
 	update TB_MOLD_FORDER
 	   set IN_QTY = IN_QTY + A_IN_QTY
 	where COMP_ID = A_COMP_ID
-	  and MOLD_MORDER_KEY = A_MOLD_MORDER_KEY
+	  and MOLD_MORDER_KEY = A_CALL_KEY
 	;
 
 	

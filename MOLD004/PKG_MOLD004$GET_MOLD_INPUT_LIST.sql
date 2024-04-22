@@ -17,7 +17,6 @@ PROC:begin
 
 	select
 		  A.MOLD_INPUT_KEY,
-		  '' as MOLD_MORDER_KEY,
 		  A.SET_SEQ,
 		  A.CUST_CODE,
 		  (select CUST_NAME
@@ -33,7 +32,8 @@ PROC:begin
 		  A.AMT,
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.DEPT_CODE,
-		  A.RMK
+		  A.RMK,
+		  A.CALL_KEY
 	from TB_MOLD_INPUT A
 		left join TB_MOLD B
 		 	    on A.MOLD_CODE = B.MOLD_CODE

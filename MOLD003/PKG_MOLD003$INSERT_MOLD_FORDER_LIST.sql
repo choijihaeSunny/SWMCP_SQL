@@ -11,6 +11,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$INSERT_MOLD_FORDER_LI
 	IN A_AMT decimal(16, 4),
 	IN A_EMP_NO varchar(10),
 	IN A_DEPT_CODE varchar(10),
+	IN A_CALL_KEY varchar(30),
 	IN A_RMK varchar(100),
 	IN A_SYS_EMP_NO varchar(10),
 	IN A_SYS_ID varchar(30),
@@ -51,6 +52,7 @@ begin
     	EMP_NO,
     	DEPT_CODE,
     	IN_QTY,
+    	CALL_KEY,
     	RMK
     	,SYS_EMP_NO
     	,SYS_ID
@@ -70,6 +72,7 @@ begin
     	A_EMP_NO,
     	A_DEPT_CODE,
     	A_QTY,
+    	A_CALL_KEY,
     	A_RMK
     	,A_SYS_EMP_NO
     	,A_SYS_ID

@@ -1,6 +1,5 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$INSERT_MOLD_INPUT`(	
 	IN A_COMP_ID varchar(10),
-	IN A_MOLD_MORDER_KEY varchar(30),
 	IN A_SET_DATE TIMESTAMP,
 	IN A_SET_SEQ varchar(4),
 	INOUT A_MOLD_INPUT_KEY varchar(30),
@@ -13,7 +12,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$INSERT_MOLD_INPUT`(
 	IN A_DEPT_CODE varchar(10),
 	IN A_IN_QTY decimal(10, 0),
 #    IN A_CALL_KIND varchar(10),
-#    IN A_CALL_KEY varchar(30),
+    IN A_CALL_KEY varchar(30),
 #    IN A_END_AMT decimal(16, 4),
 	IN A_RMK varchar(100),
 	IN A_SYS_EMP_NO varchar(10),
@@ -44,7 +43,7 @@ begin
     set V_IN_QTY = (select IN_QTY
    					from TB_MOLD_FORDER
    					where COMP_ID = A_COMP_ID
-	  				  and MOLD_MORDER_KEY = A_MOLD_MORDER_KEY);
+	  				  and MOLD_MORDER_KEY = A_CALL_KEY);
 	  				 
 	if A_IN_QTY > V_IN_QTY then
 		SET N_RETURN = -1;
@@ -66,7 +65,7 @@ begin
     	DEPT_CODE,
     	IN_QTY,
 #    	CALL_KIND,
-#    	CALL_KEY,
+    	CALL_KEY,
 #    	END_AMT,
     	RMK
     	,SYS_EMP_NO
@@ -87,7 +86,7 @@ begin
     	A_DEPT_CODE,
     	A_IN_QTY,
 #    	A_CALL_KIND,
-#      	A_CALL_KEY,
+      	A_CALL_KEY,
 #    	A_END_AMT,
     	A_RMK
     	,A_SYS_EMP_NO
@@ -99,7 +98,7 @@ begin
     update TB_MOLD_FORDER
 	   set IN_QTY = IN_QTY - A_IN_QTY
 	where COMP_ID = A_COMP_ID
-	  and MOLD_MORDER_KEY = A_MOLD_MORDER_KEY
+	  and MOLD_MORDER_KEY = A_CALL_KEY
 	;
    	
     SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
