@@ -4,7 +4,8 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$GET_MOLD_INPUT_LIST_POP
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
-PROC:begin	
+PROC:begin
+	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 

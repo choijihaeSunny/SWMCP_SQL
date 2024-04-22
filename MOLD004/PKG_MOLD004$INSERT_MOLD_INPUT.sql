@@ -1,5 +1,6 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$INSERT_MOLD_INPUT`(	
 	IN A_COMP_ID varchar(10),
+	IN A_MOLD_MORDER_KEY varchar(30),
 	IN A_SET_DATE TIMESTAMP,
 	IN A_SET_SEQ varchar(4),
 	INOUT A_MOLD_INPUT_KEY varchar(30),
@@ -10,6 +11,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$INSERT_MOLD_INPUT`(
 	IN A_COST decimal(16, 4),
 	IN A_AMT decimal(16, 4),
 	IN A_DEPT_CODE varchar(10),
+	IN A_IN_QTY decimal(10, 0),
 #    IN A_CALL_KIND varchar(10),
 #    IN A_CALL_KEY varchar(30),
 #    IN A_END_AMT decimal(16, 4),
@@ -23,6 +25,7 @@ begin
 	
 	declare V_SET_NO varchar(10);
 	declare V_MOLD_INPUT_KEY varchar(30);
+	declare V_IN_QTY decimal(10, 0);
 
 	declare I INT;
 	declare V_LOT_NO varchar(30);
@@ -37,7 +40,16 @@ begin
     				 
   
     SET V_MOLD_INPUT_KEY = CONCAT('DI', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
-   
+
+    set V_IN_QTY = (select IN_QTY
+   					from TB_MOLD_FORDER
+   					where COMP_ID = A_COMP_ID
+	  				  and MOLD_MORDER_KEY = A_MOLD_MORDER_KEY);
+	  				 
+	if A_IN_QTY > V_IN_QTY then
+		SET N_RETURN = -1;
+      	SET V_RETURN = '입고하려는 수량이 잔여수량보다 큽니다.'; 
+	end if;
 
     INSERT INTO TB_MOLD_INPUT (
     	COMP_ID,
@@ -73,7 +85,7 @@ begin
     	A_COST,
     	A_AMT,
     	A_DEPT_CODE,
-    	A_QTY,
+    	A_IN_QTY,
 #    	A_CALL_KIND,
 #      	A_CALL_KEY,
 #    	A_END_AMT,
@@ -84,15 +96,22 @@ begin
     )
     ;
 	
+    update TB_MOLD_FORDER
+	   set IN_QTY = IN_QTY - A_IN_QTY
+	where COMP_ID = A_COMP_ID
+	  and MOLD_MORDER_KEY = A_MOLD_MORDER_KEY
+	;
+   	
     SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
 	    		    from TB_MOLD_INPUT_LOT
 	    		    where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	    			  and SET_SEQ = A_SET_SEQ);
+	 
    	
     if A_LOT_YN = 160923 then
     	set I = 0;
     
-    	set V_LOT_NO = CONCAT('MO', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 5, '0'));
+    	set V_LOT_NO = CONCAT('MO', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 5, '0'), LPAD('1', 2, '0'));
     
     	WHILE I < A_QTY DO
     		INSERT INTO TB_MOLD_INPUT_LOT (
@@ -119,9 +138,38 @@ begin
 		    	,SYSDATE()
 		    )
 		    ;
+		   
+		    insert into TB_MOLD_LOT (
+		    	COMP_ID,
+		    	LOT_NO,
+		    	MOLD_CODE,
+		    	SET_DATE,
+		    	IN_CUST,
+		    	IN_COST,
+		    	LOT_NO_ORI,
+		    	LOT_STATE,
+		    	QTY
+		    	,SYS_EMP_NO
+		    	,SYS_ID
+		    	,SYS_DATE
+		    ) values (
+		    	A_COMP_ID,
+		    	V_LOT_NO,
+		    	A_MOLD_CODE,
+		    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
+		    	A_CUST_CODE,
+		    	A_COST,
+		    	V_LOT_NO,
+		    	'N',
+		    	A_QTY
+		    	,A_SYS_EMP_NO
+		    	,A_SYS_ID
+		    	,SYSDATE()
+		    )
+		    ;
 		
-		set I = I + 1;
-		set V_SET_NO = V_SET_NO + 1;
+			set I = I + 1;
+			set V_SET_NO = V_SET_NO + 1;
 		   
     	end while;
     end if;

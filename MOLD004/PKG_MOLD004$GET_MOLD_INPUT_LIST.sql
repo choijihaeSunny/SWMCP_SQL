@@ -17,6 +17,8 @@ PROC:begin
 
 	select
 		  A.MOLD_INPUT_KEY,
+		  '' as MOLD_MORDER_KEY,
+		  A.SET_SEQ,
 		  A.CUST_CODE,
 		  (select CUST_NAME
 		   from tc_cust_code
@@ -26,6 +28,7 @@ PROC:begin
 		  B.MOLD_SPEC,
 		  A.LOT_YN,
 		  A.QTY,
+		  A.IN_QTY,
 		  A.COST,
 		  A.AMT,
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,

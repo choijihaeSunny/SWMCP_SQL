@@ -1,0 +1,31 @@
+-- swmcp.tb_mold_lot definition
+
+CREATE TABLE `tb_mold_lot` (
+  `COMP_ID` varchar(10) NOT NULL COMMENT '사업장코드',
+  `LOT_NO` varchar(20) NOT NULL COMMENT 'LOT NO',
+  `MOLD_CODE` varchar(30) NOT NULL COMMENT '금형코드',
+  `SET_DATE` varchar(8) NOT NULL COMMENT '생성일자',
+  `IN_CUST` varchar(10) DEFAULT NULL COMMENT '매입거래처',
+  `IN_COST` decimal(16,4) DEFAULT 0.0000 COMMENT '매입단가',
+  `LOT_NO_ORI` varchar(30) DEFAULT NULL COMMENT '최초 LOT NO',
+  `LOT_NO_PRE` varchar(30) DEFAULT NULL COMMENT '이전 LOT NO',
+  `LOT_STATE` varchar(10) NOT NULL COMMENT 'LOT 상태',
+  `QTY` decimal(10,0) DEFAULT 0 COMMENT '수량',
+  `WET` decimal(16,4) DEFAULT 0.0000 COMMENT '중량',
+  `CREATE_TABLE` varchar(30) DEFAULT NULL COMMENT 'LOT 생성테이블',
+  `CREATE_TABLE_KEY` varchar(30) DEFAULT NULL COMMENT 'LOT 생성테이블 KEY',
+  `HIT_CNT` decimal(16,4) DEFAULT 0.0000 COMMENT '금형타수',
+  `RMK` varchar(100) DEFAULT NULL COMMENT '비고',
+  `TEMP1` varchar(10) DEFAULT NULL COMMENT '임시01',
+  `TEMP2` varchar(10) DEFAULT NULL COMMENT '임시02',
+  `TEMP3` varchar(10) DEFAULT NULL COMMENT '임시03',
+  `TEMP4` varchar(10) DEFAULT NULL COMMENT '임시04',
+  `TEMP5` varchar(10) DEFAULT NULL COMMENT '임시05',
+  `SYS_EMP_NO` varchar(10) NOT NULL COMMENT '등록사번',
+  `SYS_ID` varchar(30) NOT NULL COMMENT '등록ID',
+  `SYS_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '등록일자',
+  `UPD_EMP_NO` varchar(10) DEFAULT NULL COMMENT '수정사번',
+  `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
+  `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
+  PRIMARY KEY (`COMP_ID`,`LOT_NO`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='금형LOT정보관리';
