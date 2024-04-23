@@ -39,7 +39,7 @@ begin
 	    	AMT = A_AMT,
 	    	DEPT_CODE = A_DEPT_CODE,
 	    	SCRAP_CAUSE = A_SCRAP_CAUSE,
-	    	RMK = A_RMK,
+	    	RMK = A_RMK
 	    	,UPD_EMP_NO = A_UPD_EMP_NO
 	    	,UPD_ID = A_UPD_ID
 	    	,UPD_DATE = SYSDATE()
