@@ -44,6 +44,8 @@ PROC_BODY : begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
+
+	-- SP_SUBUL_CREATE 참조하여 작성.
 	
 	/* 금형수불생성 및 품목, LOT 별 재고 반영*/
 	if A_SUBUL_YN = 'Y' then

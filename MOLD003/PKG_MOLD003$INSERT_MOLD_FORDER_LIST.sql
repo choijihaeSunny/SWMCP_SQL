@@ -34,7 +34,7 @@ begin
     				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
     				  and SET_SEQ = A_SET_SEQ);
   
-    SET A_MOLD_MORDER_KEY := CONCAT('DO', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    SET A_MOLD_MORDER_KEY := CONCAT('DO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
   	
     INSERT INTO TB_MOLD_FORDER (

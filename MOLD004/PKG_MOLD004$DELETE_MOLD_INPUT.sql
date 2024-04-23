@@ -8,6 +8,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$DELETE_MOLD_INPUT`(
 begin
 	
 	declare V_LOT_NO varchar(30);
+	declare V_IN_QTY decimal(10, 0);
 	
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -15,6 +16,10 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
    
+  	set V_IN_QTY = (select IN_QTY
+  					from TB_MOLD_INPUT
+  					where COMP_ID = A_COMP_ID
+  					  and MOLD_INPUT_KEY = A_MOLD_INPUT_KEY);
   
 	DELETE FROM TB_MOLD_INPUT
 	 WHERE COMP_ID = A_COMP_ID
@@ -37,7 +42,7 @@ begin
 	;
 	
 	update TB_MOLD_FORDER
-	   set IN_QTY = IN_QTY + A_IN_QTY
+	   set IN_QTY = IN_QTY + V_IN_QTY
 	where COMP_ID = A_COMP_ID
 	  and MOLD_MORDER_KEY = A_CALL_KEY
 	;

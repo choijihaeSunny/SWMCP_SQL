@@ -32,13 +32,16 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
+	SET N_RETURN = 0;
+  	SET V_RETURN = '저장되었습니다.'; 
+
 	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_MOLD_INPUT
     				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
     				  and SET_SEQ = A_SET_SEQ);
     				 
   
-    SET V_MOLD_INPUT_KEY = CONCAT('DI', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
 
     set V_IN_QTY = (select IN_QTY
    					from TB_MOLD_FORDER
@@ -110,7 +113,7 @@ begin
     if A_LOT_YN = 160923 then
     	set I = 0;
     
-    	set V_LOT_NO = CONCAT('MO', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 5, '0'), LPAD('1', 2, '0'));
+    	set V_LOT_NO = CONCAT('MO', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 5, '0'), '00');
     
     	WHILE I < A_QTY DO
     		INSERT INTO TB_MOLD_INPUT_LOT (

@@ -20,5 +20,5 @@ CREATE TABLE `tb_mold_input_lot` (
   `UPD_EMP_NO` varchar(10) DEFAULT NULL COMMENT '수정사번',
   `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
-  PRIMARY KEY (`COMP_ID`,`MOLD_INPUT_KEY`)
+  PRIMARY KEY (`COMP_ID`, `MOLD_INPUT_KEY`, `LOT_NO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='금형입고관리';

@@ -33,7 +33,7 @@ begin
     				  and SET_SEQ = A_SET_SEQ);
     				 
   
-    SET V_MOLD_MORDER_REQ_KEY = CONCAT('DR', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    SET V_MOLD_MORDER_REQ_KEY = CONCAT('DR', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
   	
     INSERT INTO TB_MOLD_FORDER_REQ (
