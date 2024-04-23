@@ -1,7 +1,7 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$UPDATE_MOLD_FORDER_LIST`(		
 	IN A_COMP_ID varchar(10),
-	IN A_SET_SEQ varchar(4),
-	IN A_SET_NO varchar(4),
+#	IN A_SET_SEQ varchar(4),
+#	IN A_SET_NO varchar(4),
 	IN A_MOLD_MORDER_KEY varchar(30),
 	IN A_MOLD_CODE varchar(20),
 	IN A_CUST_CODE varchar(10),
