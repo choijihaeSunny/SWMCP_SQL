@@ -25,6 +25,7 @@ begin
 	declare V_SET_NO varchar(10);
 	declare V_MOLD_INPUT_KEY varchar(30);
 	declare V_IN_QTY decimal(10, 0);
+	declare V_USE_YN varchar(5);
 
 	declare I INT;
 	declare V_LOT_NO varchar(30);
@@ -107,15 +108,21 @@ begin
     SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
 	    		    from TB_MOLD_INPUT_LOT
 	    		    where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
-	    			  and SET_SEQ = A_SET_SEQ);
+	    			  and MOLD_INPUT_KEY = V_MOLD_INPUT_KEY);
+	    			 
+	SET V_USE_YN = (select CODE
+					from sys_data
+					where path = 'cfg.mold.lotyn'
+					  and DATA_ID = A_LOT_YN);
 	 
    	
-    if A_LOT_YN = 160923 then
+    if V_USE_YN = 'Y' then
     	set I = 0;
     
-    	set V_LOT_NO = CONCAT('MO', DATE_FORMAT(A_SET_DATE, '%Y%m'), LPAD(A_SET_SEQ, 5, '0'), '00');
-    
-    	WHILE I < A_QTY DO
+    	WHILE I < A_IN_QTY DO
+    	
+    		set V_LOT_NO = CONCAT('MO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_NO, 5, '0'), '00');
+    	
     		INSERT INTO TB_MOLD_INPUT_LOT (
 		    	COMP_ID,
 		    	SET_DATE,
@@ -127,7 +134,7 @@ begin
 		    	,SYS_EMP_NO
 		    	,SYS_ID
 		    	,SYS_DATE
-		    ) values (
+		    ) VALUES (
 		    	A_COMP_ID,
 		    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
 		    	LPAD(A_SET_SEQ, 3, '0'),
@@ -154,7 +161,7 @@ begin
 		    	,SYS_EMP_NO
 		    	,SYS_ID
 		    	,SYS_DATE
-		    ) values (
+		    ) VALUES (
 		    	A_COMP_ID,
 		    	V_LOT_NO,
 		    	A_MOLD_CODE,
