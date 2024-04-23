@@ -16,6 +16,10 @@ PROC:begin
 	end if;
 
 	select
+		  A.SET_DATE,
+		  A.SET_SEQ,
+		  A.SET_NO,
+		  A.MOLD_MODI_KEY,
 		  A.MODI_DIV,
 		  A.MOLD_CODE,
 		  B.MOLD_NAME,

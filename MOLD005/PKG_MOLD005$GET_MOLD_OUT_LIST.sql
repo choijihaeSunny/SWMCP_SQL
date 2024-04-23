@@ -16,6 +16,10 @@ PROC:begin
 	end if;
 
 	select
+		  A.SET_DATE,
+		  A.SET_SEQ,
+		  A.SET_NO,
+		  A.MOLD_OUT_KEY,
 		  A.CUST_CODE,
 		  (select CUST_NAME
 		   from tc_cust_code
