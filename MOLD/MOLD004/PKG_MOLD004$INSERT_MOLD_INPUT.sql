@@ -48,7 +48,7 @@ begin
 --     				  and substring(MOLD_INPUT_KEY, 3, 4) = right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
     				); 				 
   
-    SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), V_SET_SEQ, LPAD(V_SET_NO, 3, '0'));
    
     -- 생성된 V_MOLD_INPUT_KEY가 혹시 겹치는 데이터가 있는지 확인.
     SET V_DUP_CNT = (select COUNT(*)
@@ -57,7 +57,7 @@ begin
     				);
     if V_DUP_CNT <> 0 then
     	set V_SET_NO = V_SET_NO + 1;
-    	SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    	SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), V_SET_SEQ, LPAD(V_SET_NO, 3, '0'));
     end if;
    
     SET V_IN_QTY = (select IN_QTY
@@ -173,7 +173,7 @@ begin
 		    ) VALUES (
 		    	A_COMP_ID,
 		    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
-		    	LPAD(A_SET_SEQ, 3, '0'),
+		    	V_SET_SEQ,
 		    	V_SET_NO,
 		    	V_MOLD_INPUT_KEY,
 		    	A_MOLD_CODE,
