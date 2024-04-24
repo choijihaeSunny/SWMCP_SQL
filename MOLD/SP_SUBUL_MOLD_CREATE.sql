@@ -14,10 +14,9 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`SP_SUBUL_MOLD_CREATE`(
         IN A_TABLE_KEY varchar(100),
         IN A_STOCK_YN varchar(1),
         IN A_CUST_CODE varchar(10),
-        IN A_STOCK_QTY decimal(10, 0),
         IN A_WARE_POS varchar(10),
-        
         IN A_SUBUL_YN varchar(1), -- 수불 발생 필요 여부?
+        
         IN A_SAVE_DIV varchar(10), -- insert, update, delete 여부
         IN A_IO_DATE VARCHAR(8), -- 수불 발생 일자?
         IN A_STOCK_CHK	VARCHAR(1),
@@ -132,7 +131,7 @@ PROC_BODY : begin
             			COMP_ID, WARE_CODE, MOLD_CODE, LOT_NO, STOCK_QTY, 
 						CUST_CODE, WARE_POS, SYS_EMP_NO, SYS_DATE
             		) values (
-            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, A_STOCK_QTY, 
+            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, V_STOCK_QTY, 
 						A_CUST_CODE, A_WARE_POS, SYS_EMP_NO, SYSDATE()
             		)
             		;
@@ -215,7 +214,7 @@ PROC_BODY : begin
 	            			COMP_ID, WARE_CODE, MOLD_CODE, LOT_NO, STOCK_QTY, 
 							CUST_CODE, WARE_POS, SYS_EMP_NO, SYS_DATE
 	            		) values (
-	            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, A_STOCK_QTY, 
+	            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, V_STOCK_QTY, 
 							A_CUST_CODE, A_WARE_POS, SYS_EMP_NO, SYSDATE()
 	            		)
 	            		;
@@ -289,7 +288,7 @@ PROC_BODY : begin
 	            			COMP_ID, WARE_CODE, MOLD_CODE, LOT_NO, STOCK_QTY, 
 							CUST_CODE, WARE_POS, SYS_EMP_NO, SYS_DATE
 	            		) values (
-	            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, A_STOCK_QTY, 
+	            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, V_STOCK_QTY, 
 							A_CUST_CODE, A_WARE_POS, SYS_EMP_NO, SYSDATE()
 	            		)
 	            		;
@@ -363,7 +362,7 @@ PROC_BODY : begin
 	            			COMP_ID, WARE_CODE, MOLD_CODE, LOT_NO, STOCK_QTY, 
 							CUST_CODE, WARE_POS, SYS_EMP_NO, SYS_DATE
 	            		) values (
-	            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, A_STOCK_QTY, 
+	            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, V_STOCK_QTY, 
 							A_CUST_CODE, A_WARE_POS, SYS_EMP_NO, SYSDATE()
 	            		)
 	            		;
@@ -444,7 +443,7 @@ PROC_BODY : begin
             			COMP_ID, WARE_CODE, MOLD_CODE, LOT_NO, STOCK_QTY, 
 						CUST_CODE, WARE_POS, SYS_EMP_NO, SYS_DATE
             		) values (
-            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, A_STOCK_QTY, 
+            			A_COMP_ID, A_WARE_CODE, A_MOLD_CODE, A_LOT_NO, V_STOCK_QTY, 
 						A_CUST_CODE, A_WARE_POS, SYS_EMP_NO, SYSDATE()
             		)
             		;
