@@ -2,6 +2,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$DELETE_MOLD_INPUT`(
 	IN A_COMP_ID varchar(10),
 	IN A_CALL_KEY varchar(30),
 	IN A_MOLD_INPUT_KEY varchar(30),
+	IN A_SYS_EMP_NO varchar(10),
+	IN A_SYS_ID varchar(30),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
@@ -78,32 +80,30 @@ begin
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
     ELSE
-    	call SP_MOLD_SUBUL_CREATE(
+    	call SP_SUBUL_MOLD_CREATE(
     		A_COMP_ID, -- A_COMP_ID
     		V_MOLD_INPUT_KEY, -- A_KEY_VAL
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
     		V_LOT_NO, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
-    		
     		1, -- IO_GUBN ?? 입출고 구분일텐데 1로 넣어도 괜찮을듯?.
     		V_IN_QTY, -- IO_QTY 수량
     		V_COST, -- A_IO_PRC 단가
     		V_AMT, -- A_IO_AMT
     		null, -- A_TABLE_NAME 모르겠으니 일단 NULL로 처리.
-    		
     		null, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
     		A_CUST_CODE, -- A_CUST_CODE
     		'01', -- A_WARE_POS    		
     		'Y', -- A_SUBUL_YN
-    		
     		'DELETE', -- A_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
     		'Y', -- A_STOCK_CHK
     		V_MOLD_CODE, -- A_MOLD_CODE
-    		
     		A_SYS_ID, -- A_SYS_ID
-    		A_SYS_EMP_NO -- A_SYS_EMP_NO
+    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    		N_RETURN,
+    		V_RETURN
     	);
   	END IF;  
   

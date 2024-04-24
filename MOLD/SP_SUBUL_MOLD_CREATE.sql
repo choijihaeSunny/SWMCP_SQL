@@ -4,24 +4,20 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`SP_SUBUL_MOLD_CREATE`(
         IN A_IN_OUT VARCHAR(1), -- 입고/출고 여부 입:1 출:2
         IN A_WARE_CODE varchar(10),
         IN A_LOT_NO varchar(30),
-        
         IN A_IO_GUBN varchar(10),
         IN A_IO_QTY decimal(16,4),
         IN A_IO_PRC decimal(16, 4),
         IN A_IO_AMT decimal(16, 4),
         IN A_TABLE_NAME varchar(50),
-        
         IN A_TABLE_KEY varchar(100),
         IN A_STOCK_YN varchar(1),
         IN A_CUST_CODE varchar(10),
         IN A_WARE_POS varchar(10),
         IN A_SUBUL_YN varchar(1), -- 수불 발생 필요 여부?
-        
         IN A_SAVE_DIV varchar(10), -- insert, update, delete 여부
         IN A_IO_DATE VARCHAR(8), -- 수불 발생 일자?
         IN A_STOCK_CHK	VARCHAR(1),
         IN A_MOLD_CODE varchar(30),
-        
         IN A_SYS_ID decimal(10,0),
 		IN A_SYS_EMP_NO varchar(10),
         OUT N_RETURN INT,
