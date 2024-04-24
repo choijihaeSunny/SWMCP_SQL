@@ -61,10 +61,7 @@ begin
 	
 		set I = I + 1;
 	end while;
-	   				  
-	
-	
-	
+
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;

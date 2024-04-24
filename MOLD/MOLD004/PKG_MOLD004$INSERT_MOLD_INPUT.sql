@@ -22,10 +22,13 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$INSERT_MOLD_INPUT`(
 	)
 begin
 	
+	declare V_SET_SEQ varchar(4);
 	declare V_SET_NO varchar(10);
 	declare V_MOLD_INPUT_KEY varchar(30);
 	declare V_IN_QTY decimal(10, 0);
 	declare V_USE_YN varchar(5);
+
+	declare V_DUP_CNT INT;
 
 	declare I INT;
 	declare V_LOT_NO varchar(30);
@@ -36,18 +39,32 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
 
+  	SET V_SET_SEQ = LPAD(A_SET_SEQ, 3, '0');
+  
 	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_MOLD_INPUT
     				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
-    				  and SET_SEQ = A_SET_SEQ);
-    				 
+    				  and SET_SEQ = V_SET_SEQ
+--     				  and substring(MOLD_INPUT_KEY, 3, 4) = right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
+    				); 				 
   
-    SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
-
-    set V_IN_QTY = (select IN_QTY
+    SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+   
+    -- 생성된 V_MOLD_INPUT_KEY가 혹시 겹치는 데이터가 있는지 확인.
+    SET V_DUP_CNT = (select COUNT(*)
+    				 from TB_MOLD_INPUT
+   					 where MOLD_INPUT_KEY = V_MOLD_INPUT_KEY
+    				);
+    if V_DUP_CNT <> 0 then
+    	set V_SET_NO = V_SET_NO + 1;
+    	SET V_MOLD_INPUT_KEY = CONCAT('DI', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    end if;
+   
+    SET V_IN_QTY = (select IN_QTY
    					from TB_MOLD_FORDER
    					where COMP_ID = A_COMP_ID
 	  				  and MOLD_MORDER_KEY = A_CALL_KEY);
+	  				 
 	  				 
 	if A_IN_QTY > V_IN_QTY then
 		SET N_RETURN = -1;
@@ -78,7 +95,7 @@ begin
     ) values (
     	A_COMP_ID,
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
-    	LPAD(A_SET_SEQ, 3, '0'),
+    	V_SET_SEQ,
     	V_SET_NO,
     	V_MOLD_INPUT_KEY,
     	A_CUST_CODE,
@@ -105,10 +122,7 @@ begin
 	  and MOLD_MORDER_KEY = A_CALL_KEY
 	;
    	
-    SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
-	    		    from TB_MOLD_INPUT_LOT
-	    		    where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
-	    			  and MOLD_INPUT_KEY = V_MOLD_INPUT_KEY);
+    
 	    			 
 	SET V_USE_YN = (select CODE
 					from sys_data
@@ -119,9 +133,31 @@ begin
     if V_USE_YN = 'Y' then
     	set I = 0;
     
+    	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
+		    		      from TB_MOLD_INPUT_LOT
+		    		     where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+		    			   and MOLD_INPUT_KEY = V_MOLD_INPUT_KEY
+		    			  );
+		    			 
+		SET V_LOT_NO = CONCAT('MO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_NO, 5, '0'), '00');
+	  
+		-- LOT_NO 중복방지
+		SET V_DUP_CNT = (select COUNT(*)
+						 from TB_MOLD_INPUT_LOT
+						 where LOT_NO = V_LOT_NO
+						);		
+		if V_DUP_CNT > 0 then
+			
+			SET V_SET_NO = (select MAX(substring(LOT_NO, 7, 5)) + 1							
+							from tb_mold_input_lot
+							where SUBSTRING(LOT_NO, 3, 4) =  right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
+							);
+		end if;
+
+	
     	WHILE I < A_IN_QTY DO
     	
-    		set V_LOT_NO = CONCAT('MO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_NO, 5, '0'), '00');
+    		SET V_LOT_NO = CONCAT('MO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_NO, 5, '0'), '00');
     	
     		INSERT INTO TB_MOLD_INPUT_LOT (
 		    	COMP_ID,
