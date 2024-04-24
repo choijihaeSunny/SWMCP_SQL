@@ -243,8 +243,8 @@ begin
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
     		'Y', -- A_STOCK_CHK
     		A_MOLD_CODE, -- A_MOLD_CODE
-    		A_SYS_ID, -- A_SYS_ID
     		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    		A_SYS_ID, -- A_SYS_ID
     		N_RETURN,
     		V_RETURN
     	);

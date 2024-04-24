@@ -15,6 +15,7 @@ begin
 	declare V_AMT decimal(16, 4);
 	declare V_CUST_CODE varchar(10);
 	declare V_MOLD_CODE varchar(20);
+	declare V_MOLD_INPUT_KEY varchar(30);
 
 	-- INPUT 외의 테이블 삭제용 변수
 	declare V_LOT_NO varchar(30);
@@ -29,8 +30,10 @@ begin
   	SET V_RETURN = '저장되었습니다.'; 
    
   	select 
-		  IN_QTY, COST, AMT, CUST_CODE, MOLD_CODE
-	into V_IN_QTY, V_COST, V_AMT, V_CUST_CODE, V_MOLD_CODE
+		  IN_QTY, COST, AMT, CUST_CODE, MOLD_CODE,
+		  MOLD_INPUT_KEY
+	into V_IN_QTY, V_COST, V_AMT, V_CUST_CODE, V_MOLD_CODE,
+		 V_MOLD_INPUT_KEY
 	from TB_MOLD_INPUT
 	where COMP_ID = A_COMP_ID
 	  and MOLD_INPUT_KEY = A_MOLD_INPUT_KEY
@@ -93,15 +96,15 @@ begin
     		null, -- A_TABLE_NAME 모르겠으니 일단 NULL로 처리.
     		null, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
-    		A_CUST_CODE, -- A_CUST_CODE
+    		V_CUST_CODE, -- A_CUST_CODE
     		'01', -- A_WARE_POS    		
     		'Y', -- A_SUBUL_YN
     		'DELETE', -- A_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
     		'Y', -- A_STOCK_CHK
     		V_MOLD_CODE, -- A_MOLD_CODE
-    		A_SYS_ID, -- A_SYS_ID
     		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    		A_SYS_ID, -- A_SYS_ID
     		N_RETURN,
     		V_RETURN
     	);
