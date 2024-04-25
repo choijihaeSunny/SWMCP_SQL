@@ -18,6 +18,9 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD005$UPDATE_MOLD_OUT_LIST`
 	)
 begin
 	
+	declare N_SUBUL_RETURN INT;
+	declare V_SUBUL_RETURN VARCHAR(4000);
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -45,6 +48,32 @@ begin
 	WHERE COMP_ID = A_COMP_ID
 	   and MOLD_OUT_KEY = A_MOLD_OUT_KEY
 	;
+
+	call SP_SUBUL_MOLD_CREATE(
+   		A_COMP_ID, -- A_COMP_ID
+   		A_MOLD_OUT_KEY, -- A_KEY_VAL
+   		2, -- A_IN_OUT 
+   		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+   		A_LOT_NO, -- A_LOT_NO 
+   		2, -- IO_GUBN ?? 입출고 구분
+   		A_QTY, -- IO_QTY 수량
+   		A_COST, -- A_IO_PRC 단가
+   		A_AMT, -- A_IO_AMT
+   		null, -- A_TABLE_NAME 
+   		null, -- A_TABLE_KEY
+   		'Y', -- A_STOCK_YN 재고반영
+   		A_CUST_CODE, -- A_CUST_CODE
+   		'01', -- A_WARE_POS    		
+   		'Y', -- A_SUBUL_YN
+   		'UPDATE', -- A_SAVE_DIV
+   		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+   		'Y', -- A_STOCK_CHK
+   		A_MOLD_CODE, -- A_MOLD_CODE
+   		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+   		A_SYS_ID, -- A_SYS_ID
+   		N_SUBUL_RETURN,
+   		V_SUBUL_RETURN
+	);
 
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
