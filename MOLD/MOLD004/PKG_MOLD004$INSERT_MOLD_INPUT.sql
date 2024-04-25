@@ -33,6 +33,10 @@ begin
 	declare I INT;
 	declare V_LOT_NO varchar(30);
 
+	declare V_SAVE_DIV varchar(10);
+	declare N_SUBUL_RETURN INT;
+	declare V_SUBUL_RETURN VARCHAR(4000);
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -131,6 +135,8 @@ begin
 	 
    	
     if V_USE_YN = 'Y' then
+    	-- LOT 관리 선택시 입고수량만큼 LOT 및 수불이 발생한다.
+    
     	set I = 0;
     
     	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
@@ -140,6 +146,9 @@ begin
 		    			  );
 		    			 
 		SET V_LOT_NO = CONCAT('MO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_NO, 5, '0'), '00');
+		-- 마지막의 00은 REV(Revision) 값이다. 수리, 수정 횟수를 말한다.
+		-- 차후 LOT 에 수리 또는 수정이 가해졌을 경우 +1 하여 갱신한다.
+		-- TB_MOLD_LOT 테이블의 LOT_NO_PRE, LOT_NO 컬럼을 업데이트한다.
 	  
 		-- LOT_NO 중복방지
 		SET V_DUP_CNT = (select COUNT(*)
@@ -150,7 +159,7 @@ begin
 			
 			SET V_SET_NO = (select MAX(substring(LOT_NO, 7, 5)) + 1							
 							from tb_mold_input_lot
-							where SUBSTRING(LOT_NO, 3, 4) =  right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
+							where SUBSTRING(LOT_NO, 3, 4) = right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
 							);
 		end if;
 
@@ -206,48 +215,134 @@ begin
 		    	A_COST,
 		    	V_LOT_NO,
 		    	'N',
-		    	A_QTY
+		    	1
 		    	,A_SYS_EMP_NO
 		    	,A_SYS_ID
 		    	,SYSDATE()
 		    )
 		    ;
+		   
+		   	call SP_SUBUL_MOLD_CREATE(
+	    		A_COMP_ID, -- A_COMP_ID
+	    		V_MOLD_INPUT_KEY, -- A_KEY_VAL
+	    		1, -- A_IN_OUT 
+	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+	    		V_LOT_NO, -- A_LOT_NO 
+	    		1, -- IO_GUBN ?? 입출고 구분
+	    		A_IN_QTY, -- IO_QTY 수량
+	    		A_COST, -- A_IO_PRC 단가
+	    		A_AMT, -- A_IO_AMT
+	    		null, -- A_TABLE_NAME 
+	    		null, -- A_TABLE_KEY
+	    		'Y', -- A_STOCK_YN 재고반영
+	    		A_CUST_CODE, -- A_CUST_CODE
+	    		'01', -- A_WARE_POS    		
+	    		'Y', -- A_SUBUL_YN
+	    		'INSERT', -- A_SAVE_DIV
+	    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+	    		'Y', -- A_STOCK_CHK
+	    		A_MOLD_CODE, -- A_MOLD_CODE
+	    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+	    		A_SYS_ID, -- A_SYS_ID
+	    		N_SUBUL_RETURN,
+	    		V_SUBUL_RETURN
+	    	);
 		
 			set I = I + 1;
 			set V_SET_NO = V_SET_NO + 1;
 		   
     	end while;
+   
+    else -- 금형 LOT관리 안 하는 경우 ( LOT 사용 수량관리 선택 .)
+    
+    	SET V_DUP_CNT = (select COUNT(*)
+						 from TB_MOLD_LOT
+						 where LOT_NO = A_MOLD_CODE
+						);
+					
+		if V_DUP_CNT = 0 then
+			set V_SAVE_DIV = 'INSERT';
+		
+			insert into TB_MOLD_LOT (
+	    		COMP_ID,
+			    LOT_NO,
+			    MOLD_CODE,
+			    SET_DATE,
+			    IN_CUST,
+			    IN_COST,
+			    LOT_NO_ORI,
+			    LOT_STATE,
+			    QTY
+			    ,SYS_EMP_NO
+			    ,SYS_ID
+			    ,SYS_DATE
+	    	) values (
+	    		A_COMP_ID,
+			    A_MOLD_CODE,
+			    A_MOLD_CODE,
+			    DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
+			    A_CUST_CODE,
+			    A_COST,
+			    A_MOLD_CODE, -- 금형 LOT관리 안하는 내역은 LOT NO는 금형코드로 관리 
+			    'N',
+			    A_IN_QTY
+			    ,A_SYS_EMP_NO
+			    ,A_SYS_ID
+			    ,SYSDATE()
+	    	);
+		else
+			set V_SAVE_DIV = 'UPDATE';
+		
+			-- LOT_NO 갱신해야 하나?
+		
+			update TB_MOLD_LOT
+				set QTY = QTY + A_IN_QTY
+					,UPD_EMP_NO = A_SYS_EMP_NO
+			    	,UPD_ID = A_SYS_ID
+			    	,UPD_DATE = SYSDATE()
+			where LOT_NO = A_MOLD_CODE
+			;
+		end if;
+    
+
+    	call SP_SUBUL_MOLD_CREATE(
+    		A_COMP_ID, -- A_COMP_ID
+    		V_MOLD_INPUT_KEY, -- A_KEY_VAL
+    		1, -- A_IN_OUT 
+    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+    		A_MOLD_CODE, -- A_LOT_NO --  금형 LOT관리 안 하는 내역 LOT NO는 금형코드로 관리.
+    		1, -- IO_GUBN ?? 입출고 구분
+    		A_IN_QTY, -- IO_QTY 수량
+    		A_COST, -- A_IO_PRC 단가
+    		A_AMT, -- A_IO_AMT
+    		null, -- A_TABLE_NAME
+    		null, -- A_TABLE_KEY
+    		'Y', -- A_STOCK_YN 재고반영
+    		A_CUST_CODE, -- A_CUST_CODE
+    		'01', -- A_WARE_POS    		
+    		'Y', -- A_SUBUL_YN
+    		V_SAVE_DIV, -- A_SAVE_DIV
+    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+    		'Y', -- A_STOCK_CHK
+    		A_MOLD_CODE, -- A_MOLD_CODE
+    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    		A_SYS_ID, -- A_SYS_ID
+    		N_SUBUL_RETURN,
+    		V_SUBUL_RETURN
+    	);
+
     end if;
    
     IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
     ELSE
-    	call SP_SUBUL_MOLD_CREATE(
-    		A_COMP_ID, -- A_COMP_ID
-    		V_MOLD_INPUT_KEY, -- A_KEY_VAL
-    		1, -- A_IN_OUT 
-    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
-    		V_LOT_NO, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
-    		1, -- IO_GUBN ?? 입출고 구분일텐데 1로 넣어도 괜찮을듯?.
-    		A_IN_QTY, -- IO_QTY 수량
-    		A_COST, -- A_IO_PRC 단가
-    		A_AMT, -- A_IO_AMT
-    		null, -- A_TABLE_NAME 모르겠으니 일단 NULL로 처리.
-    		null, -- A_TABLE_KEY
-    		'Y', -- A_STOCK_YN 재고반영
-    		A_CUST_CODE, -- A_CUST_CODE
-    		'01', -- A_WARE_POS    		
-    		'Y', -- A_SUBUL_YN
-    		'INSERT', -- A_SAVE_DIV
-    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
-    		'Y', -- A_STOCK_CHK
-    		A_MOLD_CODE, -- A_MOLD_CODE
-    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
-    		A_SYS_ID, -- A_SYS_ID
-    		N_RETURN,
-    		V_RETURN
-    	);
+
+    	-- 수불처리 실패한 경우
+    	if N_SUBUL_RETURN <> 0 then
+    		SET N_RETURN = -1;
+      		SET V_RETURN = '저장이 실패하였습니다.'; 
+    	end if;
   	END IF; 
   
 end
