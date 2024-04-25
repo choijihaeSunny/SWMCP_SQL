@@ -10,6 +10,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$DELETE_MOLD_INPUT`(
 begin
 	
 	-- 수불용 변수
+	declare V_QTY decimal(10, 0);
 	declare V_IN_QTY decimal(10, 0);
 	declare V_COST decimal(16, 4);
 	declare V_AMT decimal(16, 4);
@@ -112,8 +113,8 @@ begin
 	    		V_MOLD_CODE, -- A_MOLD_CODE
 	    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
 	    		A_SYS_ID, -- A_SYS_ID
-	    		N_SUBUL_RETURN,
-	    		V_SUBUL_RETURN
+	    		N_RETURN,
+	    		V_RETURN
 	    	);
 		
 			set I = I + 1;
@@ -121,11 +122,15 @@ begin
 	
 	else
 	
-		set V_LOT_CNT = (select COUNT(*)
-						 from TB_MOLD_LOT
-						 where LOT_NO = V_MOLD_CODE);
-		
-		if V_LOT_CNT = 0 then
+						
+		select QTY, IN_QTY
+		  into V_QTY, V_IN_QTY
+		from TB_MOLD_FORDER
+		where COMP_ID = A_COMP_ID
+		  and MOLD_MORDER_KEY = A_CALL_KEY
+		;
+						
+		if V_QTY = V_IN_QTY then
 			set V_SAVE_DIV = 'DELETE';
 		
 			delete from TB_MOLD_LOT
@@ -167,8 +172,8 @@ begin
     		V_MOLD_CODE, -- A_MOLD_CODE
     		A_SYS_EMP_NO, -- A_SYS_EMP_NO
     		A_SYS_ID, -- A_SYS_ID
-    		N_SUBUL_RETURN,
-    		V_SUBUL_RETURN
+    		N_RETURN,
+    		V_RETURN
     	);
 	end if;
 
@@ -178,13 +183,13 @@ begin
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
-    ELSE
-    
-    	-- 수불처리 실패한 경우
-    	if N_SUBUL_RETURN <> 0 then
-    		SET N_RETURN = -1;
-      		SET V_RETURN = '저장이 실패하였습니다.'; 
-    	end if;
+--     ELSE
+--     
+--     	-- 수불처리 실패한 경우
+--     	if N_SUBUL_RETURN <> 0 then
+--     		SET N_RETURN = -1;
+--       		SET V_RETURN = '저장이 실패하였습니다.'; 
+--     	end if;
   	END IF;  
   
 end
