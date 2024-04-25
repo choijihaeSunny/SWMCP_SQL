@@ -13,7 +13,7 @@ PROC:begin
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.SET_SEQ,
 		  COUNT(*) as CNT,
-		  SUM(A.QTY) as SUM_QTY,
+		  SUM(A.IN_QTY) as SUM_QTY,
 		  SUM(A.COST) as SUM_COST,
 		  SUM(A.AMT) as SUM_AMT
 #		  A.CUST_CODE,

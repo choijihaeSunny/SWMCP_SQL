@@ -32,10 +32,10 @@ begin
   
   	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_MOLD_OUT
-    				where SET_DATE = DATE_FORMAT(SET_DATE, '%Y%m%d')
-    				  and SET_SEQ = SET_SEQ);
+    				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+    				  and SET_SEQ = A_SET_SEQ);
   
-    SET V_MOLD_OUT_KEY := CONCAT('DS', right(DATE_FORMAT(SET_DATE, '%Y%m'), 4), LPAD(SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    SET V_MOLD_OUT_KEY := CONCAT('DS', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
   	
     INSERT INTO TB_MOLD_OUT (
@@ -56,7 +56,7 @@ begin
     	,SYS_ID
     	,SYS_DATE
     ) values (
-    	COMP_ID,
+    	A_COMP_ID,
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
     	LPAD(A_SET_SEQ, 3, '0'),
     	V_SET_NO,
@@ -104,6 +104,14 @@ begin
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
+     
+    ELSE
+
+    	-- 수불처리 실패한 경우
+    	if N_SUBUL_RETURN <> 0 then
+    		SET N_RETURN = -1;
+      		SET V_RETURN = '저장이 실패하였습니다.'; 
+    	end if;
   	END IF;  
   
 end

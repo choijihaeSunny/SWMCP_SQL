@@ -42,8 +42,8 @@ begin
 	    	AMT = A_AMT,
 	    	DEPT_CODE = A_DEPT_CODE,
 	    	RMK = A_RMK
-	    	,UPD_EMP_NO = A_UPD_EMP_NO
-	    	,UPD_ID = A_UPD_ID
+	    	,UPD_EMP_NO = A_SYS_EMP_NO
+	    	,UPD_ID = A_SYS_ID
 	    	,UPD_DATE = SYSDATE()
 	WHERE COMP_ID = A_COMP_ID
 	   and MOLD_OUT_KEY = A_MOLD_OUT_KEY
@@ -78,6 +78,13 @@ begin
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
+    ELSE
+
+    	-- 수불처리 실패한 경우
+    	if N_SUBUL_RETURN <> 0 then
+    		SET N_RETURN = -1;
+      		SET V_RETURN = '저장이 실패하였습니다.'; 
+    	end if;
   	END IF;  
   
 end

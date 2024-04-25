@@ -62,13 +62,21 @@ begin
    		V_MOLD_CODE, -- A_MOLD_CODE
    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
    		A_SYS_ID, -- A_SYS_ID
-   		N_SUBUL_RETURN,
-   		V_SUBUL_RETURN
+   		N_RETURN,
+   		V_RETURN
 	);
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
+     
+    ELSE
+
+    	-- 수불처리 실패한 경우
+    	if N_SUBUL_RETURN <> 0 then
+    		SET N_RETURN = -1;
+      		SET V_RETURN = '저장이 실패하였습니다.'; 
+    	end if;
   	END IF;  
   
 end

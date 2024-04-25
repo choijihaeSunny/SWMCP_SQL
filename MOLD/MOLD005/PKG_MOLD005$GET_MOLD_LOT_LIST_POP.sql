@@ -12,6 +12,8 @@ PROC:begin
 	select
 		  A.LOT_NO,
 		  A.MOLD_CODE,
+		  B.MOLD_NAME,
+		  B.MOLD_SPEC,
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.IN_CUST,
 		  (select CUST_NAME
@@ -28,6 +30,8 @@ PROC:begin
 		  A.HIT_CNT,
 		  A.RMK
 	from TB_MOLD_LOT A
+		left join TB_MOLD B
+		 	    on A.MOLD_CODE = B.MOLD_CODE
 	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 	;
 
