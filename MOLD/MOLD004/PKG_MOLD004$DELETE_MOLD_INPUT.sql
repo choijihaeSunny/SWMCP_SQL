@@ -122,14 +122,11 @@ begin
 	
 	else
 	
-						
-		select QTY, IN_QTY
-		  into V_QTY, V_IN_QTY
-		from TB_MOLD_FORDER
-		where COMP_ID = A_COMP_ID
-		  and MOLD_MORDER_KEY = A_CALL_KEY
-		;
-						
+		set V_QTY = (select QTY
+					 from TB_MOLD_LOT
+					 where LOT_NO = V_MOLD_CODE
+					);
+		
 		if V_QTY = V_IN_QTY then
 			set V_SAVE_DIV = 'DELETE';
 		
@@ -183,13 +180,13 @@ begin
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
---     ELSE
---     
---     	-- 수불처리 실패한 경우
---     	if N_SUBUL_RETURN <> 0 then
---     		SET N_RETURN = -1;
---       		SET V_RETURN = '저장이 실패하였습니다.'; 
---     	end if;
+    ELSE
+    
+    	-- 수불처리 실패한 경우
+    	if N_SUBUL_RETURN <> 0 then
+    		SET N_RETURN = -1;
+      		SET V_RETURN = '저장이 실패하였습니다.'; 
+    	end if;
   	END IF;  
   
 end

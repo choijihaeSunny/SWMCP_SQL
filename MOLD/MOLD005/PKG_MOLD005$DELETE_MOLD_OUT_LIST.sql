@@ -62,8 +62,8 @@ begin
    		V_MOLD_CODE, -- A_MOLD_CODE
    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
    		A_SYS_ID, -- A_SYS_ID
-   		N_RETURN,
-   		V_RETURN
+   		N_SUBUL_RETURN,
+   		V_SUBUL_RETURN
 	);
 	
 	IF ROW_COUNT() = 0 THEN
