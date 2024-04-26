@@ -16,7 +16,7 @@ PROC:begin
 	end if;
 
 	select
-		  A.SET_DATE,
+		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.SET_SEQ,
 		  A.SET_NO,
 		  A.MOLD_MODI_KEY,

@@ -33,10 +33,10 @@ begin
   
   	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_MOLD_MODI
-    				where SET_DATE = DATE_FORMAT(SET_DATE, '%Y%m%d')
-    				  and SET_SEQ = SET_SEQ);
+    				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+    				  and SET_SEQ = A_SET_SEQ);
   
-    SET A_MOLD_MODI_KEY := CONCAT('DF', right(DATE_FORMAT(SET_DATE, '%Y%m'), 4), LPAD(SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    SET A_MOLD_MODI_KEY := CONCAT('DF', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
   	
     INSERT INTO TB_MOLD_MODI (
@@ -63,8 +63,8 @@ begin
     	,SYS_DATE
     ) values (
     	COMP_ID,
-    	DATE_FORMAT(SET_DATE, '%Y%m%d'),
-    	LPAD(SET_SEQ, 3, '0'),
+    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
+    	LPAD(A_SET_SEQ, 3, '0'),
     	V_SET_NO,
     	A_MOLD_MODI_KEY,
     	A_MODI_DIV,
