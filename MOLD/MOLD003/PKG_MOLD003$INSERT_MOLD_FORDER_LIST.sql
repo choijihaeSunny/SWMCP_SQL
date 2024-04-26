@@ -20,7 +20,9 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$INSERT_MOLD_FORDER_LI
 begin
 	
 	declare V_SET_NO varchar(10);
-	declare A_MOLD_MORDER_KEY varchar(30);
+	declare V_MOLD_MORDER_KEY varchar(30);
+
+	declare V_DUP_CNT INT;
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -33,8 +35,16 @@ begin
     				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
     				  and SET_SEQ = A_SET_SEQ);
   
-    SET A_MOLD_MORDER_KEY := CONCAT('DO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    SET V_MOLD_MORDER_KEY = CONCAT('DO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
+    SET V_DUP_CNT = (select COUNT(*)
+    				 from TB_MOLD_FORDER
+   					 where MOLD_MORDER_KEY = V_MOLD_MORDER_KEY
+    				);
+    if V_DUP_CNT <> 0 then
+    	set V_SET_NO = V_SET_NO + 1;
+    	SET V_MOLD_MORDER_KEY = CONCAT('DO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    end if;
   	
     INSERT INTO TB_MOLD_FORDER (
     	COMP_ID,
@@ -61,7 +71,7 @@ begin
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
     	LPAD(A_SET_SEQ, 3, '0'),
     	V_SET_NO,
-    	A_MOLD_MORDER_KEY,
+    	V_MOLD_MORDER_KEY,
     	A_MOLD_CODE,
     	A_CUST_CODE,
     	A_QTY,

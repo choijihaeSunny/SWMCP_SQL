@@ -20,6 +20,8 @@ begin
 	
 	declare V_SET_NO varchar(10);
 	declare V_MOLD_MORDER_REQ_KEY varchar(30);
+
+	declare V_DUP_CNT INT;
 	
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -35,6 +37,14 @@ begin
   
     SET V_MOLD_MORDER_REQ_KEY = CONCAT('DR', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
+    SET V_DUP_CNT = (select COUNT(*)
+    				 from TB_MOLD_FORDER_REQ
+   					 where MOLD_MORDER_REQ_KEY = V_MOLD_MORDER_REQ_KEY
+    				);
+    if V_DUP_CNT <> 0 then
+    	set V_SET_NO = V_SET_NO + 1;
+    	SET V_MOLD_MORDER_REQ_KEY = CONCAT('DR', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    end if;
   	
     INSERT INTO TB_MOLD_FORDER_REQ (
     	COMP_ID,

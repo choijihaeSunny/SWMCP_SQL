@@ -18,8 +18,9 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD005$INSERT_MOLD_OUT_LIST`
 begin
 	
 	declare V_SET_NO varchar(10);
-	declare A_MOLD_OUT_KEY varchar(30);
 	declare V_MOLD_OUT_KEY varchar(30);
+
+	declare V_DUP_CNT INT;
 
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
@@ -37,6 +38,14 @@ begin
   
     SET V_MOLD_OUT_KEY := CONCAT('DS', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
    
+    SET V_DUP_CNT = (select COUNT(*)
+    				 from TB_MOLD_OUT
+   					 where MOLD_OUT_KEY = V_MOLD_OUT_KEY
+    				);
+    if V_DUP_CNT <> 0 then
+    	set V_SET_NO = V_SET_NO + 1;
+    	SET V_MOLD_OUT_KEY := CONCAT('DS', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
+    end if;
   	
     INSERT INTO TB_MOLD_OUT (
     	COMP_ID,
