@@ -112,14 +112,13 @@ begin
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
-      SET V_RETURN = '저장이 실패하였습니다.'; 
-     
+      SET V_RETURN = V_SUBUL_RETURN; -- '저장이 실패하였습니다.'; 
     ELSE
-
+    
     	-- 수불처리 실패한 경우
     	if N_SUBUL_RETURN <> 0 then
     		SET N_RETURN = -1;
-      		SET V_RETURN = '저장이 실패하였습니다.'; 
+      		SET V_RETURN = V_SUBUL_RETURN; 
     	end if;
   	END IF;  
   

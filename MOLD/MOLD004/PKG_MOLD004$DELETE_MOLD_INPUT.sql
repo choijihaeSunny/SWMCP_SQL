@@ -152,7 +152,7 @@ begin
     		V_MOLD_INPUT_KEY, -- A_KEY_VAL
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
-    		V_LOT_NO, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
+    		V_MOLD_CODE, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
     		1, -- IO_GUBN ?? 입출고 구분일텐데 1로 넣어도 괜찮을듯?.
     		V_IN_QTY, -- IO_QTY 수량
     		V_COST, -- A_IO_PRC 단가
@@ -179,13 +179,13 @@ begin
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
-      SET V_RETURN = '저장이 실패하였습니다.'; 
+      SET V_RETURN = V_SUBUL_RETURN; -- '저장이 실패하였습니다.'; 
     ELSE
     
     	-- 수불처리 실패한 경우
     	if N_SUBUL_RETURN <> 0 then
     		SET N_RETURN = -1;
-      		SET V_RETURN = '저장이 실패하였습니다.'; 
+      		SET V_RETURN = V_SUBUL_RETURN; 
     	end if;
   	END IF;  
   

@@ -29,5 +29,5 @@ CREATE TABLE `tb_mold_forder` (
   `UPD_EMP_NO` varchar(10) DEFAULT NULL COMMENT '수정사번',
   `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
-  PRIMARY KEY (`MOLD_CODE`)
+  PRIMARY KEY (`MOLD_MORDER_KEY`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='금형발주관리';

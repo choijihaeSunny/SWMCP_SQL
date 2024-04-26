@@ -43,6 +43,8 @@ PROC_BODY : begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
+	SET N_RETURN = 0;
+  	SET V_RETURN = '수불처리 완료되었습니다.'; 
 
 	-- SP_SUBUL_CREATE 참조하여 작성.
 	
@@ -55,7 +57,10 @@ PROC_BODY : begin
 			into   V_IN_OUT, V_WARE_CODE, V_MOLD_CODE, V_LOT_NO, V_STOCK_YN, 
 				   V_IO_DATE, V_IO_QTY
 			from   TB_MOLD_SUBUL 
-			where  COMP_ID = A_COMP_ID and KEY_VAL = A_KEY_VAL;
+			where  COMP_ID = A_COMP_ID 
+			  and  KEY_VAL = A_KEY_VAL
+			  and LOT_NO = A_LOT_NO
+			;
 		end if;
 	
 		-- INSERT, UPDATE, DELETE else if 구문
@@ -395,6 +400,7 @@ PROC_BODY : begin
         	   	   UPD_DATE = SYSDATE()
         	 where COMP_ID = A_COMP_ID
         	   and KEY_VAL = A_KEY_VAL
+        	   and LOT_NO = A_LOT_NO
         	;
         
         elseif A_SAVE_DIV = 'DELETE' then
@@ -460,14 +466,15 @@ PROC_BODY : begin
         	delete from TB_MOLD_SUBUL
         	where COMP_ID = A_COMP_ID
         	  and KEY_VAL = A_KEY_VAL
+        	  and LOT_NO = A_LOT_NO
         	;
         	
 		end if; -- INSERT, UPDATE, DELETE else if 구문 end
 	end if; -- if A_SUBUL_YN = 'Y' then endif
 
-
-	SET N_RETURN = 0;
-  	SET V_RETURN = '수불처리 완료되었습니다.'; 
-   
-   
+		
+   IF ROW_COUNT() = 0 THEN
+  	  SET N_RETURN = -1;
+      SET V_RETURN = '수불처리 실패하였습니다.'; -- '저장이 실패하였습니다.'; 
+  	END IF;  
 END
