@@ -71,7 +71,7 @@ begin
     ) values (
    		A_COMP_ID,
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
-    	LPAD(A_SET_SEQ, 3, '0'),
+    	LPAD(A_SET_SEQ, 4, '0'),
     	V_COLL_NUMB,
     	A_CUST_CODE,
     	A_EMP_NO,

@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE008$GET_COLL_BILL_LIST`(
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC108$GET_INPUT_RETURN_MST_LIST`(
 			IN A_SET_DATE 		TIMESTAMP,
 			IN A_SET_SEQ		varchar(4),
             OUT N_RETURN      	INT,
@@ -6,7 +6,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE008$GET_COLL_BILL_LIST`(
 )
 PROC:begin
 	
-	declare V_SET_SEQ varchar(3);
+	declare V_SET_SEQ varchar(4);
 	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -18,7 +18,8 @@ PROC:begin
 	select
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.SET_SEQ,
-		  A.COLL_NUMB,
+		  A.INPUT_RETURN_MST_KEY,
+		  STR_TO_DATE(A.RETURN_DATE, '%Y%m%d') as RETURN_DATE,
 		  A.CUST_CODE,
 		  (select CUST_NAME
 		   from tc_cust_code
@@ -28,25 +29,12 @@ PROC:begin
 		   from insa_mst 
 		   where emp_no = A.EMP_NO) as EMP_NAME,
 		  A.DEPT_CODE,
-		  A.SALES_KIND,
-		  A.COLL_KIND,
-		  A.RACE_KIND,
-		  A.BILL_TYPE,
-		  A.MNY_EA,
-		  A.MNY_RATE,
-		  A.EXCH_GAP,
-		  A.COMMISSION,
-		  A.MANAGE_NO,
-		  A.APP_NO,
-		  STR_TO_DATE(A.BAL_DATE, '%Y%m%d') as BAL_DATE,
-		  STR_TO_DATE(A.END_DATE, '%Y%m%d') as END_DATE,
-		  A.BAL_CUST_NM,
-		  A.BAL_BANK_NM,
-		  A.COLL_AMT,
-		  A.SLIP_NUMB,
+		  A.SHIP_INFO,
+		  A.PJ_NO,
+		  A.PJ_NAME,
 		  A.RMKS
-	from TB_COLL_BILL A
-	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+	from TB_INPUT_RETURN_MST A
+	where A.RETURN_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	  and A.SET_SEQ = V_SET_SEQ
 	;
 
