@@ -30,6 +30,7 @@ PROC:begin
 		   where emp_no = A.EMP_NO) as EMP_NAME,
 		  A.DEPT_CODE,
 		  A.SHIP_INFO,
+		  A.ITEM_KIND,
 		  A.PJ_NO,
 		  A.PJ_NAME,
 		  A.RMKS
