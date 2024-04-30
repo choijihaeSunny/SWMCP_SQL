@@ -21,6 +21,9 @@ begin
 	declare V_MOLD_OUT_KEY varchar(30);
 
 	declare V_DUP_CNT INT;
+	
+	declare V_IO_GUBN bigint(20);
+	declare V_AMT decimal(16, 4);
 
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
@@ -46,6 +49,12 @@ begin
     	set V_SET_NO = V_SET_NO + 1;
     	SET V_MOLD_OUT_KEY := CONCAT('DS', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
     end if;
+   
+    SET V_IO_GUBN = (select DATA_ID
+					 from sys_data
+					 where path = 'cfg.com.io.mold.out.out');
+	
+	SET V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
   	
     INSERT INTO TB_MOLD_OUT (
     	COMP_ID,
@@ -75,7 +84,7 @@ begin
     	A_LOT_NO,
     	A_QTY,
     	A_COST,
-    	A_AMT,
+    	V_AMT,
     	A_DEPT_CODE,
     	A_RMK
     	,A_SYS_EMP_NO
@@ -90,10 +99,10 @@ begin
    		2, -- A_IN_OUT 
    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
    		A_LOT_NO, -- A_LOT_NO 
-   		2, -- IO_GUBN ?? 입출고 구분
+   		V_IO_GUBN, -- IO_GUBN 
    		A_QTY, -- IO_QTY 수량
    		A_COST, -- A_IO_PRC 단가
-   		A_AMT, -- A_IO_AMT
+   		V_AMT, -- A_IO_AMT
    		null, -- A_TABLE_NAME 
    		null, -- A_TABLE_KEY
    		'Y', -- A_STOCK_YN 재고반영

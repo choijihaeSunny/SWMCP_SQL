@@ -33,7 +33,11 @@ begin
 	declare I INT;
 	declare V_LOT_NO varchar(30);
 
+	declare V_AMT decimal(16, 4);
+
 	declare V_SAVE_DIV varchar(10);
+	declare V_IO_GUBN bigint(20);
+
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
 
@@ -75,6 +79,8 @@ begin
       	SET V_RETURN = '입고하려는 수량이 잔여수량보다 큽니다.'; 
 	end if;
 
+	SET V_AMT = A_IN_QTY * A_COST; -- 단가 * 갯수 = 금액
+
     INSERT INTO TB_MOLD_INPUT (
     	COMP_ID,
     	SET_DATE,
@@ -107,7 +113,7 @@ begin
     	A_LOT_YN,
     	A_QTY,
     	A_COST,
-    	A_AMT,
+    	V_AMT,
     	A_DEPT_CODE,
     	A_IN_QTY,
 #    	A_CALL_KIND,
@@ -132,6 +138,10 @@ begin
 					from sys_data
 					where path = 'cfg.mold.lotyn'
 					  and DATA_ID = A_LOT_YN);
+	
+	SET V_IO_GUBN = (select DATA_ID
+					 from sys_data
+					 where path = 'cfg.com.io.mold.in.in');
 	 
    	
     if V_USE_YN = 'Y' then
@@ -228,10 +238,10 @@ begin
 	    		1, -- A_IN_OUT 
 	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
 	    		V_LOT_NO, -- A_LOT_NO 
-	    		1, -- IO_GUBN ?? 입출고 구분
-	    		A_IN_QTY, -- IO_QTY 수량
+	    		V_IO_GUBN, -- IO_GUBN 
+	    		1, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
-	    		A_AMT, -- A_IO_AMT
+	    		A_COST, -- A_IO_AMT -- 단가 * 갯수 = 금액
 	    		null, -- A_TABLE_NAME 
 	    		null, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
@@ -311,10 +321,10 @@ begin
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
     		A_MOLD_CODE, -- A_LOT_NO --  금형 LOT관리 안 하는 내역 LOT NO는 금형코드로 관리.
-    		1, -- IO_GUBN ?? 입출고 구분
+    		V_IO_GUBN, -- IO_GUBN ?? 입출고 구분
     		A_IN_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
-    		A_AMT, -- A_IO_AMT
+    		V_AMT, -- A_IO_AMT
     		null, -- A_TABLE_NAME
     		null, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영

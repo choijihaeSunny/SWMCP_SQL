@@ -26,6 +26,8 @@ begin
 	declare V_LOT_CNT INT;
 
 	declare V_SAVE_DIV varchar(10);
+	declare V_IO_GUBN bigint(20);
+	
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
 	
@@ -46,7 +48,9 @@ begin
 	  and MOLD_INPUT_KEY = A_MOLD_INPUT_KEY
 	;
 
-
+	SET V_IO_GUBN = (select DATA_ID
+					 from sys_data
+					 where path = 'cfg.com.io.mold.in.in');
 
 	DELETE FROM TB_MOLD_INPUT
 	 WHERE COMP_ID = A_COMP_ID
@@ -97,11 +101,11 @@ begin
 	    		1, -- A_IN_OUT 
 	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
 	    		V_LOT_NO, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
-	    		1, -- IO_GUBN ?? 입출고 구분일텐데 1로 넣어도 괜찮을듯?.
+	    		V_IO_GUBN, -- IO_GUBN ?? 
 	    		1, -- IO_QTY 수량
 	    		V_COST, -- A_IO_PRC 단가
 	    		V_AMT, -- A_IO_AMT
-	    		null, -- A_TABLE_NAME 모르겠으니 일단 NULL로 처리.
+	    		null, -- A_TABLE_NAME
 	    		null, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
 	    		V_CUST_CODE, -- A_CUST_CODE
@@ -153,7 +157,7 @@ begin
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
     		V_MOLD_CODE, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
-    		1, -- IO_GUBN ?? 입출고 구분일텐데 1로 넣어도 괜찮을듯?.
+    		V_IO_GUBN, -- IO_GUBN 
     		V_IN_QTY, -- IO_QTY 수량
     		V_COST, -- A_IO_PRC 단가
     		V_AMT, -- A_IO_AMT
