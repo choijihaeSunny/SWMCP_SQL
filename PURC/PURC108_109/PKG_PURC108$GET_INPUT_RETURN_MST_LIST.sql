@@ -25,9 +25,6 @@ PROC:begin
 		   from tc_cust_code
 		   where cust_code = A.CUST_CODE) as CUST_NAME,
 		  A.EMP_NO,
-		  (select kor_name
-		   from insa_mst 
-		   where emp_no = A.EMP_NO) as EMP_NAME,
 		  A.DEPT_CODE,
 		  A.SHIP_INFO,
 		  A.ITEM_KIND,

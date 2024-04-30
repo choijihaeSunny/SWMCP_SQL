@@ -6,7 +6,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE008$GET_COLL_BILL_LIST`(
 )
 PROC:begin
 	
-	declare V_SET_SEQ varchar(3);
+	declare V_SET_SEQ varchar(4);
 	
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
