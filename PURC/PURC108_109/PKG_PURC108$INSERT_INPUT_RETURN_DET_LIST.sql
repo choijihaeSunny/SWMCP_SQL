@@ -27,8 +27,9 @@ begin
 
 	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
-	declare V_ITEM_KIND varchar(10);
 	declare V_WARE_CODE bigint(20);
+	declare V_ITEM_KIND varchar(10);
+    declare V_CUST_CODE varchar(10);
 
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
@@ -100,13 +101,13 @@ begin
     	,SYSDATE()
     )
     ;
-   	
-    select
-    	  ITEM_KIND
-     into V_ITEM_KIND
-    from TB_INPUT_RETURN_MST
-    where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
-    ;
+   					  
+   	select
+   		  ITEM_KIND, CUST_CODE
+   	into V_ITEM_KIND, V_CUST_CODE
+   	from TB_INPUT_RETURN_MST
+   	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
+   	;
    
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
@@ -132,7 +133,7 @@ begin
         'Y', -- A_STOCK_YN	VARCHAR(1),
         1, -- A_IO_RATE	DECIMAL, -- 환율은 해외와 거래하지 않는 이상 1
         null, -- A_ITEM_CODE_UP	VARCHAR(30),
-        A_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
+        V_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
         'Y', -- A_PRE_STOCK_YN		VARCHAR(1),
         DATE_FORMAT(A_RETURN_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
         null, -- A_ORDER_KEY			VARCHAR(30),

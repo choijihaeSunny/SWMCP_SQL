@@ -4,8 +4,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC108$DELETE_INPUT_RETURN_D
 -- 	IN A_SET_SEQ varchar(4),
     IN A_INPUT_RETURN_MST_KEY varchar(30),
     IN A_INPUT_RETURN_KEY varchar(30),
-    IN A_ITEM_KIND varchar(10), 
-    IN A_CUST_CODE varchar(10),
     IN A_SYS_EMP_NO varchar(10),
 	IN A_SYS_ID varchar(30),
 	OUT N_RETURN INT,
@@ -21,7 +19,8 @@ begin
 	declare V_COST decimal(16, 4);
 	
 	declare V_IO_GUBN bigint(20);
-	
+	declare V_ITEM_KIND varchar(10);
+    declare V_CUST_CODE varchar(10);
 	
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
@@ -42,6 +41,13 @@ begin
       and INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
       and INPUT_RETURN_KEY = A_INPUT_RETURN_KEY
 	;
+
+	select
+   		  ITEM_KIND, CUST_CODE
+   	into V_ITEM_KIND, V_CUST_CODE
+   	from TB_INPUT_RETURN_MST
+   	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
+   	;
   
   	delete from TB_INPUT_RETURN_DET
     where COMP_ID = A_COMP_ID
@@ -60,7 +66,7 @@ begin
         DATE_FORMAT(V_SET_DATE, '%Y%m%d'), -- V_IO_DATE VARCHAR(8),
         1, -- V_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- V_WARE_CODE big--t,        
-        A_ITEM_KIND, -- V_ITEM_K--D big--t,
+        V_ITEM_KIND, -- V_ITEM_K--D big--t,
         V_ITEM_CODE, -- V_ITEM_CODE VARCHAR(30),
         V_LOT_NO, -- V_LOT_NO VARCHAR(30),
         100, -- V_PROG_CODE big--t,
@@ -73,7 +79,7 @@ begin
         'Y', -- V_STOCK_YN	VARCHAR(1),
         1, -- V_IO_RATE	DECIMAL, -- 환율은 해외와 거래하지 않는 이상 1
         null, -- V_ITEM_CODE_UP	VARCHAR(30),
-        A_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
+        V_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
         'Y', -- V_PRE_STOCK_YN		VARCHAR(1),
         DATE_FORMAT(V_RETURN_DATE, '%Y%m%d'), -- V_IO_DATE_AC			VARCHAR(8),
         null, -- V_ORDER_KEY			VARCHAR(30),
