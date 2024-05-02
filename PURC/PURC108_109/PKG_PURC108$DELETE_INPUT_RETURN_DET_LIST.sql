@@ -57,7 +57,7 @@ begin
    
    	SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where path = 'cfg.com.io.mold.in.in');
+					 where path = 'cfg.com.io.mat.in.ret');
 	
     call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
