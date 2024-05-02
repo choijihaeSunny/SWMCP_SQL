@@ -1,10 +1,7 @@
-CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC108$UPDATE_INPUT_RETURN_DET_LIST`(		
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC112$INSERT_MATR_ETC_OUT_DET_LIST`(		
 	IN A_COMP_ID varchar(10),
--- 	IN A_SET_DATE TIMESTAMP,
--- 	IN A_SET_SEQ varchar(4),
-    IN A_INPUT_RETURN_MST_KEY varchar(30),
-    IN A_INPUT_RETURN_KEY varchar(30),
-    IN A_RETURN_DATE TIMESTAMP,
+    IN A_MATR_ETC_OUT_MST_KEY varchar(30),
+    IN A_OUT_DATE TIMESTAMP,
     IN A_ITEM_CODE varchar(30),
     IN A_LOT_NO varchar(30),
     IN A_QTY decimal(10, 0),
@@ -12,25 +9,24 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC108$UPDATE_INPUT_RETURN_D
     IN A_AMT decimal(16, 4),
     IN A_WARE_CODE bigint(20),
     IN A_DEPT_CODE varchar(10),
-    IN A_RETURN_CAUSE bigint(20),
-    IN A_END_AMT decimal(16, 4),
-    IN A_CALL_KIND varchar(10),
-    IN A_CALL_KEY varchar(30),
     IN A_RMK varchar(100),
-	IN A_UPD_EMP_NO varchar(10),
-	IN A_UPD_ID varchar(30),
+	IN A_SYS_EMP_NO varchar(10),
+	IN A_SYS_ID varchar(30),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
-	
+	declare V_MATR_ETC_OUT_KEY varchar(30);
+	declare V_SET_DATE varchar(8);
+	declare V_SET_SEQ varchar(4);
+	declare V_SET_NO varchar(4);
+
 	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
 	declare V_WARE_CODE bigint(20);
-	declare V_ITEM_KIND varchar(10);
     declare V_CUST_CODE varchar(10);
-	
-	declare N_SUBUL_RETURN INT;
+
+   	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
@@ -39,59 +35,80 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
-  	set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
+  	select
+  		  SET_DATE, SET_SEQ, CUST_CODE
+  	into V_SET_DATE, V_SET_SEQ, V_CUST_CODE
+  	from TB_MATR_ETC_OUT
+  	where MATR_ETC_OUT_MST_KEY = A_MATR_ETC_OUT_MST_KEY
+  	;
+  
+  	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
+    				from TB_MATR_ETC_OUT_DET
+    				where MATR_ETC_OUT_MST_KEY = A_MATR_ETC_OUT_MST_KEY
+    				); 	
+    			
+    SET V_MATR_ETC_OUT_KEY := CONCAT(A_MATR_ETC_OUT_MST_KEY, LPAD(V_SET_NO, 4, '0'));
+
+   	set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
    	
    	set V_WARE_CODE = (select WARE_CODE
    					   from DEPT_CODE
    					   where DEPT_CODE = A_DEPT_CODE);
-  
-  	update TB_INPUT_RETURN_DET
-  		set COMP_ID = A_COMP_ID
-#	    	,SET_DATE = A_SET_DATE
-#	    	,SET_SEQ = A_SET_SEQ
-#	    	,SET_NO = A_
-#	    	,INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
-#	    	,INPUT_RETURN_KEY = A_INPUT_RETURN_KEY
-	    	,RETURN_DATE = DATE_FORMAT(A_RETURN_DATE, '%Y%m%d')
-	    	,ITEM_CODE = A_ITEM_CODE
-	    	,LOT_NO = A_LOT_NO
-	    	,QTY = A_QTY
-	    	,COST = A_COST
-	    	,AMT = V_AMT
-	    	,WARE_CODE = A_WARE_CODE
-	    	,DEPT_CODE = A_DEPT_CODE
-	    	,RETURN_CAUSE = A_RETURN_CAUSE
-	    	,END_AMT = A_END_AMT
-	    	,CALL_KIND = A_CALL_KIND
-	    	,CALL_KEY = A_CALL_KEY
-	    	,RMK = A_RMK
-	    	,UPD_EMP_NO = A_UPD_EMP_NO
-	    	,UPD_ID = A_UPD_ID
-	    	,UPD_DATE = SYSDATE()
-    where COMP_ID = A_COMP_ID
-      and INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
-      and INPUT_RETURN_KEY = A_INPUT_RETURN_KEY
-    ;
    
-    select
-   		  ITEM_KIND, CUST_CODE
-   	into V_ITEM_KIND, V_CUST_CODE
-   	from TB_INPUT_RETURN_MST
-   	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
-   	;
+    INSERT INTO TB_MATR_ETC_OUT_DET (
+    	COMP_ID,
+    	SET_DATE,
+    	SET_SEQ,
+    	SET_NO,
+    	MATR_ETC_OUT_MST_KEY,
+    	MATR_ETC_OUT_KEY,
+    	OUT_DATE,
+    	ITEM_CODE,
+    	LOT_NO,
+    	QTY,
+    	COST,
+    	AMT,
+    	WARE_CODE,
+    	DEPT_CODE,
+    	RMK
+    	,SYS_EMP_NO
+    	,SYS_ID
+    	,SYS_DATE
+    ) values (
+   		A_COMP_ID,
+    	V_SET_DATE,
+    	V_SET_SEQ,
+    	V_SET_NO,
+    	A_MATR_ETC_OUT_MST_KEY,
+    	V_MATR_ETC_OUT_KEY,
+    	DATE_FORMAT(A_OUT_DATE, '%Y%m%d'),
+    	A_ITEM_CODE,
+    	A_LOT_NO,
+    	A_QTY,
+    	A_COST,
+    	V_AMT,
+    	A_WARE_CODE,
+    	A_DEPT_CODE,
+    	A_RMK
+    	,A_SYS_EMP_NO
+    	,A_SYS_ID
+    	,SYSDATE()
+    )
+    ;
+  
    
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where full_path = 'cfg.com.io.mat.in.ret');
+					 where full_path = 'cfg.com.io.mat.out.etc');
    
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
-        V_INPUT_RETURN_KEY,-- A_KEY_VAL VARCHAR(100),
-        'UPDATE', -- A_SAVE_DIV VARCHAR(10),
+        V_MATR_ETC_OUT_KEY,-- A_KEY_VAL VARCHAR(100),
+        'INSERT', -- A_SAVE_DIV VARCHAR(10),
         DATE_FORMAT(A_SET_DATE, '%Y%m%d'), -- A_IO_DATE VARCHAR(8),
         1, -- A_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- A_WARE_CODE big--t,        
-        V_ITEM_KIND, -- A_ITEM_K--D big--t,
+        null, -- A_ITEM_K--D big--t, input_etc 에 ITEM_KIND 항목이 없음.
         A_ITEM_CODE, -- A_ITEM_CODE VARCHAR(30),
         A_LOT_NO, -- A_LOT_NO VARCHAR(30),
         100, -- A_PROG_CODE big--t,
@@ -104,15 +121,15 @@ begin
         'Y', -- A_STOCK_YN	VARCHAR(1),
         1, -- A_IO_RATE	DECIMAL, -- 환율은 해외와 거래하지 않는 이상 1
         null, -- A_ITEM_CODE_UP	VARCHAR(30),
-        A_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
+        V_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
         'Y', -- A_PRE_STOCK_YN		VARCHAR(1),
-        DATE_FORMAT(A_RETURN_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
+        DATE_FORMAT(A_OUT_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
         null, -- A_ORDER_KEY			VARCHAR(30),
         'Y', -- A_SUBUL_ORDER_YN		VARCHAR(1),
         'Y', -- A_SUBUL_YN			VARCHAR(1),
         'Y', -- A_STOCK_CHK			VARCHAR(1),
-        A_UPD_ID, -- A_SYS_ID decimal(10,0),
-		A_UPD_EMP_NO, -- A_SYS_EMP_NO varchar(10),
+        A_SYS_ID, -- A_SYS_ID decimal(10,0),
+		A_SYS_EMP_NO, -- A_SYS_EMP_NO varchar(10),
 		N_SUBUL_RETURN,
     	V_SUBUL_RETURN
    	);

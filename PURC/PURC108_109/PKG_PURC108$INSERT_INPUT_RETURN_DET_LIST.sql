@@ -1,7 +1,5 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC108$INSERT_INPUT_RETURN_DET_LIST`(		
 	IN A_COMP_ID varchar(10),
-	IN A_SET_DATE TIMESTAMP,
-	IN A_SET_SEQ varchar(4),
     IN A_INPUT_RETURN_MST_KEY varchar(30),
     IN A_RETURN_DATE TIMESTAMP,
     IN A_ITEM_CODE varchar(30),
@@ -23,6 +21,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC108$INSERT_INPUT_RETURN_D
 begin
 	
 	declare V_INPUT_RETURN_KEY varchar(30);
+	declare V_SET_DATE varchar(8);
+	declare V_SET_SEQ varchar(4);
 	declare V_SET_NO varchar(4);
 
 	declare V_AMT decimal(16, 4);
@@ -38,7 +38,14 @@ begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET N_RETURN = 0;
-  	SET V_RETURN = '저장되었습니다.'; 
+  	SET V_RETURN = '저장되었습니다.';
+  
+  	select
+  		  SET_DATE, SET_SEQ, ITEM_KIND, CUST_CODE
+  	into V_SET_DATE, V_SET_SEQ, V_ITEM_KIND, V_CUST_CODE
+  	from TB_INPUT_RETURN_MST
+  	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
+  	;
   
   	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_INPUT_RETURN_DET
@@ -78,8 +85,8 @@ begin
     	,SYS_DATE
     ) values (
    		A_COMP_ID,
-    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
-    	LPAD(A_SET_SEQ, 4, '0'),
+    	V_SET_DATE,
+    	V_SET_SEQ,
     	V_SET_NO,
     	A_INPUT_RETURN_MST_KEY,
     	V_INPUT_RETURN_KEY,
@@ -102,16 +109,10 @@ begin
     )
     ;
    					  
-   	select
-   		  ITEM_KIND, CUST_CODE
-   	into V_ITEM_KIND, V_CUST_CODE
-   	from TB_INPUT_RETURN_MST
-   	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
-   	;
    
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where path = 'cfg.com.io.mat.in.ret');
+					 where full_path = 'cfg.com.io.mat.in.ret');
    
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
