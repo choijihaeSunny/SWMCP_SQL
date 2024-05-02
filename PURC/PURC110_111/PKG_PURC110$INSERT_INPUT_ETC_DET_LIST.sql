@@ -1,7 +1,5 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC110$INSERT_INPUT_ETC_DET_LIST`(		
 	IN A_COMP_ID varchar(10),
-	IN A_SET_DATE TIMESTAMP,
-	IN A_SET_SEQ varchar(4),
     IN A_INPUT_ETC_MST_KEY varchar(30),
     IN A_INPUT_DATE TIMESTAMP,
     IN A_ITEM_CODE varchar(30),
@@ -19,8 +17,9 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC110$INSERT_INPUT_ETC_DET_
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
-	
 	declare V_INPUT_ETC_KEY varchar(30);
+	declare V_SET_DATE varchar(8);
+	declare V_SET_SEQ varchar(4);
 	declare V_SET_NO varchar(4);
 
 	declare V_AMT decimal(16, 4);
@@ -36,6 +35,13 @@ begin
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
+  
+  	select
+  		  SET_DATE, SET_SEQ, CUST_CODE
+  	into V_SET_DATE, V_SET_SEQ, V_CUST_CODE
+  	from TB_INPUT_ETC_MST
+  	where INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
+  	;
   
   	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_INPUT_ETC_DET
@@ -72,8 +78,8 @@ begin
     	,SYS_DATE
     ) values (
    		A_COMP_ID,
-    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
-    	LPAD(A_SET_SEQ, 4, '0'),
+    	V_SET_DATE,
+    	V_SET_SEQ,
     	V_SET_NO,
     	A_INPUT_ETC_MST_KEY,
     	V_INPUT_ETC_KEY,
@@ -92,14 +98,11 @@ begin
     	,SYSDATE()
     )
     ;
-   
-    SET V_CUST_CODE = (select CUST_CODE
-   					   from TB_INPUT_ETC_MST
-   					   where INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY);
+  
    
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where path = 'cfg.com.io.mat.in.etc');
+					 where full_path = 'cfg.com.io.mat.in.etc');
    
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
@@ -123,7 +126,7 @@ begin
         null, -- A_ITEM_CODE_UP	VARCHAR(30),
         V_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
         'Y', -- A_PRE_STOCK_YN		VARCHAR(1),
-        DATE_FORMAT(A_RETURN_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
+        DATE_FORMAT(A_INPUT_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
         null, -- A_ORDER_KEY			VARCHAR(30),
         'Y', -- A_SUBUL_ORDER_YN		VARCHAR(1),
         'Y', -- A_SUBUL_YN			VARCHAR(1),

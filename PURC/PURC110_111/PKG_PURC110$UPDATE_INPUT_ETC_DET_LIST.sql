@@ -72,7 +72,7 @@ begin
    
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where path = 'cfg.com.io.mat.in.etc');
+					 where full_path = 'cfg.com.io.mat.in.etc');
    
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
@@ -96,7 +96,7 @@ begin
         null, -- A_ITEM_CODE_UP	VARCHAR(30),
         V_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
         'Y', -- A_PRE_STOCK_YN		VARCHAR(1),
-        DATE_FORMAT(A_RETURN_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
+        DATE_FORMAT(A_INPUT_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
         null, -- A_ORDER_KEY			VARCHAR(30),
         'Y', -- A_SUBUL_ORDER_YN		VARCHAR(1),
         'Y', -- A_SUBUL_YN			VARCHAR(1),
