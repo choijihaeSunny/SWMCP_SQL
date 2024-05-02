@@ -14,7 +14,7 @@ PROC:begin
 		  A.SET_NO,
 		  A.MATR_ETC_OUT_MST_KEY,
 		  A.MATR_ETC_OUT_KEY,
-		  STR_TO_DATE(A.OUT_DATE, '%Y%m%d') as INPUT_DATE,
+		  STR_TO_DATE(A.OUT_DATE, '%Y%m%d') as OUT_DATE,
 		  A.ITEM_CODE,
 		  (select ITEM_NAME
 		   from TB_ITEM_CODE
