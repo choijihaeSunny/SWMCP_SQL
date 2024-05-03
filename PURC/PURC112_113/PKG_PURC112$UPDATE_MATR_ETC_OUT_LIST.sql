@@ -29,7 +29,7 @@ begin
 #	    	SET_DATE = A_SET_DATE
 #	    	SET_SEQ = A_SET_SEQ
 #	    	,MATR_ETC_OUT_MST_KEY = A_MATR_ETC_OUT_MST_KEY
-	    	,OUT_DATE = DATE_FORMAT(A_OUT_DATE, '%Y%m%d')
+-- 	    	,OUT_DATE = DATE_FORMAT(A_OUT_DATE, '%Y%m%d')
 	    	,CUST_CODE = A_CUST_CODE
 	    	,EMP_NO = A_EMP_NO
 	    	,DEPT_CODE = A_DEPT_CODE
