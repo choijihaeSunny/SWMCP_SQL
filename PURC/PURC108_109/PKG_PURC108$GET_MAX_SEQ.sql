@@ -10,7 +10,7 @@ begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 
-	select LPAD(IFNULL(MAX(SET_SEQ), 0) + 1, 4, '0') 
+	select LPAD(IFNULL(MAX(SET_SEQ), 0) + 1, 4, '0') as SEQ
 	from TB_INPUT_RETURN_MST
 	where right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
 	;
