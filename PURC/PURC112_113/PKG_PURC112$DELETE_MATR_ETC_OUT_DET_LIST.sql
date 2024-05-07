@@ -22,6 +22,8 @@ begin
 	
 	declare V_IO_GUBN bigint(20);
     declare V_CUST_CODE varchar(10);
+   
+    declare V_ITEM_KIND bigint;
 	
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
@@ -56,6 +58,10 @@ begin
 	SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
 					 where full_path = 'cfg.com.io.mat.out.etc');
+					
+	SET V_ITEM_KIND = (select ITEM_KIND
+					   from TB_ITEM_CODE
+					   where ITEM_CODE = V_ITEM_CODE);
 	
     call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
@@ -64,7 +70,7 @@ begin
         V_SET_DATE, -- V_IO_DATE VARCHAR(8),
         1, -- V_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- V_WARE_CODE big--t,        
-        null, -- V_ITEM_K--D big--t,
+        V_ITEM_KIND, -- V_ITEM_K--D big--t,
         V_ITEM_CODE, -- V_ITEM_CODE VARCHAR(30),
         V_LOT_NO, -- V_LOT_NO VARCHAR(30),
         100, -- V_PROG_CODE big--t,

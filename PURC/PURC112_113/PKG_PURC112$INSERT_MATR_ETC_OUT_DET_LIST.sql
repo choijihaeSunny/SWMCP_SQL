@@ -25,6 +25,8 @@ begin
 	declare V_IO_GUBN bigint(20);
 	declare V_WARE_CODE bigint(20);
     declare V_CUST_CODE varchar(10);
+   
+    declare V_ITEM_KIND bigint;
 
    	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
@@ -101,6 +103,10 @@ begin
 					 from sys_data
 					 where full_path = 'cfg.com.io.mat.out.etc');
    
+	SET V_ITEM_KIND = (select ITEM_KIND
+					   from TB_ITEM_CODE
+					   where ITEM_CODE = A_ITEM_CODE);
+					  
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
         V_MATR_ETC_OUT_KEY,-- A_KEY_VAL VARCHAR(100),
@@ -108,7 +114,7 @@ begin
         V_SET_DATE, -- A_IO_DATE VARCHAR(8),
         1, -- A_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- A_WARE_CODE big--t,        
-        0, -- A_ITEM_K--D big--t, input_etc 에 ITEM_KIND 항목이 없음.
+        V_ITEM_KIND, -- A_ITEM_K--D big--t, input_etc 에 ITEM_KIND 항목이 없음.
         A_ITEM_CODE, -- A_ITEM_CODE VARCHAR(30),
         A_LOT_NO, -- A_LOT_NO VARCHAR(30),
         100, -- A_PROG_CODE big--t,

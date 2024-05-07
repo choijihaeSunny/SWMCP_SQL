@@ -12,7 +12,7 @@ PROC:begin
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	if trim(A_SET_SEQ) <> '' then
-		set V_SET_SEQ := LPAD(A_SET_SEQ, 4, '0');
+		set V_SET_SEQ := LPAD(A_SET_SEQ, 3, '0');
 	end if;
 
 	select
