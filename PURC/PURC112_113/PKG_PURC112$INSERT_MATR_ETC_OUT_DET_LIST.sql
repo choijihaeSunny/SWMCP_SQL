@@ -3,7 +3,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC112$INSERT_MATR_ETC_OUT_D
     IN A_MATR_ETC_OUT_MST_KEY varchar(30),
     IN A_OUT_DATE TIMESTAMP,
     IN A_ITEM_CODE varchar(30),
-    IN A_LOT_NO varchar(30),
     IN A_QTY decimal(10, 0),
     IN A_COST decimal(16, 4),
     IN A_AMT decimal(16, 4),
@@ -20,6 +19,7 @@ begin
 	declare V_SET_DATE varchar(8);
 	declare V_SET_SEQ varchar(4);
 	declare V_SET_NO varchar(4);
+	declare V_LOT_NO varchar(30);
 
 	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
@@ -56,7 +56,10 @@ begin
    	set V_WARE_CODE = (select WARE_CODE
    					   from DEPT_CODE
    					   where DEPT_CODE = A_DEPT_CODE);
-   
+    
+   	-- LP(제품:LP,자재:LM,상품:LG,금형:MO) + 년월(4자리:YYMM) + 순번(5자리) + REV(2자리)
+   	set V_LOT_NO = CONCAT('LP', right(V_SET_DATE, 4), LPAD(V_SET_SEQ, 5, '0'), '00');
+   					  
     INSERT INTO TB_MATR_ETC_OUT_DET (
     	COMP_ID,
     	SET_DATE,
@@ -85,7 +88,7 @@ begin
     	V_MATR_ETC_OUT_KEY,
     	DATE_FORMAT(A_OUT_DATE, '%Y%m%d'),
     	A_ITEM_CODE,
-    	A_LOT_NO,
+    	V_LOT_NO,
     	A_QTY,
     	A_COST,
     	V_AMT,
@@ -116,7 +119,7 @@ begin
         V_WARE_CODE, -- A_WARE_CODE big--t,        
         V_ITEM_KIND, -- A_ITEM_K--D big--t, input_etc 에 ITEM_KIND 항목이 없음.
         A_ITEM_CODE, -- A_ITEM_CODE VARCHAR(30),
-        A_LOT_NO, -- A_LOT_NO VARCHAR(30),
+        V_LOT_NO, -- A_LOT_NO VARCHAR(30),
         100, -- A_PROG_CODE big--t,
         V_IO_GUBN, -- A_IO_GUBN	big--t,
         A_QTY, -- A_IO_QTY		DECIMAL,
