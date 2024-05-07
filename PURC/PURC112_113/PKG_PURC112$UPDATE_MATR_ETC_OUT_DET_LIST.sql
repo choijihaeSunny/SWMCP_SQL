@@ -82,7 +82,7 @@ begin
 					
     SET V_ITEM_KIND = (select ITEM_KIND
 					   from TB_ITEM_CODE
-					   where ITEM_CODE = V_ITEM_CODE);
+					   where ITEM_CODE = A_ITEM_CODE);
   
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
