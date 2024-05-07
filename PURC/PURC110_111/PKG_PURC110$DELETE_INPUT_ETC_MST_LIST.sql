@@ -19,10 +19,10 @@ begin
 	  and INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
 	;
 
-	delete from TB_INPUT_ETC_DET
-	where COMP_ID = A_COMP_ID
-	  and INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
-	;
+-- 	delete from TB_INPUT_ETC_DET
+-- 	where COMP_ID = A_COMP_ID
+-- 	  and INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
+-- 	;
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;

@@ -17,6 +17,7 @@ begin
 	declare V_AMT decimal(16, 4);
 	declare V_QTY decimal(10, 0);
 	declare V_COST decimal(16, 4);
+	declare V_SET_DATE varchar(8);
 	declare V_OUT_DATE varchar(8);
 	
 	declare V_IO_GUBN bigint(20);
@@ -60,7 +61,7 @@ begin
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
         A_MATR_ETC_OUT_KEY,-- A_KEY_VAL VARCHAR(100),
         'DELETE', -- A_SAVE_DIV VARCHAR(10),
-        DATE_FORMAT(V_SET_DATE, '%Y%m%d'), -- V_IO_DATE VARCHAR(8),
+        V_SET_DATE, -- V_IO_DATE VARCHAR(8),
         1, -- V_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- V_WARE_CODE big--t,        
         null, -- V_ITEM_K--D big--t,

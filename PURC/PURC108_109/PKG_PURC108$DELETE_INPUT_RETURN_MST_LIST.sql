@@ -12,17 +12,17 @@ begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET N_RETURN = 0;
-  	SET V_RETURN = '저장되었습니다.'; 
+  	SET V_RETURN = '저장되었습니다.';
    
     delete from TB_INPUT_RETURN_MST
 	where COMP_ID = A_COMP_ID
 	  and INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
 	;
 
-	delete from TB_INPUT_RETURN_DET
-    where COMP_ID = A_COMP_ID
-      and INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
-    ;
+-- 	delete from TB_INPUT_RETURN_DET
+--     where COMP_ID = A_COMP_ID
+--       and INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
+--     ;
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;

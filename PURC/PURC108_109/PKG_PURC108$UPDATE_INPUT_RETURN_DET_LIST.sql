@@ -83,13 +83,6 @@ begin
       and INPUT_RETURN_KEY = A_INPUT_RETURN_KEY
     ;
    
-    select
-   		  ITEM_KIND, CUST_CODE
-   	into V_ITEM_KIND, V_CUST_CODE
-   	from TB_INPUT_RETURN_MST
-   	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
-   	;
-   
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
 					 where full_path = 'cfg.com.io.mat.in.ret');

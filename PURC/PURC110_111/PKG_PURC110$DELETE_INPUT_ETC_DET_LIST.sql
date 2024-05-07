@@ -17,6 +17,7 @@ begin
 	declare V_AMT decimal(16, 4);
 	declare V_QTY decimal(10, 0);
 	declare V_COST decimal(16, 4);
+	declare V_SET_DATE varchar(8);
 	declare V_INPUT_DATE varchar(8);
 	
 	declare V_IO_GUBN bigint(20);
@@ -33,9 +34,9 @@ begin
   
   	select
 		  ware_code, item_code, lot_no, amt, qty,
-		  cost, input_date
+		  cost, set_date, input_date
 	into V_WARE_CODE, V_ITEM_CODE, V_LOT_NO, V_AMT, V_QTY,
-		 V_COST, V_INPUT_DATE
+		 V_COST, V_SET_DATE, V_INPUT_DATE
 	from tb_input_etc_det
 	where COMP_ID = A_COMP_ID
       and INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
@@ -63,7 +64,7 @@ begin
         DATE_FORMAT(V_SET_DATE, '%Y%m%d'), -- V_IO_DATE VARCHAR(8),
         1, -- V_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- V_WARE_CODE big--t,        
-        null, -- V_ITEM_K--D big--t,
+        0, -- V_ITEM_K--D big--t,
         V_ITEM_CODE, -- V_ITEM_CODE VARCHAR(30),
         V_LOT_NO, -- V_LOT_NO VARCHAR(30),
         100, -- V_PROG_CODE big--t,

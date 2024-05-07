@@ -24,7 +24,7 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
    
-    update TB_MATR_ETC_OUT_MST
+    update TB_MATR_ETC_OUT
     	set COMP_ID = A_COMP_ID
 #	    	SET_DATE = A_SET_DATE
 #	    	SET_SEQ = A_SET_SEQ
