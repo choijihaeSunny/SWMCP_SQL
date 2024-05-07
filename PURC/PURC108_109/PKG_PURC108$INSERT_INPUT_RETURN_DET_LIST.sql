@@ -118,7 +118,7 @@ begin
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
         V_INPUT_RETURN_KEY,-- A_KEY_VAL VARCHAR(100),
         'INSERT', -- A_SAVE_DIV VARCHAR(10),
-        DATE_FORMAT(A_SET_DATE, '%Y%m%d'), -- A_IO_DATE VARCHAR(8),
+        V_SET_DATE, -- A_IO_DATE VARCHAR(8),
         1, -- A_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- A_WARE_CODE big--t,        
         V_ITEM_KIND, -- A_ITEM_K--D big--t,

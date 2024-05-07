@@ -24,6 +24,9 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC108$UPDATE_INPUT_RETURN_D
 	)
 begin
 	
+	declare V_SET_DATE varchar(8);
+	declare V_SET_SEQ varchar(4);
+
 	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
 	declare V_WARE_CODE bigint(20);
@@ -40,6 +43,13 @@ begin
   	SET V_RETURN = '저장되었습니다.'; 
   
   	set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
+  	
+  	select
+  		  SET_DATE, SET_SEQ, ITEM_KIND, CUST_CODE
+  	into V_SET_DATE, V_SET_SEQ, V_ITEM_KIND, V_CUST_CODE
+  	from TB_INPUT_RETURN_MST
+  	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
+  	;
    	
    	set V_WARE_CODE = (select WARE_CODE
    					   from DEPT_CODE
@@ -86,9 +96,9 @@ begin
    
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
-        V_INPUT_RETURN_KEY,-- A_KEY_VAL VARCHAR(100),
+        A_INPUT_RETURN_KEY,-- A_KEY_VAL VARCHAR(100),
         'UPDATE', -- A_SAVE_DIV VARCHAR(10),
-        DATE_FORMAT(A_SET_DATE, '%Y%m%d'), -- A_IO_DATE VARCHAR(8),
+        V_SET_DATE, -- A_IO_DATE VARCHAR(8),
         1, -- A_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- A_WARE_CODE big--t,        
         V_ITEM_KIND, -- A_ITEM_K--D big--t,
@@ -104,7 +114,7 @@ begin
         'Y', -- A_STOCK_YN	VARCHAR(1),
         1, -- A_IO_RATE	DECIMAL, -- 환율은 해외와 거래하지 않는 이상 1
         null, -- A_ITEM_CODE_UP	VARCHAR(30),
-        A_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
+        V_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
         'Y', -- A_PRE_STOCK_YN		VARCHAR(1),
         DATE_FORMAT(A_RETURN_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
         null, -- A_ORDER_KEY			VARCHAR(30),
