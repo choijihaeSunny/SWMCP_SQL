@@ -31,14 +31,14 @@ begin
   	SET V_RETURN = '저장되었습니다.'; 
   
   	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
-    				from TB_MATR_ETC_OUT
+    				from TB_STOCK_MOVE
     				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
     				  and SET_SEQ = A_SET_SEQ);
   
     SET V_MOVE_KEY := CONCAT('WM', DATE_FORMAT(A_SET_DATE, '%Y%m%d'), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
   	
    	SET V_DUP_CNT = (select COUNT(*)
-    				 from TB_MATR_ETC_OUT
+    				 from TB_STOCK_MOVE
    					 where MOVE_KEY = V_MOVE_KEY
     				);
     if V_DUP_CNT <> 0 then
