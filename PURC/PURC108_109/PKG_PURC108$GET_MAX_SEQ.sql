@@ -12,7 +12,7 @@ begin
 
 	select LPAD(IFNULL(MAX(SET_SEQ), 0) + 1, 4, '0') as SEQ
 	from TB_INPUT_RETURN_MST
-	where right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
+	where SUBSTRING(SET_DATE, 3, 4) = right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4)
 	;
 	
 
