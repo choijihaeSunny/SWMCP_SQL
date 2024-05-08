@@ -48,7 +48,7 @@ PROC:begin
 						group by AA.INPUT_RETURN_MST_KEY	
 					 ) AS B
 		   on (A.CUST_CODE = B.CUST_CODE
-		   and A.EMP_NO = B.EMP_NO
+# 		   and A.EMP_NO = B.EMP_NO
 		   and A.SHIP_INFO = B.SHIP_INFO
 		   and A.PJ_NO = B.PJ_NO
 		   and A.ITEM_KIND = B.ITEM_KIND

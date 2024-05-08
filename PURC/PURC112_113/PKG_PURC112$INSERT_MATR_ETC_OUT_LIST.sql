@@ -48,7 +48,7 @@ begin
     ) values (
    		A_COMP_ID,
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
-    	LPAD(A_SET_SEQ, 4, '0'),
+    	LPAD(A_SET_SEQ, 3, '0'),
     	V_MATR_ETC_OUT_MST_KEY,
     	DATE_FORMAT(A_OUT_DATE, '%Y%m%d'),
     	A_CUST_CODE,
