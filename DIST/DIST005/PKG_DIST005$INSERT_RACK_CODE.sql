@@ -1,6 +1,5 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST005$INSERT_RACK_CODE`(		
 	IN A_COMP_ID varchar(10),
-	IN A_RACK_CODE varchar(20),
 	IN A_RACK_NAME varchar(30),
 	IN A_RACK_DIV bigint(20),
 	IN A_FLOOR varchar(3),
@@ -17,17 +16,21 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST005$INSERT_RACK_CODE`(
 	)
 begin
 	
+	declare V_RACK_CODE varchar(20);
+	declare V_RACK_DIV varchar(20);
+	
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
-    SET A_RACK_CODE := CONCAT(A_RACK_DIV, LPAD(A_FLOOR, 3, '0'), LPAD(A_ROOM, 3, '0'));
-   
---     if A_RACK_NAME is null or TRIM(A_RACK_NAME) = '' then
---     	set A_RACK_CODE := A_RACK_CODE;
---     end if;
+  	SET V_RACK_DIV = (select CODE
+  					  from SYS_DATA
+  					  where path = 'cfg.dist.rack'
+  					    and DATA_ID = A_RACK_DIV);
+  
+    SET V_RACK_CODE := CONCAT(V_RACK_DIV, LPAD(A_FLOOR, 3, '0'), LPAD(A_ROOM, 3, '0'));
   	
     INSERT INTO TB_RACK (
     	COMP_ID
@@ -46,7 +49,7 @@ begin
     	,SYS_DATE
     ) values (
     	A_COMP_ID
-    	,A_RACK_CODE
+    	,V_RACK_CODE
     	,A_RACK_NAME
     	,A_RACK_DIV
     	,A_FLOOR
