@@ -68,7 +68,7 @@ begin
         CONCAT('TB_MATR_ETC_OUT_DET-', A_MATR_ETC_OUT_KEY),-- A_KEY_VAL VARCHAR(100),
         'DELETE', -- A_SAVE_DIV VARCHAR(10),
         V_SET_DATE, -- V_IO_DATE VARCHAR(8),
-        1, -- V_-- IN_OUT VARCHAR(1),
+        2, -- V_-- IN_OUT VARCHAR(1),
         V_WARE_CODE, -- V_WARE_CODE big--t,        
         V_ITEM_KIND, -- V_ITEM_K--D big--t,
         V_ITEM_CODE, -- V_ITEM_CODE VARCHAR(30),
