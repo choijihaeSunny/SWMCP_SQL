@@ -21,7 +21,11 @@ PROC:begin
 		   A.SIZE_H,
 		   A.RMK
 	from TB_RACK A
-	where A.RACK_DIV LIKE CONCAT('%', A_RACK_DIV, '%')
+	where case 
+			  when A_RACK_DIV != 0
+			  then FIND_IN_SET(A.RACK_DIV, A_RACK_DIV)
+			  else A.RACK_DIV like '%'
+		  end 
 	;
 
 	set N_RETURN := 0;

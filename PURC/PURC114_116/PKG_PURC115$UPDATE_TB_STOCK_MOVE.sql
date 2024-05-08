@@ -20,6 +20,7 @@ begin
 	declare V_QTY decimal(10, 0);
 	declare V_COST decimal(16, 4);
 	declare V_AMT decimal(16, 4);
+	declare V_OUT_DATE varchar(8);
 	
 	declare V_IO_GUBN bigint(20);
 	declare V_CUST_CODE varchar(10);
@@ -49,10 +50,10 @@ begin
    
    	select
    		  SET_DATE, WARE_CODE, ITEM_KIND, ITEM_CODE, LOT_NO,
-   		  QTY, COST, AMT
+   		  QTY, COST, AMT, OUT_DATE
    	into 
    		V_SET_DATE, V_WARE_CODE, V_ITEM_KIND, V_ITEM_CODE, V_LOT_NO,
-   		V_QTY, V_COST, V_AMT
+   		V_QTY, V_COST, V_AMT, V_OUT_DATE
    	from TB_STOCK_MOVE
    	where COMP_ID = A_COMP_ID
 	  and MOVE_KEY = A_MOVE_KEY
@@ -60,7 +61,7 @@ begin
    
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where full_path = 'cfg.com.io.mat.out.etc');
+					 where full_path = 'cfg.com.io.mat.in.mov');
 	
     call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
@@ -84,7 +85,7 @@ begin
         null, -- A_ITEM_CODE_UP	VARCHAR(30),
         V_CUST_CODE, -- A_CUST_CODE		VARCHAR(10),
         'Y', -- A_PRE_STOCK_YN		VARCHAR(1),
-        DATE_FORMAT(A_OUT_DATE, '%Y%m%d'), -- A_IO_DATE_AC			VARCHAR(8),
+        V_OUT_DATE, -- A_IO_DATE_AC			VARCHAR(8),
         null, -- A_ORDER_KEY			VARCHAR(30),
         'Y', -- A_SUBUL_ORDER_YN		VARCHAR(1),
         'Y', -- A_SUBUL_YN			VARCHAR(1),
