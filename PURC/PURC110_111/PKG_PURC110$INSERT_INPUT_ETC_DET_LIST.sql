@@ -115,7 +115,7 @@ begin
    
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
-        V_INPUT_ETC_KEY,-- A_KEY_VAL VARCHAR(100),
+        CONCAT('TB_INPUT_ETC_DET-', V_INPUT_ETC_KEY),-- A_KEY_VAL VARCHAR(100),
         'INSERT', -- A_SAVE_DIV VARCHAR(10),
         V_SET_DATE, -- A_IO_DATE VARCHAR(8),
         1, -- A_-- IN_OUT VARCHAR(1),
@@ -128,8 +128,8 @@ begin
         A_QTY, -- A_IO_QTY		DECIMAL,
         A_COST,-- A_IO_PRC		DECIMAL,
         V_AMT,-- A_IO_AMT		DECIMAL,
-        null, -- A_TABLE_NAME	VARCHAR(50),
-        null, -- A_TABLE_KEY	VARCHAR(100),
+        'TB_INPUT_ETC_DET', -- V_TABLE_NAME	VARCHAR(50),
+        V_INPUT_ETC_KEY, -- V_TABLE_KEY	VARCHAR(100),
         'Y', -- A_STOCK_YN	VARCHAR(1),
         1, -- A_IO_RATE	DECIMAL, -- 환율은 해외와 거래하지 않는 이상 1
         null, -- A_ITEM_CODE_UP	VARCHAR(30),

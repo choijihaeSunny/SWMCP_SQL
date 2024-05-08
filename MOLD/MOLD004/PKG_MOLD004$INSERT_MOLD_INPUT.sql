@@ -317,7 +317,7 @@ begin
 
     	call SP_SUBUL_MOLD_CREATE(
     		A_COMP_ID, -- A_COMP_ID
-    		V_MOLD_INPUT_KEY, -- A_KEY_VAL
+    		CONCAT('TB_MOLD_INPUT_LOT-', V_MOLD_INPUT_KEY), -- A_KEY_VAL
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
     		A_MOLD_CODE, -- A_LOT_NO --  금형 LOT관리 안 하는 내역 LOT NO는 금형코드로 관리.
@@ -325,8 +325,8 @@ begin
     		A_IN_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
     		V_AMT, -- A_IO_AMT
-    		null, -- A_TABLE_NAME
-    		null, -- A_TABLE_KEY
+    		'TB_MOLD_INPUT_LOT', -- A_TABLE_NAME
+    		V_MOLD_INPUT_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
     		A_CUST_CODE, -- A_CUST_CODE
     		'01', -- A_WARE_POS    		

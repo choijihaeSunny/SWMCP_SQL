@@ -153,7 +153,7 @@ begin
 	
 		call SP_SUBUL_MOLD_CREATE(
     		A_COMP_ID, -- A_COMP_ID
-    		V_MOLD_INPUT_KEY, -- A_KEY_VAL
+    		CONCAT('TB_MOLD_INPUT_LOT-', V_MOLD_INPUT_KEY), -- A_KEY_VAL
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
     		V_MOLD_CODE, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
@@ -161,8 +161,8 @@ begin
     		V_IN_QTY, -- IO_QTY 수량
     		V_COST, -- A_IO_PRC 단가
     		V_AMT, -- A_IO_AMT
-    		null, -- A_TABLE_NAME 모르겠으니 일단 NULL로 처리.
-    		null, -- A_TABLE_KEY
+    		'TB_MOLD_INPUT_LOT', -- A_TABLE_NAME
+    		V_MOLD_INPUT_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
     		V_CUST_CODE, -- A_CUST_CODE
     		'01', -- A_WARE_POS    		
