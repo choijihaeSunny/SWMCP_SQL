@@ -59,7 +59,7 @@ begin
    					   where DEPT_CODE = A_DEPT_CODE);
    	
    	-- LP(제품:LP,자재:LM,상품:LG,금형:MO) + 년월(4자리:YYMM) + 순번(5자리) + REV(2자리)
-   	set V_LOT_NO = CONCAT('LP', right(V_SET_DATE, 4), LPAD(V_SET_SEQ, 5, '0'), '00');
+   	set V_LOT_NO = CONCAT('LP', substring(V_SET_DATE, 3, 4), LPAD(V_SET_SEQ, 5, '0'), '00');
    	   
     INSERT INTO TB_INPUT_ETC_DET (
     	COMP_ID,
