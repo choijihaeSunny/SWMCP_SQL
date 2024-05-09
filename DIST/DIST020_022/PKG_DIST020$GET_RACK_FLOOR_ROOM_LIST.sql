@@ -8,41 +8,37 @@ PROC:begin
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
-	select 
-		   A.RACK_DIV,
-		   LPAD(A.FLOOR, 2, '0') as FLOOR,
- 		   MAX(case when ROOM_ORDER = 1 then ROOM END) as R01,
-		   MAX(case when ROOM_ORDER = 2 then ROOM END) as R02,
-		   MAX(case when ROOM_ORDER = 3 then ROOM END) as R03,
-		   MAX(case when ROOM_ORDER = 4 then ROOM END) as R04,
-		   MAX(case when ROOM_ORDER = 5 then ROOM END) as R05,
-		   MAX(case when ROOM_ORDER = 6 then ROOM END) as R06,
-		   MAX(case when ROOM_ORDER = 7 then ROOM END) as R07,
-		   MAX(case when ROOM_ORDER = 8 then ROOM END) as R08,
-		   MAX(case when ROOM_ORDER = 9 then ROOM END) as R09,
-		   MAX(case when ROOM_ORDER = 10 then ROOM END) as R10
-	from (
-		  select
-		  		AA.RACK_CODE,
-			    AA.RACK_NAME,
-			    AA.RACK_DIV,
-			    AA.FLOOR,
-			    AA.ROOM,
-			    AA.SPEC,
-			    AA.SIZE_R,
-			    AA.SIZE_V,
-			    AA.SIZE_H,
-			    AA.RMK,
-			    ROW_NUMBER() OVER (PARTITION BY AA.RACK_DIV, AA.FLOOR 
-			    				   ORDER BY AA.ROOM) AS ROOM_ORDER
-		   from TB_RACK AA
-		  ) as A
-	where case 
-			  when A_RACK_DIV != 0
-			  then FIND_IN_SET(A.RACK_DIV, A_RACK_DIV)
-			  else A.RACK_DIV like '%'
-		  end 
-	group by A.RACK_DIV
+	SELECT 
+	      A.RACK_DIV,
+	      LPAD(A.FLOOR, 2, '0') as FLOOR,
+	      MAX(CASE WHEN ROOM_ORDER = 1 THEN ROOM END) AS R01,
+	      MAX(CASE WHEN ROOM_ORDER = 2 THEN ROOM END) AS R02,
+	      MAX(CASE WHEN ROOM_ORDER = 3 THEN ROOM END) AS R03,
+	      MAX(CASE WHEN ROOM_ORDER = 4 THEN ROOM END) AS R04,
+	      MAX(CASE WHEN ROOM_ORDER = 5 THEN ROOM END) AS R05,
+	      MAX(CASE WHEN ROOM_ORDER = 6 THEN ROOM END) AS R06,
+	      MAX(CASE WHEN ROOM_ORDER = 7 THEN ROOM END) AS R07,
+	      MAX(CASE WHEN ROOM_ORDER = 8 THEN ROOM END) AS R08,
+	      MAX(CASE WHEN ROOM_ORDER = 9 THEN ROOM END) AS R09,
+	      MAX(CASE WHEN ROOM_ORDER = 10 THEN ROOM END) AS R10
+	FROM (
+	      SELECT 
+		        DISTINCT AA.RACK_DIV,
+		        B.FLOOR,
+		        AA.ROOM,
+		        ROW_NUMBER() OVER (PARTITION BY AA.RACK_DIV, B.FLOOR 
+		        				   ORDER BY AA.ROOM) AS ROOM_ORDER
+	      FROM TB_RACK AA
+	    	LEFT JOIN (
+	        		   SELECT DISTINCT FLOOR FROM TB_RACK
+	    			  ) B ON AA.FLOOR = B.FLOOR
+			) AS A
+	WHERE CASE 
+			  WHEN A_RACK_DIV != 0
+			  THEN FIND_IN_SET(A.RACK_DIV, A_RACK_DIV)
+			  ELSE A.RACK_DIV LIKE '%'
+		  END 
+	GROUP BY A.RACK_DIV, A.FLOOR
 	;
 
 	set N_RETURN := 0;
