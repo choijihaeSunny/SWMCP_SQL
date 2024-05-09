@@ -30,6 +30,11 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
+    if A_WARE_CODE = A_WARE_CODE_PRE then
+		SET N_RETURN = -1;
+      	SET V_RETURN = '이동전 창고와 이동후 창고가 같습니다.'; 
+	end if;
+  
   	SET V_SET_NO = (select IFNULL(MAX(SET_NO), 0) + 1
     				from TB_STOCK_MOVE
     				where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')

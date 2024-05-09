@@ -26,7 +26,11 @@ begin
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
- 
+  
+    if A_WARE_CODE = A_WARE_CODE_PRE then
+		SET N_RETURN = -1;
+      	SET V_RETURN = '이동전 창고와 이동후 창고가 같습니다.'; 
+	end if;
    
     UPDATE TB_STOCK_MOVE
     	SET

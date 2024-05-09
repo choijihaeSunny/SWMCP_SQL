@@ -32,6 +32,7 @@ PROC:begin
 		  A.RMK
 	from TB_STOCK_MOVE A
 	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+	  and A.CONFIRM_YN = 'N'
 	;
 
 	set N_RETURN := 0;

@@ -39,6 +39,7 @@ PROC:begin
 	from TB_STOCK_MOVE A
 	where A.MOVE_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	  and A.SET_SEQ = V_SET_SEQ
+	  and A.CONFIRM_YN = 'N'
 	;
 
 	set N_RETURN := 0;
