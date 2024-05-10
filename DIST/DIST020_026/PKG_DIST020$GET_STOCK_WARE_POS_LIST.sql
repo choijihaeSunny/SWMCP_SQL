@@ -24,8 +24,8 @@ begin
 		A.STOCK_QTY,
 		A.WARE_CODE,
 		A.WARE_POS,
+		A.WARE_POS_DATE,
 		C.USE_YN,
-		-- 창고위치지정일시는 어떤 column?
 		'DEL_POS' as DEL_POS,
 		A.RMK
 	from tb_stock A
