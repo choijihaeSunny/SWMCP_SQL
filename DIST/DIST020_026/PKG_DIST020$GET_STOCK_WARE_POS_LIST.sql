@@ -5,8 +5,13 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST020$GET_STOCK_WARE_POS_LI
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
+	
+	declare V_RACK_CODE varchar(20);
+	
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	set V_RACK_CODE = REPLACE(A_RACK_CODE, '-', '');
 
 	select 
 		A.COMP_ID,
@@ -33,7 +38,7 @@ begin
 			on (A.ITEM_CODE = C.ITEM_CODE)
 	where A.COMP_ID = A_COMP_ID 
 	  and A.STOCK_QTY > 0
-	  and A.WARE_POS = A_RACK_CODE
+	  and A.WARE_POS = V_RACK_CODE
 	order by A.ITEM_CODE, str_to_date(B.SET_DATE, '%Y%m%d'), A.LOT_NO
 	;
 	
