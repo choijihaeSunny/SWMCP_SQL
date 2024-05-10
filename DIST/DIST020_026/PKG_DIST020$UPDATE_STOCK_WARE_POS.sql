@@ -30,6 +30,15 @@ begin
 	   AND LOT_NO = A_LOT_NO
 	 ;
 	
+	select COUNT(*) as CNT
+	from TB_STOCK
+	WHERE COMP_ID = A_COMP_ID
+	   and WARE_CODE = A_WARE_CODE
+	   AND ITEM_CODE = A_ITEM_CODE
+	   AND LOT_NO = A_LOT_NO
+	   and WARE_POS = A_RACK_CODE
+	 ;
+	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
