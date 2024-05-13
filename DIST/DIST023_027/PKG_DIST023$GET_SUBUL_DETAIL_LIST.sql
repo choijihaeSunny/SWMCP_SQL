@@ -49,7 +49,8 @@ begin
 		  					   ORDER BY A.TOP_SORT, A.IO_DATE, A.IN_OUT, A.KEY_VAL) AS STOCK_QTY,
 		  A.PRE_AMT, A.IN_AMT, A.OUT_AMT, 
 		  SUM(A.NEXT_AMT) OVER(PARTITION BY A.ITEM_CODE 
-		  					   ORDER BY A.TOP_SORT, A.IO_DATE, A.IN_OUT, A.KEY_VAL) AS STOCK_AMT
+		  					   ORDER BY A.TOP_SORT, A.IO_DATE, A.IN_OUT, A.KEY_VAL) AS STOCK_AMT,
+		  A.LOT_NO
 	from (
 		select
 			  '0' as TOP_SORT, '0' as IN_OUT, AA.ITEM_CODE, AA.ITEM_NAME, AA.ITEM_SPEC,
@@ -72,11 +73,12 @@ begin
 			  SUM(
 				    (case when AA.IN_OUT = '1' then AA.IO_AMT else 0 END)
 				  - (case when AA.IN_OUT = '2' then AA.IO_AMT else 0 END)
-			  ) as NEXT_AMT
+			  ) as NEXT_AMT,
+			  AA.LOT_NO
 		from (
 			select	
 				  AAA.ITEM_CODE, BBB.ITEM_NAME, BBB.ITEM_SPEC, '1' as IN_OUT, AAA.NEXT_QTY as IO_QTY,
-				  AAA.NEXT_AMT as IO_AMT
+				  AAA.NEXT_AMT as IO_AMT, AAA.LOT_NO
 			from TB_IO_END AAA
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
@@ -87,20 +89,20 @@ begin
 			union all 
 			select	
 				  AAA.ITEM_CODE, BBB.ITEM_NAME, BBB.ITEM_SPEC, AAA.IN_OUT, AAA.IO_QTY,
-				  AAA.IO_AMT
+				  AAA.IO_AMT, AAA.LOT_NO
 			from TB_SUBUL AAA
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
 			  and AAA.WARE_CODE like CONCAT('%', A_WARE_CODE, '%')
-			  and AAA.IO_DATE = V_END_YYMM
+			  and AAA.IO_DATE between V_ST_DATE and V_ED_DATE
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 		) AA
 		group by AA.ITEM_CODE, AA.ITEM_NAME, AA.ITEM_SPEC
 		union all
 		select 
 			  '1' as TOP_SORT, AA.IN_OUT, AA.ITEM_CODE, BB.ITEM_NAME, BB.ITEM_SPEC,
-			  AA.IO_DATE, AA.IO_GUBN,
+			  AA.IO_DATE, AA.IO_GUBN, 
 			  0 as PRE_QTY,
 			  (case when IN_OUT = '1' then IO_QTY else 0 END) as IN_QTY,
 			  (case when IN_OUT = '2' then IO_QTY else 0 END) as OUT_QTY,
@@ -108,7 +110,8 @@ begin
 			  AA.KEY_VAL, 0 as PRE_AMT,
 			  (case when IN_OUT = '1' then IO_AMT else 0 END) as IN_AMT,
 			  (case when IN_OUT = '2' then IO_AMT else 0 END) as OUT_AMT,
-			  (case when IN_OUT = '1' then IO_AMT else IO_AMT * -1 END) as NEXT_AMT
+			  (case when IN_OUT = '1' then IO_AMT else IO_AMT * -1 END) as NEXT_AMT,
+			  AA.LOT_NO
 		from TB_SUBUL AA
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
