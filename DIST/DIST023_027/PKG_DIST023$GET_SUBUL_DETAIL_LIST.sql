@@ -39,11 +39,11 @@ begin
 	  and A.WARE_CODE like CONCAT(A_WARE_CODE, '%')
 	;
 
-	-- V_END_YYMM null 일 경우 처리 차후 문의 필요
+	-- V_END_YYMM null 일 경우 처리 수정 필요
 	
 	--
 	select
-		  A.TOP_SORT, A.IN_OUT, A.ITEM_CODE, A.IO_DATE, A.ITEM_NAME,
+		  A.TOP_SORT, A.IN_OUT, A.ITEM_CODE, /*STR_TO_DATE(A.IO_DATE, '%Y%m%d') as IO_DATE*/A.IO_DATE, A.ITEM_NAME,
 		  A.ITEM_SPEC, A.IO_GUBUN, A.PRE_QTY, A.IN_QTY, A.OUT_QTY,
 		  SUM(A.NEXT_QTY) OVER(PARTITION BY A.ITEM_CODE 
 		  					   ORDER BY A.TOP_SORT, A.IO_DATE, A.IN_OUT, A.KEY_VAL) AS STOCK_QTY,
