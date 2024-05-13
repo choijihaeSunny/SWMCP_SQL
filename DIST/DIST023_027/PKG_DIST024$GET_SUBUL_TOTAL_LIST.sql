@@ -10,11 +10,48 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST024$GET_SUBUL_TOTAL_LIST`
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
+	
+	declare V_ST_DATE VARCHAR(8);
+	declare V_ED_DATE VARCHAR(8);
+	
+	declare V_PRE_DATE VARCHAR(8);
+	declare V_END_YYMM VARCHAR(8);
+	
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
+	set V_ST_DATE = DATE_FORMAT(A_ST_DATE, '%Y%m%d');
+	set V_ED_DATE = DATE_FORMAT(A_ED_DATE, '%Y%m%d');
+	set V_PRE_DATE = DATE_FORMAT(DATE_ADD(A_ST_DATE, interval - 1 month), '%Y%m%d');
+
+	-- LEETEK의 PKG_ITEMSTOCKTOTALR, PKG_MATRSTOCKTOTALR 참조
+	-- TC_IO_END <=> TB_IO_END
+	-- VIEW_ITEM_CODE <=> TB_ITEM_CODE ? VIEW_ITEM ? 
+	-- TC_SUBUL_ITEM, TC_SUBUL_MATR <=> TB_SUBUL ?
+
+	select
+		  MAX(YYMM)
+	into V_END_YYMM
+	from TB_IO_END A
+		inner join VIEW_ITEM B
+		on A.ITEM_CODE = B.ITEM_CODE
+	where A.COMP_ID = A_COMP_ID
+	  and A.YYMM < SUBSTRING(V_ST_DATE, 1, 6)
+	  and CASE 
+			  WHEN A_WARE_CODE != 0
+			  THEN FIND_IN_SET(A.WARE_CODE, A_WARE_CODE)
+			  ELSE A.WARE_CODE LIKE '%'
+		  END 
+	;
+
+	-- V_END_YYMM null 일 경우 처리 수정 필요
 
 	
+	--
+	
+	
+	
+	--
 
 	SET N_RETURN = 0;
     SET V_RETURN = '조회되었습니다.'; 

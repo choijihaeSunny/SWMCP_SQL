@@ -22,6 +22,7 @@ begin
 
 	set V_ST_DATE = DATE_FORMAT(A_ST_DATE, '%Y%m%d');
 	set V_ED_DATE = DATE_FORMAT(A_ED_DATE, '%Y%m%d');
+	set V_PRE_DATE = DATE_FORMAT(DATE_ADD(A_ST_DATE, interval - 1 month), '%Y%m%d'); -- 이월된 값 (한달 전)
 
 	-- LEETEK의 PKG_ITEMSTOCKDETAILR, PKG_MATRSTOCKDETAILR 참조
 	-- TC_IO_END <=> TB_IO_END
@@ -41,7 +42,6 @@ begin
 			  THEN FIND_IN_SET(A.WARE_CODE, A_WARE_CODE)
 			  ELSE A.WARE_CODE LIKE '%'
 		  END 
-	  
 	;
 
 	-- V_END_YYMM null 일 경우 처리 수정 필요
@@ -113,7 +113,7 @@ begin
 					  THEN FIND_IN_SET(AAA.WARE_CODE, A_WARE_CODE)
 					  ELSE AAA.WARE_CODE LIKE '%'
 				  END 
-			  and AAA.IO_DATE between V_ST_DATE and V_ED_DATE
+			  and AAA.IO_DATE between V_END_YYMM and V_PRE_DATE
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 			  and CASE 
 					  WHEN A_ITEM_KIND != 0
