@@ -36,7 +36,12 @@ begin
 		on A.ITEM_CODE = B.ITEM_CODE
 	where A.COMP_ID = A_COMP_ID
 	  and A.YYMM < SUBSTRING(V_ST_DATE, 1, 6)
-	  and A.WARE_CODE like CONCAT(A_WARE_CODE, '%')
+	  and CASE 
+			  WHEN A_WARE_CODE != 0
+			  THEN FIND_IN_SET(A.WARE_CODE, A_WARE_CODE)
+			  ELSE A.WARE_CODE LIKE '%'
+		  END 
+	  
 	;
 
 	-- V_END_YYMM null 일 경우 처리 수정 필요
@@ -83,9 +88,18 @@ begin
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
-			  and AAA.WARE_CODE like CONCAT('%', A_WARE_CODE, '%')
+			  and CASE 
+					  WHEN A_WARE_CODE != 0
+					  THEN FIND_IN_SET(AAA.WARE_CODE, A_WARE_CODE)
+					  ELSE AAA.WARE_CODE LIKE '%'
+				  END 
 			  and AAA.YYMM = V_END_YYMM
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
+			  and CASE 
+					  WHEN A_ITEM_KIND != 0
+					  THEN FIND_IN_SET(BBB.ITEM_KIND, A_ITEM_KIND)
+					  ELSE BBB.ITEM_KIND LIKE '%'
+				  END 
 			union all 
 			select	
 				  AAA.ITEM_CODE, BBB.ITEM_NAME, BBB.ITEM_SPEC, AAA.IN_OUT, AAA.IO_QTY,
@@ -94,9 +108,18 @@ begin
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
-			  and AAA.WARE_CODE like CONCAT('%', A_WARE_CODE, '%')
+			  and CASE 
+					  WHEN A_WARE_CODE != 0
+					  THEN FIND_IN_SET(AAA.WARE_CODE, A_WARE_CODE)
+					  ELSE AAA.WARE_CODE LIKE '%'
+				  END 
 			  and AAA.IO_DATE between V_ST_DATE and V_ED_DATE
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
+			  and CASE 
+					  WHEN A_ITEM_KIND != 0
+					  THEN FIND_IN_SET(AAA.ITEM_KIND, A_ITEM_KIND)
+					  ELSE AAA.ITEM_KIND LIKE '%'
+				  END 
 		) AA
 		group by AA.ITEM_CODE, AA.ITEM_NAME, AA.ITEM_SPEC
 		union all
@@ -116,9 +139,18 @@ begin
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
-		  and AA.WARE_CODE like CONCAT('%', A_WARE_CODE, '%')
+		  and CASE 
+				  WHEN A_WARE_CODE != 0
+				  THEN FIND_IN_SET(AA.WARE_CODE, A_WARE_CODE)
+				  ELSE AA.WARE_CODE LIKE '%'
+			  END 
 		  and AA.IO_DATE between V_ST_DATE and V_ED_DATE
 		  and AA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
+		  and CASE 
+				  WHEN A_ITEM_KIND != 0
+				  THEN FIND_IN_SET(AA.ITEM_KIND, A_ITEM_KIND)
+				  ELSE AA.ITEM_KIND LIKE '%'
+			  END 
 	) A
 	;
 
