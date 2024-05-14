@@ -4,8 +4,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST023$GET_SUBUL_DETAIL_LIST
 	IN A_ED_DATE TIMESTAMP,
 	in A_ITEM_CODE VARCHAR(30),
 	in A_ITEM_NAME VARCHAR(100),
-	in A_ITEM_KIND BIGINT(20),
-	in A_WARE_CODE bigint(20),
+	in A_ITEM_KIND BIGINT(20),  -- 무조건 선택하여 조회해야 한다.
+	in A_WARE_CODE bigint(20),  -- 무조건 선택하여 조회해야 한다.
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
@@ -37,11 +37,7 @@ begin
 		on A.ITEM_CODE = B.ITEM_CODE
 	where A.COMP_ID = A_COMP_ID
 	  and A.YYMM < SUBSTRING(V_ST_DATE, 1, 6)
-	  and CASE 
-			  WHEN A_WARE_CODE != 0
-			  THEN A.WARE_CODE = A_WARE_CODE
-			  ELSE A.WARE_CODE LIKE '%'
-		  END 
+	  and A.WARE_CODE = A_WARE_CODE
 	;
 
 	if V_END_YYMM is null then
@@ -62,25 +58,13 @@ begin
 		select
 			  '0' as TOP_SORT, '0' as IN_OUT, AA.ITEM_CODE, AA.ITEM_NAME, AA.ITEM_SPEC,
 			  '이월' as IO_DATE, '' as IO_GUBUN,
-			  SUM(
-				  	(case when AA.IN_OUT = '1' then AA.IO_QTY else 0 END) 
-				  - (case when AA.IN_OUT = '2' then AA.IO_QTY else 0 END)
-			  ) as PRE_QTY,
+			  SUM(case when AA.IN_OUT = '1' then AA.IO_QTY else AA.IO_QTY * -1 END) as PRE_QTY,
 			  0 as IN_QTY, 0 as OUT_QTY,
-			  SUM(
-				  	(case when AA.IN_OUT = '1' then AA.IO_QTY else 0 end)
-				  - (case when AA.IN_OUT = '2' then AA.IO_QTY else 0 END)
-			  ) as NEXT_QTY,
+			  SUM(case when AA.IN_OUT = '1' then AA.IO_QTY else AA.IO_QTY * -1 END) as NEXT_QTY,
 			  '' as KEY_VAL,
-			  SUM(
-				    (case when AA.IN_OUT = '1' then AA.IO_AMT else 0 END)
-				  - (case when AA.IN_OUT = '2' then AA.IO_AMT else 0 END)
-			  ) as PRE_AMT,
+			  SUM(case when AA.IN_OUT = '1' then AA.IO_AMT else AA.IO_AMT * -1 END) as PRE_AMT,
 			  0 as IN_AMT, 0 as OUT_AMT,
-			  SUM(
-				    (case when AA.IN_OUT = '1' then AA.IO_AMT else 0 END)
-				  - (case when AA.IN_OUT = '2' then AA.IO_AMT else 0 END)
-			  ) as NEXT_AMT,
+			  SUM(case when AA.IN_OUT = '1' then AA.IO_AMT else AA.IO_AMT * -1 END) as NEXT_AMT,
 			  AA.LOT_NO
 		from (
 			select	
@@ -90,18 +74,10 @@ begin
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
-			  and CASE 
-					  WHEN A_WARE_CODE != 0
-					  THEN AAA.WARE_CODE = A_WARE_CODE
-					  ELSE AAA.WARE_CODE LIKE '%'
-				  END 
+			  and AAA.WARE_CODE = A_WARE_CODE
 			  and AAA.YYMM = V_END_YYMM
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
-			  and CASE 
-					  WHEN A_ITEM_KIND != 0
-					  THEN BBB.ITEM_KIND = A_ITEM_KIND
-					  ELSE BBB.ITEM_KIND LIKE '%'
-				  END 
+			  and AAA.ITEM_KIND = A_ITEM_KIND 
 			union all 
 			select	
 				  AAA.ITEM_CODE, BBB.ITEM_NAME, BBB.ITEM_SPEC, AAA.IN_OUT, AAA.IO_QTY,
@@ -110,18 +86,10 @@ begin
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
-			  and CASE 
-					  WHEN A_WARE_CODE != 0
-					  THEN AAA.WARE_CODE = A_WARE_CODE
-					  ELSE AAA.WARE_CODE LIKE '%'
-				  END 
+			  and AAA.WARE_CODE = A_WARE_CODE
 			  and AAA.IO_DATE between V_END_YYMM and V_PRE_DATE
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
-			  and CASE 
-					  WHEN A_ITEM_KIND != 0
-					  THEN AAA.ITEM_KIND = A_ITEM_KIND
-					  ELSE AAA.ITEM_KIND LIKE '%'
-				  END 
+			  and AAA.ITEM_KIND = A_ITEM_KIND
 		) AA
 		group by AA.ITEM_CODE, AA.ITEM_NAME, AA.ITEM_SPEC
 		union all
@@ -141,18 +109,10 @@ begin
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
-		  and CASE 
-				  WHEN A_WARE_CODE != 0
-				  THEN AA.WARE_CODE = A_WARE_CODE
-				  ELSE AA.WARE_CODE LIKE '%'
-			  END 
+		  and AA.WARE_CODE = A_WARE_CODE
 		  and AA.IO_DATE between V_ST_DATE and V_ED_DATE
 		  and AA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
-		  and CASE 
-				  WHEN A_ITEM_KIND != 0
-				  THEN AA.ITEM_KIND = A_ITEM_KIND
-				  ELSE AA.ITEM_KIND LIKE '%'
-			  END 
+		  and AA.ITEM_KIND = A_ITEM_KIND
 	) A
 	;
 

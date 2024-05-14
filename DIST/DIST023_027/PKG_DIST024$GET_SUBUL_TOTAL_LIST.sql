@@ -4,8 +4,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST024$GET_SUBUL_TOTAL_LIST`
 	IN A_ED_DATE TIMESTAMP,
 	in A_ITEM_CODE VARCHAR(30),
 	in A_ITEM_NAME VARCHAR(100),
-	in A_ITEM_KIND BIGINT(20),
-	in A_WARE_CODE bigint(20),
+	in A_ITEM_KIND BIGINT(20),  -- 무조건 선택하여 조회해야 한다.
+	in A_WARE_CODE bigint(20),  -- 무조건 선택하여 조회해야 한다.
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
@@ -37,11 +37,7 @@ begin
 		on A.ITEM_CODE = B.ITEM_CODE
 	where A.COMP_ID = A_COMP_ID
 	  and A.YYMM < SUBSTRING(V_ST_DATE, 1, 6)
-	  and CASE 
-			  WHEN A_WARE_CODE != 0
-			  THEN A.WARE_CODE = A_WARE_CODE
-			  ELSE A.WARE_CODE LIKE '%'
-		  END 
+	  and A.WARE_CODE = A_WARE_CODE
 	;
 
 	if V_END_YYMM is null then
@@ -61,16 +57,12 @@ begin
 		select
 			  AA.COMP_ID, AA.ITEM_CODE, BB.ITEM_NAME, BB.ITEM_SPEC, AA.NEXT_QTY as PRE_QTY,
 			  AA.NEXT_AMT as PRE_AMT, 0 as IN_QTY, 0 as IN_AMT, 0 as OUT_QTY, 0 as OUT_AMT,
-			  AA.WARE_CODE, BB.ITEM_KIND, AA.LOT_NO, '' as CUST_CODE
+			  AA.WARE_CODE, AA.ITEM_KIND, AA.LOT_NO, '' as CUST_CODE
 		from TB_IO_END AA
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
-		  and CASE 
-				  WHEN A_WARE_CODE != 0
-				  THEN AA.WARE_CODE = A_WARE_CODE
-				  ELSE AA.WARE_CODE LIKE '%'
-			  end
+		  and AA.WARE_CODE = A_WARE_CODE
 		  and AA.YYMM = V_END_YYMM
 		union all 
 		select 
@@ -83,11 +75,7 @@ begin
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
-		  and CASE 
-				  WHEN A_WARE_CODE != 0
-				  THEN AA.WARE_CODE = A_WARE_CODE
-				  ELSE AA.WARE_CODE LIKE '%'
-			  end
+		  and AA.WARE_CODE = A_WARE_CODE
 		  and AA.IO_DATE between CONCAT(V_END_YYMM, '32') and V_PRE_DATE
 		union all 
 		select
@@ -100,11 +88,7 @@ begin
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
-		  and CASE 
-				  WHEN A_WARE_CODE != 0
-				  THEN AA.WARE_CODE = A_WARE_CODE
-				  ELSE AA.WARE_CODE LIKE '%'
-			  end
+		  and AA.WARE_CODE = A_WARE_CODE
 		and AA.IO_DATE between V_ST_DATE and V_ED_DATE
 	) A
 		inner join TC_CUST_CODE CUST
@@ -112,11 +96,7 @@ begin
 			and A.CUST_CODE = CUST.CUST_CODE
 	where A.COMP_ID = A_COMP_ID
 	  and A.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
-	  and CASE 
-			  WHEN A_ITEM_KIND != 0
-			  THEN A.ITEM_KIND = A_ITEM_KIND
-			  ELSE A.ITEM_KIND LIKE '%'
-		  END 
+	  and A.ITEM_KIND = A_ITEM_KIND
 	group by A.ITEM_CODE, A.ITEM_NAME, A.ITEM_SPEC, A.COMP_ID, A.WARE_CODE,
 			 A.ITEM_KIND, A.LOT_NO, A.CUST_CODE
 	;
