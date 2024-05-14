@@ -39,7 +39,7 @@ begin
 	  and A.YYMM < SUBSTRING(V_ST_DATE, 1, 6)
 	  and CASE 
 			  WHEN A_WARE_CODE != 0
-			  THEN FIND_IN_SET(A.WARE_CODE, A_WARE_CODE)
+			  THEN A.WARE_CODE = A_WARE_CODE
 			  ELSE A.WARE_CODE LIKE '%'
 		  END 
 	;
@@ -92,14 +92,14 @@ begin
 			where AAA.COMP_ID = A_COMP_ID
 			  and CASE 
 					  WHEN A_WARE_CODE != 0
-					  THEN FIND_IN_SET(AAA.WARE_CODE, A_WARE_CODE)
+					  THEN AAA.WARE_CODE = A_WARE_CODE
 					  ELSE AAA.WARE_CODE LIKE '%'
 				  END 
 			  and AAA.YYMM = V_END_YYMM
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 			  and CASE 
 					  WHEN A_ITEM_KIND != 0
-					  THEN FIND_IN_SET(BBB.ITEM_KIND, A_ITEM_KIND)
+					  THEN BBB.ITEM_KIND = A_ITEM_KIND
 					  ELSE BBB.ITEM_KIND LIKE '%'
 				  END 
 			union all 
@@ -112,14 +112,14 @@ begin
 			where AAA.COMP_ID = A_COMP_ID
 			  and CASE 
 					  WHEN A_WARE_CODE != 0
-					  THEN FIND_IN_SET(AAA.WARE_CODE, A_WARE_CODE)
+					  THEN AAA.WARE_CODE = A_WARE_CODE
 					  ELSE AAA.WARE_CODE LIKE '%'
 				  END 
 			  and AAA.IO_DATE between V_END_YYMM and V_PRE_DATE
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 			  and CASE 
 					  WHEN A_ITEM_KIND != 0
-					  THEN FIND_IN_SET(AAA.ITEM_KIND, A_ITEM_KIND)
+					  THEN AAA.ITEM_KIND = A_ITEM_KIND
 					  ELSE AAA.ITEM_KIND LIKE '%'
 				  END 
 		) AA
@@ -143,14 +143,14 @@ begin
 		where AA.COMP_ID = A_COMP_ID
 		  and CASE 
 				  WHEN A_WARE_CODE != 0
-				  THEN FIND_IN_SET(AA.WARE_CODE, A_WARE_CODE)
+				  THEN AA.WARE_CODE = A_WARE_CODE
 				  ELSE AA.WARE_CODE LIKE '%'
 			  END 
 		  and AA.IO_DATE between V_ST_DATE and V_ED_DATE
 		  and AA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 		  and CASE 
 				  WHEN A_ITEM_KIND != 0
-				  THEN FIND_IN_SET(AA.ITEM_KIND, A_ITEM_KIND)
+				  THEN AA.ITEM_KIND = A_ITEM_KIND
 				  ELSE AA.ITEM_KIND LIKE '%'
 			  END 
 	) A

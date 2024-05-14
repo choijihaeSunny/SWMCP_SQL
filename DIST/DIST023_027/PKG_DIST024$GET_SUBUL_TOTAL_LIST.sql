@@ -39,7 +39,7 @@ begin
 	  and A.YYMM < SUBSTRING(V_ST_DATE, 1, 6)
 	  and CASE 
 			  WHEN A_WARE_CODE != 0
-			  THEN FIND_IN_SET(A.WARE_CODE, A_WARE_CODE)
+			  THEN A.WARE_CODE = A_WARE_CODE
 			  ELSE A.WARE_CODE LIKE '%'
 		  END 
 	;
@@ -51,29 +51,24 @@ begin
 	--
 	
 	select 
-		  A.ITEM_CODE, A.ITEM_NAME, A.ITEM_SPEC, A.WARE_CODE, A.WARE_CODE_NAME,
+		  A.ITEM_CODE, A.ITEM_NAME, A.ITEM_SPEC, A.WARE_CODE, 
 		  SUM(A.PRE_QTY) as PRE_QTY, SUM(A.IN_QTY) as IN_QTY, SUM(A.OUT_QTY) as OUT_QTY,
 		  (SUM(A.PRE_QTY) + SUM(A.IN_QTY) - SUM(A.OUT_QTY)) as STOCK_QTY,
 		  SUM(A.PRE_AMT) as PRE_AMT, SUM(A.IN_AMT) as IN_AMT, SUM(A.OUT_AMT) as OUT_AMT,
 		  (SUM(A.PRE_AMT) + SUM(A.IN_AMT) - SUM(A.OUT_AMT)) as STOCK_AMT,
-		  A.ITEM_KIND
+		  A.ITEM_KIND, A.LOT_NO, A.CUST_CODE
 	from (
 		select
 			  AA.COMP_ID, AA.ITEM_CODE, BB.ITEM_NAME, BB.ITEM_SPEC, AA.NEXT_QTY as PRE_QTY,
 			  AA.NEXT_AMT as PRE_AMT, 0 as IN_QTY, 0 as IN_AMT, 0 as OUT_QTY, 0 as OUT_AMT,
-			  AA.WARE_CODE,
-			  (select NAME
-			  from sys_data
-			  where path = 'cfg.com.wh.kind'
-			    and DATA_ID = AA.WARE_CODE) as WARE_CODE_NAME,
-			  BB.ITEM_KIND
+			  AA.WARE_CODE, BB.ITEM_KIND, AA.LOT_NO, '' as CUST_CODE
 		from TB_IO_END AA
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
 		  and CASE 
 				  WHEN A_WARE_CODE != 0
-				  THEN FIND_IN_SET(AA.WARE_CODE, A_WARE_CODE)
+				  THEN AA.WARE_CODE = A_WARE_CODE
 				  ELSE AA.WARE_CODE LIKE '%'
 			  end
 		  and AA.YYMM = V_END_YYMM
@@ -83,18 +78,14 @@ begin
 			  (case when AA.IN_OUT = '1' then AA.IO_QTY else AA.IO_QTY * -1 END) as PRE_QTY,
 			  (case when AA.IN_OUT = '1' then AA.IO_AMT else AA.IO_AMT * -1 END) as PRE_AMT,
 			  0 as IN_QTY, 0 as IN_AMT, 0 as OUT_QTY, 0 as OUT_AMT, AA.WARE_CODE,
-			  (select NAME
-			  from sys_data
-			  where path = 'cfg.com.wh.kind'
-			    and DATA_ID = AA.WARE_CODE) as WARE_CODE_NAME,
-			  AA.ITEM_KIND
+			  AA.ITEM_KIND, AA.LOT_NO, AA.CUST_CODE
 		from TB_SUBUL AA
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
 		  and CASE 
 				  WHEN A_WARE_CODE != 0
-				  THEN FIND_IN_SET(AA.WARE_CODE, A_WARE_CODE)
+				  THEN AA.WARE_CODE = A_WARE_CODE
 				  ELSE AA.WARE_CODE LIKE '%'
 			  end
 		  and AA.IO_DATE between CONCAT(V_END_YYMM, '32') and V_PRE_DATE
@@ -104,18 +95,14 @@ begin
 		      (case when AA.IN_OUT = '1' then AA.IO_QTY else AA.IO_QTY * -1 END) as PRE_QTY,
 		      (case when AA.IN_OUT = '1' then AA.IO_AMT else AA.IO_AMT * -1 END) as PRE_AMT,
 		      0 as IN_QTY, 0 as IN_AMT, 0 as OUT_QTY, 0 as OUT_AMT, AA.WARE_CODE,
-		      (select NAME
-			  from sys_data
-			  where path = 'cfg.com.wh.kind'
-			    and DATA_ID = AA.WARE_CODE) as WARE_CODE_NAME,
-			  AA.ITEM_KIND
+			  AA.ITEM_KIND, AA.LOT_NO, AA.CUST_CODE
 		from TB_SUBUL AA
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
 		  and CASE 
 				  WHEN A_WARE_CODE != 0
-				  THEN FIND_IN_SET(AA.WARE_CODE, A_WARE_CODE)
+				  THEN AA.WARE_CODE = A_WARE_CODE
 				  ELSE AA.WARE_CODE LIKE '%'
 			  end
 		and AA.IO_DATE between V_ST_DATE and V_ED_DATE
@@ -124,11 +111,11 @@ begin
 	  and A.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 	  and CASE 
 			  WHEN A_ITEM_KIND != 0
-			  THEN FIND_IN_SET(A.ITEM_KIND, A_ITEM_KIND)
+			  THEN A.ITEM_KIND = A_ITEM_KIND
 			  ELSE A.ITEM_KIND LIKE '%'
 		  END 
 	group by A.ITEM_CODE, A.ITEM_NAME, A.ITEM_SPEC, A.COMP_ID, A.WARE_CODE,
-		  	 A.WARE_CODE_NAME
+			 A.ITEM_KIND, A.LOT_NO, A.CUST_CODE
 	;
 	
 	
