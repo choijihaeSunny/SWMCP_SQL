@@ -44,7 +44,9 @@ begin
 		  END 
 	;
 
-	-- V_END_YYMM null 일 경우 처리 수정 필요
+	if V_END_YYMM is null then
+		set V_END_YYMM = '202001';
+	end if;
 	
 	--
 	select
