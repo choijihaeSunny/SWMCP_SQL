@@ -56,7 +56,7 @@ begin
 		  (SUM(A.PRE_QTY) + SUM(A.IN_QTY) - SUM(A.OUT_QTY)) as STOCK_QTY,
 		  SUM(A.PRE_AMT) as PRE_AMT, SUM(A.IN_AMT) as IN_AMT, SUM(A.OUT_AMT) as OUT_AMT,
 		  (SUM(A.PRE_AMT) + SUM(A.IN_AMT) - SUM(A.OUT_AMT)) as STOCK_AMT,
-		  A.ITEM_KIND, A.LOT_NO, A.CUST_CODE
+		  A.ITEM_KIND, A.LOT_NO, A.CUST_CODE, CUST.CUST_NAME
 	from (
 		select
 			  AA.COMP_ID, AA.ITEM_CODE, BB.ITEM_NAME, BB.ITEM_SPEC, AA.NEXT_QTY as PRE_QTY,
@@ -107,6 +107,9 @@ begin
 			  end
 		and AA.IO_DATE between V_ST_DATE and V_ED_DATE
 	) A
+		inner join TC_CUST_CODE CUST
+			on A.COMP_ID = CUST.COMP_ID
+			and A.CUST_CODE = CUST.CUST_CODE
 	where A.COMP_ID = A_COMP_ID
 	  and A.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 	  and CASE 
