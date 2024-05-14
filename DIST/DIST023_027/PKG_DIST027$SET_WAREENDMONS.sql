@@ -47,7 +47,7 @@ begin
 		,NEXT_AMT
 		,SYS_EMP_NO
     	,SYS_ID
-    	,SYS_DATE
+    	,SYS_DT
 	) values (
 		A_COMP_ID
 		,V_YYMM
