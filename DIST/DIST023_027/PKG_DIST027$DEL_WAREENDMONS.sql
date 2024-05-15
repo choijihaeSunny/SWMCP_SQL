@@ -1,7 +1,6 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST027$DEL_WAREENDMONS`(	
 	IN A_COMP_ID VARCHAR(10),
 	IN A_YYMM TIMESTAMP,
-	IN A_ITEM_CODE VARCHAR(30),
 	IN A_ITEM_KIND BIGINT(20),
 	IN A_WARE_CODE BIGINT(20),
 	OUT N_RETURN INT,
@@ -27,7 +26,6 @@ begin
     from TB_IO_END
     where COMP_ID = A_COMP_ID
       and YYMM = V_YYMM_CONF
-      and ITEM_CODE = A_ITEM_CODE
       and ITEM_KIND = A_ITEM_KIND
       and WARE_CODE = A_WARE_CODE
     ;
@@ -39,8 +37,7 @@ begin
   
 	delete from TB_IO_END
 	where COMP_ID = A_COMP_ID
-      and YYMM = V_YYMM_CONF
-      and ITEM_CODE = A_ITEM_CODE
+      and YYMM = V_YYMM
       and ITEM_KIND = A_ITEM_KIND
       and WARE_CODE = A_WARE_CODE
 	;
