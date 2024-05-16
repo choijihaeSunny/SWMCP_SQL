@@ -1,5 +1,4 @@
-CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD001$INSERT_MOLD`(		
-	IN A_MOLD_CODE varchar(20),
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD001$INSERT_MOLD`(
 	IN A_CLASS1 bigint(20),
 	IN A_CLASS2 bigint(20),
 	IN A_CLASS_SEQ varchar(4),
@@ -20,9 +19,13 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD001$INSERT_MOLD`(
 	)
 begin
 	
+	declare V_MOLD_CODE VARCHAR(20);
+	
 	DECLARE V_CLASS1 VARCHAR(20);
 	DECLARE V_CLASS2 VARCHAR(20);
 	
+	declare V_CNT INT;
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -39,7 +42,18 @@ begin
     				where path = CONCAT('cfg.mold.class1.', V_CLASS1)
     				  and data_id = A_CLASS2);
   
-    SET A_MOLD_CODE := CONCAT('M', LPAD(V_CLASS1, 2, '0'), LPAD(V_CLASS2, 3, '0'), LPAD(A_CLASS_SEQ, 4, '0'));
+    SET V_MOLD_CODE := CONCAT('M', LPAD(V_CLASS1, 2, '0'), LPAD(V_CLASS2, 3, '0'), LPAD(A_CLASS_SEQ, 4, '0'));
+   
+    select COUNT(*)
+    into V_CNT
+    from TB_MOLD
+    WHERE MOLD_CODE = V_MOLD_CODE
+    ;
+   
+    if V_CNT > 0 then
+		SET N_RETURN = -1;
+      	SET V_RETURN = '순번을 다시 입력하여 주십시오.'; 
+	end if;
    
   	
     INSERT INTO TB_MOLD (
@@ -61,7 +75,7 @@ begin
     	,SYS_ID
     	,SYS_DATE
     ) values (
-    	A_MOLD_CODE,
+    	V_MOLD_CODE,
     	A_CLASS1,
     	A_CLASS2,
     	LPAD(A_CLASS_SEQ, 4, '0'),

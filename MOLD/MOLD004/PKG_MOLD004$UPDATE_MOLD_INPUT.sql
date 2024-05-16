@@ -7,8 +7,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$UPDATE_MOLD_INPUT`(
 	IN A_MOLD_CODE varchar(20),
 #	IN A_LOT_YN bigint(20),
 #	IN A_QTY decimal(10, 0),
-	IN A_COST decimal(16, 4),
-	IN A_AMT decimal(16, 4),
+#	IN A_COST decimal(16, 4),
+#	IN A_AMT decimal(16, 4),
 	IN A_DEPT_CODE varchar(10),
 #	IN A_IN_QTY decimal(10, 0),
 #    IN A_CALL_KIND varchar(10),
@@ -37,9 +37,9 @@ begin
 
 	update TB_MOLD_INPUT
 		set 
-			COST = A_COST
-			,AMT = A_AMT
-			,DEPT_CODE = A_DEPT_CODE
+#			COST = A_COST
+#			,AMT = A_AMT
+			DEPT_CODE = A_DEPT_CODE
 			,RMK = A_RMK
 			,UPD_EMP_NO = A_UPD_EMP_NO
 	    	,UPD_ID = A_UPD_ID

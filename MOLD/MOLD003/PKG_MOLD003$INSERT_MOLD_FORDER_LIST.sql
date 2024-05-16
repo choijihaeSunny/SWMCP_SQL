@@ -7,7 +7,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$INSERT_MOLD_FORDER_LI
 	IN A_QTY decimal(10, 0),
 	IN A_DELI_DATE TIMESTAMP,
 	IN A_COST decimal(16, 4),
-	IN A_AMT decimal(16, 4),
 	IN A_EMP_NO varchar(10),
 	IN A_DEPT_CODE varchar(10),
 	IN A_CALL_KEY varchar(30),
@@ -23,6 +22,8 @@ begin
 	declare V_MOLD_MORDER_KEY varchar(30);
 
 	declare V_DUP_CNT INT;
+
+	declare V_AMT decimal(16, 4);
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -45,6 +46,8 @@ begin
     	set V_SET_NO = V_SET_NO + 1;
     	SET V_MOLD_MORDER_KEY = CONCAT('DO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
     end if;
+   
+    set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
   	
     INSERT INTO TB_MOLD_FORDER (
     	COMP_ID,
@@ -77,7 +80,7 @@ begin
     	A_QTY,
     	DATE_FORMAT(A_DELI_DATE, '%Y%m%d'),
     	A_COST,
-    	A_AMT,
+    	V_AMT,
     	A_EMP_NO,
     	A_DEPT_CODE,
     	A_QTY,
