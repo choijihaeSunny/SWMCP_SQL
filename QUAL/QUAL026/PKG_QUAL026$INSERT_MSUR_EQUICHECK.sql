@@ -4,7 +4,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUICHECK
 	IN A_CHECK_ITEM varchar(10),
 	IN A_CYCLE decimal(3, 0),
 	IN A_FINAL_DATE timestamp,
-	IN A_NEXT_DATE timestamp,
 	IN A_CHECK_DEPT varchar(10),
 	IN A_ETC_RMK varchar(200),
 	IN A_SYS_EMP_NO varchar(10),
@@ -14,11 +13,15 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUICHECK
 	)
 begin
 	
+	declare V_NEXT_DATE timestamp;
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
+  
+  	set V_NEXT_DATE = DATE_ADD(A_FINAL_DATE, interval A_CYCLE MONTH);
   
     INSERT INTO TB_MSUR_EQUICHECK (
     	COMP_ID,
@@ -38,7 +41,7 @@ begin
     	A_CHECK_ITEM,
     	A_CYCLE,
     	DATE_FORMAT(A_FINAL_DATE, '%Y%m%d'),
-    	DATE_FORMAT(A_NEXT_DATE, '%Y%m%d'),
+    	DATE_FORMAT(V_NEXT_DATE, '%Y%m%d'),
     	A_CHECK_DEPT,
     	A_ETC_RMK
     	,A_SYS_EMP_NO
