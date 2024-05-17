@@ -47,6 +47,8 @@ PROC_BODY : begin
   	SET V_RETURN = '수불처리 완료되었습니다.'; 
 
 	-- SP_SUBUL_CREATE 참조하여 작성.
+  
+
 	
 	/* 금형수불생성 및 품목, LOT 별 재고 반영*/
 	if A_SUBUL_YN = 'Y' then
@@ -62,7 +64,7 @@ PROC_BODY : begin
 			  and LOT_NO = A_LOT_NO
 			;
 		end if;
-	
+
 		-- INSERT, UPDATE, DELETE else if 구문
 		if A_SAVE_DIV = 'INSERT' then 
 			-- 기존의 재고값을 구하는듯?
@@ -154,21 +156,25 @@ PROC_BODY : begin
             end if; -- if A_STOCK_YN = 'Y' then end
             
         elseif A_SAVE_DIV = 'UPDATE' then 
+        
         	
+        
         	if 
 	        	   A_IN_OUT <> V_IN_OUT	
 	        	or A_WARE_CODE <> V_WARE_CODE
 	        	or A_MOLD_CODE <> V_MOLD_CODE
 	        	or A_LOT_NO <> V_LOT_NO
 	        	or A_STOCK_YN <> V_STOCK_YN
+	        	or A_IO_DATE <> V_IO_DATE
 	        then
+
         		if V_STOCK_YN = 'Y' then -- 변경 전 정보
         			select ifnull(SUM(CASE 
 										  WHEN IN_OUT = '1' THEN IO_QTY 
 										  ELSE IO_QTY * -1 
 									  END), 0),
 						   ifnull(SUM(CASE 
-							   			  WHEN IO_DATE <= A_IO_DATE THEN 
+							   			  WHEN IO_DATE <= V_IO_DATE THEN 
 							   			  								CASE 
 								   			  								WHEN IN_OUT = '1' THEN IO_QTY 
 								   			  												  ELSE IO_QTY * -1 
@@ -236,7 +242,7 @@ PROC_BODY : begin
 					 
         		end if; -- if V_STOCK_YN = 'Y' then end
         		
-        		if A_STOCK_YN = 'Y' then
+        		if A_STOCK_YN = 'Y' then -- 변경 후 정보
         			select ifnull(SUM(CASE 
 										  WHEN IN_OUT = '1' THEN IO_QTY 
 										  ELSE IO_QTY * -1 
@@ -383,8 +389,10 @@ PROC_BODY : begin
             		 -- TB_STOCK_ITEM 에 대응하는 MOLD 테이블을 모르겠어서 일단 보류.
 	            	 
         		end if; -- if A_STOCK_YN = 'Y' then end
-        	end if;
+        	end if; -- A_IN_OUT <> V_IN_OUT	or A_WARE_CODE <> V_WARE_CODE ... end
         
+        	
+        	
         	update TB_MOLD_SUBUL
         	   set IO_DATE = A_IO_DATE,
         	   	   IN_OUT = A_IN_OUT,

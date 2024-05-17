@@ -31,6 +31,7 @@ PROC:begin
 		   from insa_mst 
 		   where emp_no = A.EMP_NO) as EMP_NAME,
 		  A.DEPT_CODE,
+		  B.LOT_YN,
 		  A.RMK
 	from TB_MOLD_FORDER A
 		left join TB_MOLD B

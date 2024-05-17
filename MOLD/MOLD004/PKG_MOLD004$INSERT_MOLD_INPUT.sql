@@ -234,7 +234,7 @@ begin
 		   
 		   	call SP_SUBUL_MOLD_CREATE(
 	    		A_COMP_ID, -- A_COMP_ID
-	    		V_MOLD_INPUT_KEY, -- A_KEY_VAL
+	    		CONCAT('TB_MOLD_INPUT-', V_MOLD_INPUT_KEY), -- A_KEY_VAL
 	    		1, -- A_IN_OUT 
 	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
 	    		V_LOT_NO, -- A_LOT_NO 
@@ -242,8 +242,8 @@ begin
 	    		1, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
 	    		A_COST, -- A_IO_AMT -- 단가 * 갯수 = 금액
-	    		null, -- A_TABLE_NAME 
-	    		null, -- A_TABLE_KEY
+	    		'TB_MOLD_INPUT', -- A_TABLE_NAME
+    			V_MOLD_INPUT_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
 	    		A_CUST_CODE, -- A_CUST_CODE
 	    		'01', -- A_WARE_POS    		
@@ -271,7 +271,8 @@ begin
 						);
 					
 		if V_DUP_CNT = 0 then
-			set V_SAVE_DIV = 'INSERT';
+--			set V_SAVE_DIV = 'INSERT';
+			set V_IN_QTY = A_IN_QTY;
 		
 			insert into TB_MOLD_LOT (
 	    		COMP_ID,
@@ -295,43 +296,46 @@ begin
 			    A_COST,
 			    A_MOLD_CODE, -- 금형 LOT관리 안하는 내역은 LOT NO는 금형코드로 관리 
 			    'N',
-			    A_IN_QTY
+			    V_IN_QTY
 			    ,A_SYS_EMP_NO
 			    ,A_SYS_ID
 			    ,SYSDATE()
 	    	);
 		else
-			set V_SAVE_DIV = 'UPDATE';
+--			set V_SAVE_DIV = 'UPDATE';
 		
 			-- LOT_NO 갱신해야 하나?
+			
+			set V_IN_QTY = (select QTY
+							from TB_MOLD_LOT
+							where LOT_NO = A_MOLD_CODE);
 		
 			update TB_MOLD_LOT
-				set QTY = QTY + A_IN_QTY
+				set QTY = V_IN_QTY
 					,UPD_EMP_NO = A_SYS_EMP_NO
 			    	,UPD_ID = A_SYS_ID
 			    	,UPD_DATE = SYSDATE()
 			where LOT_NO = A_MOLD_CODE
 			;
 		end if;
-    
 
     	call SP_SUBUL_MOLD_CREATE(
     		A_COMP_ID, -- A_COMP_ID
-    		CONCAT('TB_MOLD_INPUT_LOT-', V_MOLD_INPUT_KEY), -- A_KEY_VAL
+    		CONCAT('TB_MOLD_INPUT-', V_MOLD_INPUT_KEY), -- A_KEY_VAL
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
     		A_MOLD_CODE, -- A_LOT_NO --  금형 LOT관리 안 하는 내역 LOT NO는 금형코드로 관리.
     		V_IO_GUBN, -- IO_GUBN ?? 입출고 구분
-    		A_IN_QTY, -- IO_QTY 수량
+    		V_IN_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
     		V_AMT, -- A_IO_AMT
-    		'TB_MOLD_INPUT_LOT', -- A_TABLE_NAME
+    		'TB_MOLD_INPUT', -- A_TABLE_NAME
     		V_MOLD_INPUT_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
     		A_CUST_CODE, -- A_CUST_CODE
     		'01', -- A_WARE_POS    		
     		'Y', -- A_SUBUL_YN
-    		V_SAVE_DIV, -- A_SAVE_DIV
+    		'INSERT', -- A_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
     		'Y', -- A_STOCK_CHK
     		A_MOLD_CODE, -- A_MOLD_CODE
