@@ -8,7 +8,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$UPDATE_MOLD_MODI_LIST
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
-	IN A_AMT decimal(16, 4),
 	IN A_MOLD_CODE_AFT varchar(30),
 	IN A_LOT_NO_AFT varchar(30),
 	IN A_DEPT_CODE varchar(10),
@@ -27,6 +26,8 @@ begin
 	declare V_MODI_DIV_ORI VARCHAR(10);
 	declare V_MODI_DIV varchar(10);
 
+	declare V_AMT decimal(16, 4);
+
 	declare V_LOT_NO varchar(20);
 	declare V_MOLD_CODE varchar(30);
 
@@ -43,6 +44,8 @@ begin
 							 and MOLD_CODE = A_MOLD_CODE);
 					  
 	
+	set V_AMT = A_QTY * A_COST;	
+						
 	if A_MODI_DIV <> V_MODI_DIV_ORI then
 		
 		set V_MODI_DIV = (select CODE
@@ -149,7 +152,7 @@ begin
 		    LOT_NO = A_LOT_NO,
 		    QTY = A_QTY,
 		    COST = A_COST,
-		    AMT = A_AMT,
+		    AMT = V_AMT,
 		    MOLD_CODE_AFT = A_MOLD_CODE_AFT,
 		    LOT_NO_AFT = A_LOT_NO_AFT,
 		    DEPT_CODE = A_DEPT_CODE,
