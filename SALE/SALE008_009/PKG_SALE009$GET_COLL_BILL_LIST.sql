@@ -44,7 +44,7 @@ PROC:begin
 	from TB_COLL_BILL A
 	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 						 AND DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-	  and A.CUST_CODE = A_CUST_CODE
+	  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%') 
 	;
 
 	set N_RETURN := 0;
