@@ -7,7 +7,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$INSERT_MOLD_MODI_LIST
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
-	IN A_MOLD_CODE_AFT varchar(30),
+#	IN A_MOLD_CODE_AFT varchar(30),
 #	IN A_LOT_NO_AFT varchar(30),
 	IN A_DEPT_CODE varchar(10),
 	IN A_IN_OUT varchar(10),
@@ -28,7 +28,7 @@ begin
 
 	declare V_AMT decimal(16, 4);
 	
-	declare V_LOT_NO varchar(20);
+	declare V_LOT_NO varchar(30);
 	declare V_MOLD_CODE varchar(30);
 
 	declare V_DUP_CNT INT;
@@ -62,6 +62,10 @@ begin
    					    and DATA_ID = A_MODI_DIV);
    	
    	set V_AMT = A_QTY * A_COST;
+   
+    set V_MOLD_CODE = (select MOLD_CODE
+						 from TB_MOLD_LOT
+						where LOT_NO = A_LOT_NO);
    					  
    	if V_MODI_DIV = 'M' then -- 수정일 경우
 	   	set V_LOT_STATE = (select DATA_ID
@@ -69,7 +73,7 @@ begin
 						   where path = 'cfg.mold.lotstate'
 						     and CODE = 'M');
 						   
-		set V_LOT_NO = (select CONCAT(substring(LOT_NO, 1 ,(length(LOT_NO) - 2)), LPAD(LOT_NO(LOT_NO, 2) + 1, 2, '0'))
+		set V_LOT_NO = (select CONCAT(SUBSTRING(LOT_NO, 1, (length(LOT_NO) - 2)), LPAD(RIGHT(LOT_NO, 2) + 1, 2, '0'))
 						from TB_MOLD_LOT
 						where LOT_NO = A_LOT_NO);    
 						
@@ -172,7 +176,7 @@ begin
     	,SYS_ID
     	,SYS_DATE
     ) values (
-    	COMP_ID,
+    	A_COMP_ID,
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
     	LPAD(A_SET_SEQ, 3, '0'),
     	V_SET_NO,

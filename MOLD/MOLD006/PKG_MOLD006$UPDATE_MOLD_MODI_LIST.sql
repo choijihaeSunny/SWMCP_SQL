@@ -8,8 +8,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$UPDATE_MOLD_MODI_LIST
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
-	IN A_MOLD_CODE_AFT varchar(30),
-	IN A_LOT_NO_AFT varchar(30),
+#	IN A_MOLD_CODE_AFT varchar(30),
+#	IN A_LOT_NO_AFT varchar(30),
 	IN A_DEPT_CODE varchar(10),
 	IN A_IN_OUT varchar(10),
 	IN A_CUST_CODE varchar(10),
@@ -40,26 +40,24 @@ begin
   	set V_MODI_DIV_ORI = (select MODI_DIV
   						   from TB_MOLD_MODI
   						   where COMP_ID = A_COMP_ID
-							 and MOLD_MODI_KEY = A_MOLD_MODI_KEY
-							 and MOLD_CODE = A_MOLD_CODE);
+							 and MOLD_MODI_KEY = A_MOLD_MODI_KEY);
 					  
 	
 	set V_AMT = A_QTY * A_COST;	
 						
 	if A_MODI_DIV <> V_MODI_DIV_ORI then
 		
-		set V_MODI_DIV = (select CODE
-	   					  from SYS_DATA
-	   					  where path = 'cfg.mold.modi'
-	   					    and DATA_ID = A_MODI_DIV); 
-	   					   
-	   	if V_MODI_DIV = 'M' then -- 수리 -> 수정일 경우
+		set V_MOLD_CODE = (select MOLD_CODE
+							 from TB_MOLD_LOT
+							where LOT_NO = A_LOT_NO);
+   					  
+	   	if V_MODI_DIV = 'M' then -- 수정일 경우
 		   	set V_LOT_STATE = (select DATA_ID
 							   from SYS_DATA
 							   where path = 'cfg.mold.lotstate'
 							     and CODE = 'M');
 							   
-			set V_LOT_NO = (select CONCAT(substring(LOT_NO, 1 ,(length(LOT_NO) - 2)), LPAD(LOT_NO(LOT_NO, 2) + 1, 2, '0'))
+			set V_LOT_NO = (select CONCAT(SUBSTRING(LOT_NO, 1, (length(LOT_NO) - 2)), LPAD(RIGHT(LOT_NO, 2) + 1, 2, '0'))
 							from TB_MOLD_LOT
 							where LOT_NO = A_LOT_NO);    
 							
@@ -97,7 +95,7 @@ begin
 			    	  QTY,
 			    	  WET,
 			    	  'TB_MOLD_MODI',
-			    	  A_MOLD_MODI_KEY,
+			    	  V_MOLD_MODI_KEY,
 			    	  0, -- 수정등록시 신규 LOT 생성으로 금형타수 초기화
 			    	  RMK,
 			    	  0,
@@ -118,27 +116,22 @@ begin
 		    	set LOT_STATE = V_LOT_STATE
 		    where LOT_NO = A_LOT_NO
 		    ;
-	   	else -- if V_MODI_DIV = 'R' -- 수정 -> 수리일 경우
-	   	
-	   		delete from TB_MOLD_LOT
-	   		where CREATE_TABLE = 'TB_MOLD_MODI'
-	   		  and CREATE_TABLE_KEY = A_MOLD_MODI_KEY
-	   		;
-	   	
+	   	else -- if V_MODI_DIV = 'R' -- 수리등록일 경우
+	   		
 	   		-- 대상이 된 LOT_NO 수정상태로 수정
+	   	
 		    set V_LOT_STATE = (select DATA_ID
 							   from SYS_DATA
 							   where path = 'cfg.mold.lotstate'
 							     and CODE = 'M');
-	   	
 	   		update TB_MOLD_LOT
 	   			set HIT_CNT = 0
 	   				,LOT_STATE = V_LOT_STATE
-	   		where LOT_NO = A_LOT_NO
-	   		;
-	   		
-	   	end if; -- if V_MODI_DIV = 'M' then end
-	end if;
+	   		where LOT_NO = A_LOT_NO;
+	   	
+	   		set V_LOT_NO = A_LOT_NO;
+	   	end if;
+	end if; -- if A_MODI_DIV <> V_MODI_DIV_ORI then
 							
     update TB_MOLD_MODI
 	    set
@@ -165,7 +158,6 @@ begin
 		    ,UPD_DATE = SYSDATE()
 	where COMP_ID = A_COMP_ID
 	  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
-	  and MOLD_CODE = A_MOLD_CODE
 	;
 
 	IF ROW_COUNT() = 0 THEN
