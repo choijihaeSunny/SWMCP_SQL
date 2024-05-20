@@ -27,6 +27,7 @@ begin
 	declare V_MOLD_INPUT_KEY varchar(30);
 	declare V_IN_QTY decimal(10, 0);
 	declare V_USE_YN varchar(5);
+	declare V_LOT_STATE varchar(10);
 
 	declare V_DUP_CNT INT;
 
@@ -135,13 +136,18 @@ begin
     
 	    			 
 	SET V_USE_YN = (select CODE
-					from sys_data
+					from SYS_DATA
 					where path = 'cfg.mold.lotyn'
 					  and DATA_ID = A_LOT_YN);
 	
 	SET V_IO_GUBN = (select DATA_ID
-					 from sys_data
+					 from SYS_DATA
 					 where path = 'cfg.com.io.mold.in.in');
+					
+	set V_LOT_STATE = (select DATA_ID
+					   from SYS_DATA
+					   where path = 'cfg.mold.lotstate'
+					     and CODE = 'N');
 	 
    	
     if V_USE_YN = 'Y' then
@@ -212,7 +218,9 @@ begin
 		    	IN_COST,
 		    	LOT_NO_ORI,
 		    	LOT_STATE,
-		    	QTY
+		    	QTY,
+		    	CREATE_TABLE,
+		    	CREATE_TABLE_KEY
 		    	,SYS_EMP_NO
 		    	,SYS_ID
 		    	,SYS_DATE
@@ -224,8 +232,10 @@ begin
 		    	A_CUST_CODE,
 		    	A_COST,
 		    	V_LOT_NO,
-		    	'N',
-		    	1
+		    	V_LOT_STATE,
+		    	1,
+		    	'TB_MOLD_INPUT_LOT',
+		    	V_MOLD_INPUT_KEY
 		    	,A_SYS_EMP_NO
 		    	,A_SYS_ID
 		    	,SYSDATE()
@@ -283,20 +293,24 @@ begin
 			    IN_COST,
 			    LOT_NO_ORI,
 			    LOT_STATE,
-			    QTY
+			    QTY,
+			    CREATE_TABLE,
+		    	CREATE_TABLE_KEY
 			    ,SYS_EMP_NO
 			    ,SYS_ID
 			    ,SYS_DATE
 	    	) values (
 	    		A_COMP_ID,
-			    A_MOLD_CODE,
+			    CONCAT(A_MOLD_CODE, '00'),
 			    A_MOLD_CODE,
 			    DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
 			    A_CUST_CODE,
 			    A_COST,
 			    A_MOLD_CODE, -- 금형 LOT관리 안하는 내역은 LOT NO는 금형코드로 관리 
-			    'N',
-			    V_IN_QTY
+			    V_LOT_STATE,
+			    V_IN_QTY,
+			    'TB_MOLD_INPUT',
+			    V_MOLD_INPUT_KEY
 			    ,A_SYS_EMP_NO
 			    ,A_SYS_ID
 			    ,SYSDATE()
