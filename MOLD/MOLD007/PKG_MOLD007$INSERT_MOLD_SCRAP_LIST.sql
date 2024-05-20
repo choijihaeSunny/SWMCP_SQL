@@ -17,6 +17,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD007$INSERT_MOLD_SCRAP_LIS
 	)
 begin
 	
+	declare V_LOT_STATE varchar(10);
+
 	declare V_SET_NO varchar(10);
 	declare V_MOLD_SCRAP_KEY varchar(30);
 
@@ -80,7 +82,18 @@ begin
     	,SYSDATE()
     )
     ;
+   
+    -- 폐기상태로 UPDATE
+    set V_LOT_STATE = (select DATA_ID
+					   from SYS_DATA
+					   where path = 'cfg.mold.lotstate'
+						 and CODE = 'P');
 	
+	update TB_MOLD_LOT
+	   set LOT_STATE = V_LOT_STATE
+	 where LOT_NO = A_LOT_NO
+	;
+						
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
