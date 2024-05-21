@@ -21,9 +21,9 @@ begin
 	 ;
 	
 	 set V_LOT_STATE = (select DATA_ID
-							   from SYS_DATA
-							   where path = 'cfg.mold.lotstate'
-							     and CODE = 'N');
+						  from SYS_DATA
+					     where path = 'cfg.mold.lotstate'
+						   and CODE = 'N');
 							    
 	update TB_MOLD_LOT
 	   set LOT_STATE = V_LOT_STATE
