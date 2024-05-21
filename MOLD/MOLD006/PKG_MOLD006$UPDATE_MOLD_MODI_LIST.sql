@@ -31,6 +31,11 @@ begin
 	declare V_LOT_NO varchar(20);
 	declare V_MOLD_CODE varchar(30);
 
+	declare V_IO_GUBN bigint(20);
+
+	declare N_SUBUL_RETURN INT;
+	declare V_SUBUL_RETURN VARCHAR(4000);
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -147,7 +152,69 @@ begin
 				    ,UPD_DATE = SYSDATE()
 			where COMP_ID = A_COMP_ID
 			  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
-			;	 
+			;
+		
+			SET V_IO_GUBN = (select DATA_ID
+							   from SYS_DATA
+							  where path = 'cfg.com.io.mold.out');
+					
+			-- 기존의 LOT_NO는 폐기됐으므로 출고처리한다. 
+			call SP_SUBUL_MOLD_CREATE( 
+	    		A_COMP_ID, -- A_COMP_ID
+	    		CONCAT('TB_MOLD_MODI-', A_MOLD_MODI_KEY), -- A_KEY_VAL
+	    		2, -- A_IN_OUT 
+	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+	    		A_LOT_NO, -- A_LOT_NO -
+	    		V_IO_GUBN, -- IO_GUBN
+	    		A_QTY, -- IO_QTY 수량
+	    		A_COST, -- A_IO_PRC 단가
+	    		V_AMT, -- A_IO_AMT
+	    		'TB_MOLD_MODI', -- A_TABLE_NAME
+	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
+	    		'Y', -- A_STOCK_YN 재고반영
+	    		A_CUST_CODE, -- A_CUST_CODE
+	    		'01', -- A_WARE_POS    		
+	    		'Y', -- A_SUBUL_YN
+	    		'INSERT', -- A_SAVE_DIV
+	    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+	    		'Y', -- A_STOCK_CHK
+	    		A_MOLD_CODE, -- A_MOLD_CODE
+	    		A_UPD_EMP_NO, -- A_UPD_EMP_NO
+	    		A_UPD_ID, -- A_SYS_ID
+	    		N_SUBUL_RETURN,
+	    		V_SUBUL_RETURN
+	    	);
+
+	    	SET V_IO_GUBN = (select DATA_ID
+							 from SYS_DATA
+							 where path = 'cfg.com.io.mold.in');
+					
+			-- 새로 생성된 LOT_NO를 입고처리한다. -> 해당 내역 삭제
+			call SP_SUBUL_MOLD_CREATE( 
+	    		A_COMP_ID, -- A_COMP_ID
+	    		CONCAT('TB_MOLD_MODI-', A_MOLD_MODI_KEY), -- A_KEY_VAL
+	    		1, -- A_IN_OUT 
+	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+	    		V_LOT_NO, -- A_LOT_NO
+	    		V_IO_GUBN, -- IO_GUBN 
+	    		A_QTY, -- IO_QTY 수량
+	    		A_COST, -- A_IO_PRC 단가
+	    		V_AMT, -- A_IO_AMT
+	    		'TB_MOLD_MODI', -- A_TABLE_NAME
+	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
+	    		'Y', -- A_STOCK_YN 재고반영
+	    		A_CUST_CODE, -- A_CUST_CODE
+	    		'01', -- A_WARE_POS    		
+	    		'Y', -- A_SUBUL_YN
+	    		'INSERT', -- A_SAVE_DIV
+	    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+	    		'Y', -- A_STOCK_CHK
+	    		A_MOLD_CODE, -- A_MOLD_CODE
+	    		A_UPD_EMP_NO, -- A_UPD_EMP_NO
+	    		A_UPD_ID, -- A_SYS_ID
+	    		N_SUBUL_RETURN,
+	    		V_SUBUL_RETURN
+	    	);
 	   	else -- if V_MODI_DIV = 'R' -- 수리등록일 경우
 	   		
 	   		-- 대상이 된 LOT_NO 수정상태로 수정
@@ -161,6 +228,12 @@ begin
 	   				,LOT_STATE = V_LOT_STATE
 	   		where LOT_NO = A_LOT_NO
 	   		;
+	   		
+	   		set V_LOT_NO = (select LOT_NO
+							from TB_MOLD_LOT
+							where COMP_ID = A_COMP_ID
+					   		  and CREATE_TABLE = 'TB_MOLD_MODI'
+					   		  and CREATE_TABLE_KEY = A_MOLD_MODI_KEY);   
 	   	
 	   		delete from TB_MOLD_LOT
 	   		where COMP_ID = A_COMP_ID
@@ -193,7 +266,69 @@ begin
 				    ,UPD_DATE = SYSDATE()
 			where COMP_ID = A_COMP_ID
 			  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
-			;	  
+			;
+		
+			SET V_IO_GUBN = (select DATA_ID
+							   from SYS_DATA
+							  where path = 'cfg.com.io.mold.out');
+		
+			-- 기존의 LOT_NO는 폐기됐으므로 출고처리한다. -> 해당 내역 삭제
+			call SP_SUBUL_MOLD_CREATE( 
+	    		A_COMP_ID, -- A_COMP_ID
+	    		CONCAT('TB_MOLD_MODI-', A_MOLD_MODI_KEY), -- A_KEY_VAL
+	    		2, -- A_IN_OUT 
+	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+	    		A_LOT_NO, -- A_LOT_NO -
+	    		V_IO_GUBN, -- IO_GUBN
+	    		A_QTY, -- IO_QTY 수량
+	    		A_COST, -- A_IO_PRC 단가
+	    		V_AMT, -- A_IO_AMT
+	    		'TB_MOLD_MODI', -- A_TABLE_NAME
+	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
+	    		'Y', -- A_STOCK_YN 재고반영
+	    		A_CUST_CODE, -- A_CUST_CODE
+	    		'01', -- A_WARE_POS    		
+	    		'Y', -- A_SUBUL_YN
+	    		'DELETE', -- A_SAVE_DIV
+	    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+	    		'Y', -- A_STOCK_CHK
+	    		A_MOLD_CODE, -- A_MOLD_CODE
+	    		A_UPD_EMP_NO, -- A_UPD_EMP_NO
+	    		A_UPD_ID, -- A_SYS_ID
+	    		N_SUBUL_RETURN,
+	    		V_SUBUL_RETURN
+	    	);
+	    
+	    	SET V_IO_GUBN = (select DATA_ID
+							   from SYS_DATA
+							  where path = 'cfg.com.io.mold.in');
+
+			-- 새로 생성된 LOT_NO를 입고처리한다. -> 해당 내역 삭제
+			call SP_SUBUL_MOLD_CREATE( 
+	    		A_COMP_ID, -- A_COMP_ID
+	    		CONCAT('TB_MOLD_MODI-', A_MOLD_MODI_KEY), -- A_KEY_VAL
+	    		1, -- A_IN_OUT 
+	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+	    		V_LOT_NO, -- A_LOT_NO
+	    		V_IO_GUBN, -- IO_GUBN 
+	    		A_QTY, -- IO_QTY 수량
+	    		A_COST, -- A_IO_PRC 단가
+	    		V_AMT, -- A_IO_AMT
+	    		'TB_MOLD_MODI', -- A_TABLE_NAME
+	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
+	    		'Y', -- A_STOCK_YN 재고반영
+	    		A_CUST_CODE, -- A_CUST_CODE
+	    		'01', -- A_WARE_POS    		
+	    		'Y', -- A_SUBUL_YN
+	    		'DELETE', -- A_SAVE_DIV
+	    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+	    		'Y', -- A_STOCK_CHK
+	    		A_MOLD_CODE, -- A_MOLD_CODE
+	    		A_UPD_EMP_NO, -- A_UPD_EMP_NO
+	    		A_UPD_ID, -- A_SYS_ID
+	    		N_SUBUL_RETURN,
+	    		V_SUBUL_RETURN
+	    	);
 	   	end if;
 	else
 		
@@ -223,6 +358,77 @@ begin
 		where COMP_ID = A_COMP_ID
 		  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
 		;	  
+	
+		if A_MODI_DIV = 'M' then -- 수정이었을 경우.
+		
+			set V_LOT_NO = (select LOT_NO_AFT
+							from TB_MOLD_MODI
+							where COMP_ID = A_COMP_ID
+					   		  and MOLD_MODI_KEY = A_MOLD_MODI_KEY);   
+			
+			SET V_IO_GUBN = (select DATA_ID
+							   from SYS_DATA
+							  where path = 'cfg.com.io.mold.out');
+							 
+			-- 기존의 LOT_NO는 폐기됐으므로 출고처리한다. -> 해당 내역 수정
+			call SP_SUBUL_MOLD_CREATE( 
+	    		A_COMP_ID, -- A_COMP_ID
+	    		CONCAT('TB_MOLD_MODI-', A_MOLD_MODI_KEY), -- A_KEY_VAL
+	    		2, -- A_IN_OUT 
+	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+	    		A_LOT_NO, -- A_LOT_NO -
+	    		V_IO_GUBN, -- IO_GUBN
+	    		A_QTY, -- IO_QTY 수량
+	    		A_COST, -- A_IO_PRC 단가
+	    		V_AMT, -- A_IO_AMT
+	    		'TB_MOLD_MODI', -- A_TABLE_NAME
+	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
+	    		'Y', -- A_STOCK_YN 재고반영
+	    		A_CUST_CODE, -- A_CUST_CODE
+	    		'01', -- A_WARE_POS    		
+	    		'Y', -- A_SUBUL_YN
+	    		'UPDATE', -- A_SAVE_DIV
+	    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+	    		'Y', -- A_STOCK_CHK
+	    		A_MOLD_CODE, -- A_MOLD_CODE
+	    		A_UPD_EMP_NO, -- A_UPD_EMP_NO
+	    		A_UPD_ID, -- A_SYS_ID
+	    		N_SUBUL_RETURN,
+	    		V_SUBUL_RETURN
+	    	);
+
+	    
+	    	SET V_IO_GUBN = (select DATA_ID
+							   from SYS_DATA
+							  where path = 'cfg.com.io.mold.in');
+							 
+			-- 새로 생성된 LOT_NO를 입고처리한다. -> 해당 내역 수정
+			call SP_SUBUL_MOLD_CREATE( 
+	    		A_COMP_ID, -- A_COMP_ID
+	    		CONCAT('TB_MOLD_MODI-', A_MOLD_MODI_KEY), -- A_KEY_VAL
+	    		1, -- A_IN_OUT 
+	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+	    		V_LOT_NO, -- A_LOT_NO
+	    		V_IO_GUBN, -- IO_GUBN 
+	    		A_QTY, -- IO_QTY 수량
+	    		A_COST, -- A_IO_PRC 단가
+	    		V_AMT, -- A_IO_AMT
+	    		'TB_MOLD_MODI', -- A_TABLE_NAME
+	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
+	    		'Y', -- A_STOCK_YN 재고반영
+	    		A_CUST_CODE, -- A_CUST_CODE
+	    		'01', -- A_WARE_POS    		
+	    		'Y', -- A_SUBUL_YN
+	    		'UPDATE', -- A_SAVE_DIV
+	    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+	    		'Y', -- A_STOCK_CHK
+	    		A_MOLD_CODE, -- A_MOLD_CODE
+	    		A_UPD_EMP_NO, -- A_UPD_EMP_NO
+	    		A_UPD_ID, -- A_SYS_ID
+	    		N_SUBUL_RETURN,
+	    		V_SUBUL_RETURN
+	    	);
+		end if;
 	end if; -- if A_MODI_DIV <> V_MODI_DIV_ORI then
 		
 	

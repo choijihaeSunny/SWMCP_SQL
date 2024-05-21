@@ -33,6 +33,11 @@ begin
 
 	declare V_DUP_CNT INT;
 
+	declare V_IO_GUBN bigint(20);
+
+	declare N_SUBUL_RETURN INT;
+	declare V_SUBUL_RETURN VARCHAR(4000);
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -148,9 +153,6 @@ begin
    		set V_LOT_NO = A_LOT_NO;
    	end if;
    
-   	
-    
-  	
    
     -- 수정내역 입력
     INSERT INTO TB_MOLD_MODI (
@@ -201,7 +203,70 @@ begin
     ;
    
    	 
+	if V_MODI_DIV = 'M' then -- 수정등록했을 경우 수불처리가 필요하다
 	
+		SET V_IO_GUBN = (select DATA_ID
+						 from SYS_DATA
+						 where path = 'cfg.com.io.mold.out');
+						
+		-- 기존의 LOT_NO는 폐기됐으므로 출고처리한다.
+		call SP_SUBUL_MOLD_CREATE( 
+    		A_COMP_ID, -- A_COMP_ID
+    		CONCAT('TB_MOLD_MODI-', V_MOLD_MODI_KEY), -- A_KEY_VAL
+    		2, -- A_IN_OUT 
+    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+    		A_LOT_NO, -- A_LOT_NO -
+    		V_IO_GUBN, -- IO_GUBN
+    		A_QTY, -- IO_QTY 수량
+    		A_COST, -- A_IO_PRC 단가
+    		V_AMT, -- A_IO_AMT
+    		'TB_MOLD_MODI', -- A_TABLE_NAME
+    		V_MOLD_MODI_KEY, -- A_TABLE_KEY
+    		'Y', -- A_STOCK_YN 재고반영
+    		A_CUST_CODE, -- A_CUST_CODE
+    		'01', -- A_WARE_POS    		
+    		'Y', -- A_SUBUL_YN
+    		'INSERT', -- A_SAVE_DIV
+    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+    		'Y', -- A_STOCK_CHK
+    		A_MOLD_CODE, -- A_MOLD_CODE
+    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    		A_SYS_ID, -- A_SYS_ID
+    		N_SUBUL_RETURN,
+    		V_SUBUL_RETURN
+    	);
+	
+    	SET V_IO_GUBN = (select DATA_ID
+						 from SYS_DATA
+						 where path = 'cfg.com.io.mold.in');
+					
+    	-- 새로 생성된 LOT_NO를 입고처리한다.
+		call SP_SUBUL_MOLD_CREATE( 
+    		A_COMP_ID, -- A_COMP_ID
+    		CONCAT('TB_MOLD_MODI-', V_MOLD_MODI_KEY), -- A_KEY_VAL
+    		1, -- A_IN_OUT 
+    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+    		V_LOT_NO, -- A_LOT_NO
+    		V_IO_GUBN, -- IO_GUBN 
+    		A_QTY, -- IO_QTY 수량
+    		A_COST, -- A_IO_PRC 단가
+    		V_AMT, -- A_IO_AMT
+    		'TB_MOLD_MODI', -- A_TABLE_NAME
+    		V_MOLD_MODI_KEY, -- A_TABLE_KEY
+    		'Y', -- A_STOCK_YN 재고반영
+    		A_CUST_CODE, -- A_CUST_CODE
+    		'01', -- A_WARE_POS    		
+    		'Y', -- A_SUBUL_YN
+    		'INSERT', -- A_SAVE_DIV
+    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+    		'Y', -- A_STOCK_CHK
+    		A_MOLD_CODE, -- A_MOLD_CODE
+    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    		A_SYS_ID, -- A_SYS_ID
+    		N_SUBUL_RETURN,
+    		V_SUBUL_RETURN
+    	);
+	end if;
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
