@@ -184,7 +184,7 @@ PROC_BODY : begin
 					 into   V_STOCK_QTY_PRE, -- 재고수량
 						    V_STOCK_QTY_PRE_DATE -- 스블일자
 					 from   TB_MOLD_SUBUL
-					 where COMP_ID = V_COMP_ID
+					 where COMP_ID = A_COMP_ID
 					   and WARE_CODE = V_WARE_CODE
 					   and MOLD_CODE = V_MOLD_CODE
 					   and LOT_NO = V_LOT_NO

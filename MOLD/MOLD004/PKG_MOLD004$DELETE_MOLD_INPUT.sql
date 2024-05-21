@@ -16,7 +16,6 @@ begin
 	declare V_AMT decimal(16, 4);
 	declare V_CUST_CODE varchar(10);
 	declare V_MOLD_CODE varchar(20);
-	declare V_MOLD_INPUT_KEY varchar(30);
 	declare V_LOT_YN bigint(20);
 	declare V_USE_YN varchar(5);
 
@@ -25,7 +24,6 @@ begin
 	declare I INT;
 	declare V_LOT_CNT INT;
 
-	declare V_SAVE_DIV varchar(10);
 	declare V_IO_GUBN bigint(20);
 	
 	declare N_SUBUL_RETURN INT;
@@ -39,10 +37,10 @@ begin
    
   	select 
 		  IN_QTY, COST, AMT, CUST_CODE, MOLD_CODE,
-		  MOLD_INPUT_KEY, LOT_YN
+		  LOT_YN
 	into 
 		 V_IN_QTY, V_COST, V_AMT, V_CUST_CODE, V_MOLD_CODE,
-		 V_MOLD_INPUT_KEY, V_LOT_YN
+		 V_LOT_YN
 	from TB_MOLD_INPUT
 	where COMP_ID = A_COMP_ID
 	  and MOLD_INPUT_KEY = A_MOLD_INPUT_KEY
@@ -95,9 +93,11 @@ begin
 			   and LOT_NO = V_LOT_NO
 			;
 		
+			set V_AMT = V_COST;
+		
 			call SP_SUBUL_MOLD_CREATE(
 	    		A_COMP_ID, -- A_COMP_ID
-	    		CONCAT('TB_MOLD_INPUT-', V_MOLD_INPUT_KEY), -- A_KEY_VAL
+	    		CONCAT('TB_MOLD_INPUT-', A_MOLD_INPUT_KEY), -- A_KEY_VAL
 	    		1, -- A_IN_OUT 
 	    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
 	    		V_LOT_NO, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
@@ -106,7 +106,7 @@ begin
 	    		V_COST, -- A_IO_PRC 단가
 	    		V_AMT, -- A_IO_AMT
 	    		'TB_MOLD_INPUT', -- A_TABLE_NAME
-    			V_MOLD_INPUT_KEY, -- A_TABLE_KEY
+    			A_MOLD_INPUT_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
 	    		V_CUST_CODE, -- A_CUST_CODE
 	    		'01', -- A_WARE_POS    		
@@ -132,14 +132,12 @@ begin
 					);
 		
 		if V_QTY = V_IN_QTY then
-			set V_SAVE_DIV = 'DELETE';
 		
 			delete from TB_MOLD_LOT
 			 where COMP_ID = A_COMP_ID
 			   and LOT_NO = V_MOLD_CODE  --  금형 LOT관리 안 하는 내역 LOT NO는 금형코드로 관리.
 			;
 		else
-			set V_SAVE_DIV = 'UPDATE';
 		
 			update TB_MOLD_LOT
 				set QTY = QTY - V_IN_QTY
@@ -153,7 +151,7 @@ begin
 	
 		call SP_SUBUL_MOLD_CREATE(
     		A_COMP_ID, -- A_COMP_ID
-    		CONCAT('TB_MOLD_INPUT-', V_MOLD_INPUT_KEY), -- A_KEY_VAL
+    		CONCAT('TB_MOLD_INPUT-', A_MOLD_INPUT_KEY), -- A_KEY_VAL
     		1, -- A_IN_OUT 
     		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
     		V_MOLD_CODE, -- A_LOT_NO -- 금형 사용하지 않는 경우 Input테이블 코드라면 사용하는 경우에는?
@@ -162,12 +160,12 @@ begin
     		V_COST, -- A_IO_PRC 단가
     		V_AMT, -- A_IO_AMT
     		'TB_MOLD_INPUT', -- A_TABLE_NAME
-    		V_MOLD_INPUT_KEY, -- A_TABLE_KEY
+    		A_MOLD_INPUT_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
     		V_CUST_CODE, -- A_CUST_CODE
     		'01', -- A_WARE_POS    		
     		'Y', -- A_SUBUL_YN
-    		V_SAVE_DIV, -- A_SAVE_DIV
+    		'DELETE', -- A_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
     		'Y', -- A_STOCK_CHK
     		V_MOLD_CODE, -- A_MOLD_CODE
