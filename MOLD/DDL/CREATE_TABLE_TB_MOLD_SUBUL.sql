@@ -7,7 +7,7 @@ CREATE TABLE `tb_mold_subul` (
   `IN_OUT` varchar(1) NOT NULL COMMENT '입/출고 (입:1, 출:2)',
   `WARE_CODE` varchar(10) DEFAULT NULL COMMENT '창고코드',
   `MOLD_CODE` varchar(30) NOT NULL COMMENT '금형코드',
-  `LOT_NO` varchar(30) DEFAULT NULL COMMENT 'LOT NO',
+  `LOT_NO` varchar(30) NOT NULL COMMENT 'LOT NO',
   `IO_GUBN` varchar(10) DEFAULT NULL COMMENT '입출내역구분',
   `IO_QTY` decimal(16,4) DEFAULT 0.0000 COMMENT '수량/중량',
   `IO_PRC` decimal(16,4) DEFAULT 0.0000 COMMENT '단가',
@@ -27,5 +27,5 @@ CREATE TABLE `tb_mold_subul` (
   `UPD_EMP_NO` varchar(10) DEFAULT NULL COMMENT '수정사번',
   `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
-  PRIMARY KEY (`COMP_ID`,`KEY_VAL`, `LOT_NO`)
+  PRIMARY KEY (`COMP_ID`,`KEY_VAL`,`LOT_NO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='금형수불';

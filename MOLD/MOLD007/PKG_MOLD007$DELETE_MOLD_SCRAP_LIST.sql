@@ -21,10 +21,11 @@ begin
 	   and MOLD_SCRAP_KEY = A_MOLD_SCRAP_KEY
 	 ;
 	
+	-- 정상상태로 변경
 	set V_LOT_STATE = (select DATA_ID
 					   from SYS_DATA
 					   where path = 'cfg.mold.lotstate'
-						 and CODE = 'M');
+						 and CODE = 'N');
 	
 	update TB_MOLD_LOT
 	   set LOT_STATE = V_LOT_STATE

@@ -16,7 +16,7 @@ CREATE TABLE `tb_mold_lot` (
   `CREATE_TABLE_KEY` varchar(30) DEFAULT NULL COMMENT 'LOT 생성테이블 KEY',
   `HIT_CNT` decimal(16,4) DEFAULT 0.0000 COMMENT '금형타수',
   `RMK` varchar(100) DEFAULT NULL COMMENT '비고',
-  `TEMP1` varchar(10) DEFAULT NULL COMMENT '임시01',
+  `TOT_HIT_CNT` decimal(16,4) DEFAULT NULL COMMENT '누적금형타수',
   `TEMP2` varchar(10) DEFAULT NULL COMMENT '임시02',
   `TEMP3` varchar(10) DEFAULT NULL COMMENT '임시03',
   `TEMP4` varchar(10) DEFAULT NULL COMMENT '임시04',
