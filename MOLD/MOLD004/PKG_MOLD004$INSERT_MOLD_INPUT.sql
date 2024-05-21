@@ -142,7 +142,7 @@ begin
 	
 	SET V_IO_GUBN = (select DATA_ID
 					 from SYS_DATA
-					 where path = 'cfg.com.io.mold.in.in');
+					 where full_path = 'cfg.com.io.mold.in.in');
 					
 	set V_LOT_STATE = (select DATA_ID
 					   from SYS_DATA

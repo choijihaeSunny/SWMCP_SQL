@@ -48,7 +48,7 @@ begin
 
 	SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where path = 'cfg.com.io.mold.in.in');
+					 where full_path = 'cfg.com.io.mold.in.in');
 
 	DELETE FROM TB_MOLD_INPUT
 	 WHERE COMP_ID = A_COMP_ID

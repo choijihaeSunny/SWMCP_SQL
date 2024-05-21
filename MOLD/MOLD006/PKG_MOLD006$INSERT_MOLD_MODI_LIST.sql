@@ -207,7 +207,7 @@ begin
 	
 		SET V_IO_GUBN = (select DATA_ID
 						 from SYS_DATA
-						 where path = 'cfg.com.io.mold.out');
+						 where full_path = 'cfg.com.io.mold.out.out');
 						
 		-- 기존의 LOT_NO는 폐기됐으므로 출고처리한다.
 		call SP_SUBUL_MOLD_CREATE( 
@@ -238,7 +238,7 @@ begin
 	
     	SET V_IO_GUBN = (select DATA_ID
 						 from SYS_DATA
-						 where path = 'cfg.com.io.mold.in');
+						 where full_path = 'cfg.com.io.mold.in.in');
 					
     	-- 새로 생성된 LOT_NO를 입고처리한다.
 		call SP_SUBUL_MOLD_CREATE( 

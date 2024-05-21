@@ -44,7 +44,7 @@ begin
 	
 	SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
-					 where path = 'cfg.com.io.mold.out.out');
+					 where full_path = 'cfg.com.io.mold.out.out');
 					
 					
 	call SP_SUBUL_MOLD_CREATE(

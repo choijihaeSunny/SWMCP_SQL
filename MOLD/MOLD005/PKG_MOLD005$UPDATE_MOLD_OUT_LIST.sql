@@ -19,6 +19,8 @@ begin
 	
 	declare V_AMT decimal(16, 4);
 
+	declare V_IO_GUBN bigint(20);
+
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);	
 
@@ -52,13 +54,18 @@ begin
 	   and MOLD_OUT_KEY = A_MOLD_OUT_KEY
 	;
 
+	SET V_IO_GUBN = (select DATA_ID
+					 from sys_data
+					 where full_path = 'cfg.com.io.mold.out.out');
+	
+
 	call SP_SUBUL_MOLD_CREATE(
    		A_COMP_ID, -- A_COMP_ID
    		CONCAT('TB_MOLD_OUT-', A_MOLD_OUT_KEY), -- A_KEY_VAL
    		2, -- A_IN_OUT 
    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
    		A_LOT_NO, -- A_LOT_NO 
-   		2, -- IO_GUBN ?? 입출고 구분
+   		V_IO_GUBN, -- IO_GUBN ?? 입출고 구분
    		A_QTY, -- IO_QTY 수량
    		A_COST, -- A_IO_PRC 단가
    		V_AMT, -- A_IO_AMT
