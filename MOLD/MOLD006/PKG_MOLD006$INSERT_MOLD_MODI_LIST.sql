@@ -141,7 +141,7 @@ begin
 						   where path = 'cfg.mold.lotstate'
 						     and CODE = 'M');
    		update TB_MOLD_LOT
-   			set HIT_CNT = 0
+   			set HIT_CNT = 0 -- 수리등록시 금형타수 초기화
    				,LOT_STATE = V_LOT_STATE
    		where LOT_NO = A_LOT_NO;
    	

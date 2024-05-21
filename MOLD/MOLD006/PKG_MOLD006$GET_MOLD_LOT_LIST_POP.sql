@@ -6,8 +6,15 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$GET_MOLD_LOT_LIST_POP`(
 )
 PROC:begin
 	
+	declare V_LOT_STATE varchar(10);
+
 	declare exit HANDLER for sqlexception
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	set V_LOT_STATE = (select DATA_ID
+					   from SYS_DATA
+					   where path = 'cfg.mold.lotstate'
+						 and CODE = 'P');
 
 	select
 		  B.MOLD_CODE,
@@ -31,6 +38,7 @@ PROC:begin
 	where B.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
 	  and B.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
 	  and B.USE_YN = 'Y'
+	  and A.LOT_STATE <> V_LOT_STATE
 	;
 
 	set N_RETURN := 0;

@@ -8,8 +8,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$UPDATE_MOLD_MODI_LIST
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
-#	IN A_MOLD_CODE_AFT varchar(30),
-#	IN A_LOT_NO_AFT varchar(30),
+	IN A_MOLD_CODE_AFT varchar(30),
+	IN A_LOT_NO_AFT varchar(30),
 	IN A_DEPT_CODE varchar(10),
 	IN A_IN_OUT varchar(10),
 	IN A_CUST_CODE varchar(10),
@@ -45,11 +45,13 @@ begin
 	
 	set V_AMT = A_QTY * A_COST;	
 						
+	set V_MOLD_CODE = (select MOLD_CODE
+						 from TB_MOLD_LOT
+					   where LOT_NO = A_LOT_NO);
+
 	if A_MODI_DIV <> V_MODI_DIV_ORI then
 		
-		set V_MOLD_CODE = (select MOLD_CODE
-							 from TB_MOLD_LOT
-							where LOT_NO = A_LOT_NO);
+		
    					  
 	   	if V_MODI_DIV = 'M' then -- 수정일 경우
 		   	set V_LOT_STATE = (select DATA_ID
@@ -116,6 +118,33 @@ begin
 		    	set LOT_STATE = V_LOT_STATE
 		    where LOT_NO = A_LOT_NO
 		    ;
+		   
+		    update TB_MOLD_MODI
+			    set
+		#    		COMP_ID = A_COMP_ID,
+		#	    	SET_DATE = A_SET_DATE,
+		#	    	SET_SEQ = A_SET_SEQ,
+		#	    	SET_NO = A_SET_NO,
+		#	    	MOLD_MODI_KEY = A_MOLD_MODI_KEY,
+				    MODI_DIV = A_MODI_DIV,
+				    MOLD_CODE = A_MOLD_CODE,
+				    LOT_NO = A_LOT_NO,
+				    QTY = A_QTY,
+				    COST = A_COST,
+				    AMT = V_AMT,
+				    MOLD_CODE_AFT = V_MOLD_CODE,
+				    LOT_NO_AFT = V_LOT_NO,
+				    DEPT_CODE = A_DEPT_CODE,
+				    IN_OUT = A_IN_OUT,
+				    CUST_CODE = A_CUST_CODE,
+				    CONT = A_CONT,
+				    RMK = A_RMK
+				    ,UPD_EMP_NO = A_UPD_EMP_NO
+				    ,UPD_ID = A_UPD_ID
+				    ,UPD_DATE = SYSDATE()
+			where COMP_ID = A_COMP_ID
+			  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
+			;	 
 	   	else -- if V_MODI_DIV = 'R' -- 수리등록일 경우
 	   		
 	   		-- 대상이 된 LOT_NO 수정상태로 수정
@@ -127,39 +156,75 @@ begin
 	   		update TB_MOLD_LOT
 	   			set HIT_CNT = 0
 	   				,LOT_STATE = V_LOT_STATE
-	   		where LOT_NO = A_LOT_NO;
+	   		where LOT_NO = A_LOT_NO
+	   		;
 	   	
-	   		set V_LOT_NO = A_LOT_NO;
+	   		delete from TB_MOLD_LOT
+	   		where COMP_ID = A_COMP_ID
+	   		  and LOT_NO_ORI = A_LOT_NO
+	   		  and CREATE_TABLE = 'TB_MOLD_MODI'
+	   		  and CREATE_TABLE_KEY = A_MOLD_MODI_KEY
+	   		;
+	   	
+	   		update TB_MOLD_MODI
+			    set
+		#    		COMP_ID = A_COMP_ID,
+		#	    	SET_DATE = A_SET_DATE,
+		#	    	SET_SEQ = A_SET_SEQ,
+		#	    	SET_NO = A_SET_NO,
+		#	    	MOLD_MODI_KEY = A_MOLD_MODI_KEY,
+				    MODI_DIV = A_MODI_DIV,
+				    MOLD_CODE = A_MOLD_CODE,
+				    LOT_NO = A_LOT_NO,
+				    QTY = A_QTY,
+				    COST = A_COST,
+				    AMT = V_AMT,
+				    MOLD_CODE_AFT = A_MOLD_CODE,
+				    LOT_NO_AFT = A_LOT_NO,
+				    DEPT_CODE = A_DEPT_CODE,
+				    IN_OUT = A_IN_OUT,
+				    CUST_CODE = A_CUST_CODE,
+				    CONT = A_CONT,
+				    RMK = A_RMK
+				    ,UPD_EMP_NO = A_UPD_EMP_NO
+				    ,UPD_ID = A_UPD_ID
+				    ,UPD_DATE = SYSDATE()
+			where COMP_ID = A_COMP_ID
+			  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
+			;	  
 	   	end if;
+	else
+		
+	   update TB_MOLD_MODI
+		    set
+	#    		COMP_ID = A_COMP_ID,
+	#	    	SET_DATE = A_SET_DATE,
+	#	    	SET_SEQ = A_SET_SEQ,
+	#	    	SET_NO = A_SET_NO,
+	#	    	MOLD_MODI_KEY = A_MOLD_MODI_KEY,
+			    MODI_DIV = A_MODI_DIV,
+			    MOLD_CODE = A_MOLD_CODE,
+			    LOT_NO = A_LOT_NO,
+			    QTY = A_QTY,
+			    COST = A_COST,
+			    AMT = V_AMT,
+			    MOLD_CODE_AFT = A_MOLD_CODE_AFT,
+			    LOT_NO_AFT = A_LOT_NO_AFT,
+			    DEPT_CODE = A_DEPT_CODE,
+			    IN_OUT = A_IN_OUT,
+			    CUST_CODE = A_CUST_CODE,
+			    CONT = A_CONT,
+			    RMK = A_RMK
+			    ,UPD_EMP_NO = A_UPD_EMP_NO
+			    ,UPD_ID = A_UPD_ID
+			    ,UPD_DATE = SYSDATE()
+		where COMP_ID = A_COMP_ID
+		  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
+		;	  
 	end if; -- if A_MODI_DIV <> V_MODI_DIV_ORI then
-							
-    update TB_MOLD_MODI
-	    set
-#    		COMP_ID = A_COMP_ID,
-#	    	SET_DATE = A_SET_DATE,
-#	    	SET_SEQ = A_SET_SEQ,
-#	    	SET_NO = A_SET_NO,
-#	    	MOLD_MODI_KEY = A_MOLD_MODI_KEY,
-		    MODI_DIV = A_MODI_DIV,
-		    MOLD_CODE = A_MOLD_CODE,
-		    LOT_NO = A_LOT_NO,
-		    QTY = A_QTY,
-		    COST = A_COST,
-		    AMT = V_AMT,
-		    MOLD_CODE_AFT = A_MOLD_CODE_AFT,
-		    LOT_NO_AFT = A_LOT_NO_AFT,
-		    DEPT_CODE = A_DEPT_CODE,
-		    IN_OUT = A_IN_OUT,
-		    CUST_CODE = A_CUST_CODE,
-		    CONT = A_CONT,
-		    RMK = A_RMK
-		    ,UPD_EMP_NO = A_UPD_EMP_NO
-		    ,UPD_ID = A_UPD_ID
-		    ,UPD_DATE = SYSDATE()
-	where COMP_ID = A_COMP_ID
-	  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
-	;
-
+		
+	
+ 
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = '저장이 실패하였습니다.'; 
