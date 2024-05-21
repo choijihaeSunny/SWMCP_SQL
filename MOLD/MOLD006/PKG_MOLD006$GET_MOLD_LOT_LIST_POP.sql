@@ -11,31 +11,35 @@ PROC:begin
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	select
-		  B.MOLD_CODE,
-		  B.MOLD_NAME,
-		  B.MOLD_SPEC,
-		  B.LOT_YN,
+		  A.MOLD_CODE,
+		  C.MOLD_NAME,
+		  C.MOLD_SPEC,
+		  C.LOT_YN,
 		  A.LOT_NO,
-		  A.QTY,
-		  A.IN_COST,
-		  B.STOCK_SAFE,
-		  B.CUST_CODE,
+		  B.QTY,
+		  B.IN_COST,
+		  C.STOCK_SAFE,
+		  C.CUST_CODE,
 		  (select CUST_NAME
 		   from tc_cust_code
-		   where cust_code = B.CUST_CODE) as CUST_NAME,
-		  B.ITEM_UNIT,
-		  B.RMK,
-		  B.CODE_PRE,
-		  B.WARE_POS
-	from TB_MOLD_LOT A
-		inner join TB_MOLD B on (A.MOLD_CODE = B.MOLD_CODE)
-	where B.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
-	  and B.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
-	  and B.USE_YN = 'Y'
-	  and A.LOT_STATE = (select DATA_ID
+		   where cust_code = C.CUST_CODE) as CUST_NAME,
+		  C.ITEM_UNIT,
+		  C.RMK,
+		  C.CODE_PRE,
+		  C.WARE_POS
+	from TB_MOLD_STOCK A
+		inner join TB_MOLD_LOT B on (A.COMP_ID = B.COMP_ID
+								 and A.MOLD_CODE = B.MOLD_CODE
+								 and A.LOT_NO = B.LOT_NO)
+		inner join TB_MOLD C on (B.MOLD_CODE = C.MOLD_CODE)
+	where C.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
+	  and C.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
+	  and C.USE_YN = 'Y'
+	  and B.LOT_STATE = (select DATA_ID
 					       from SYS_DATA
 					      where path = 'cfg.mold.lotstate'
 						    and CODE = 'N')
+	  and A.STOCK_QTY > 0
 	;
 
 	set N_RETURN := 0;
