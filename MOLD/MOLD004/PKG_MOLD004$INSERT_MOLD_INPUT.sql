@@ -277,7 +277,7 @@ begin
     
     	SET V_DUP_CNT = (select COUNT(*)
 						 from TB_MOLD_LOT
-						 where LOT_NO = A_MOLD_CODE
+						 where MOLD_CODE = A_MOLD_CODE
 						);
 					
 		if V_DUP_CNT = 0 then
