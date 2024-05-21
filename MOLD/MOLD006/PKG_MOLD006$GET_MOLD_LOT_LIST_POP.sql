@@ -14,7 +14,7 @@ PROC:begin
 	set V_LOT_STATE = (select DATA_ID
 					   from SYS_DATA
 					   where path = 'cfg.mold.lotstate'
-						 and CODE = 'P');
+						 and CODE = 'N');
 
 	select
 		  B.MOLD_CODE,
@@ -38,7 +38,7 @@ PROC:begin
 	where B.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
 	  and B.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
 	  and B.USE_YN = 'Y'
-	  and A.LOT_STATE <> V_LOT_STATE
+	  and A.LOT_STATE = V_LOT_STATE
 	;
 
 	set N_RETURN := 0;

@@ -51,7 +51,10 @@ begin
 
 	if A_MODI_DIV <> V_MODI_DIV_ORI then
 		
-		
+		set V_MODI_DIV = (select CODE
+	   					    from SYS_DATA
+	   					   where path = 'cfg.mold.modi'
+	   					     and DATA_ID = A_MODI_DIV);
    					  
 	   	if V_MODI_DIV = 'M' then -- 수정일 경우
 		   	set V_LOT_STATE = (select DATA_ID
@@ -92,17 +95,17 @@ begin
 			    	  IN_CUST,
 			    	  IN_COST,
 			      	  LOT_NO_ORI,
-			    	  A_LOT_NO,
+			    	  V_LOT_NO,
 			    	  V_LOT_STATE,
 			    	  QTY,
 			    	  WET,
 			    	  'TB_MOLD_MODI',
-			    	  V_MOLD_MODI_KEY,
+			    	  A_MOLD_MODI_KEY,
 			    	  0, -- 수정등록시 신규 LOT 생성으로 금형타수 초기화
 			    	  RMK,
 			    	  0,
-			    	  A_SYS_EMP_NO,
-			    	  A_SYS_ID,
+			    	  A_UPD_EMP_NO,
+			    	  A_UPD_ID,
 			    	  SYSDATE()
 			    from TB_MOLD_LOT
 			    where LOT_NO = A_LOT_NO    	  
@@ -161,7 +164,6 @@ begin
 	   	
 	   		delete from TB_MOLD_LOT
 	   		where COMP_ID = A_COMP_ID
-	   		  and LOT_NO_ORI = A_LOT_NO
 	   		  and CREATE_TABLE = 'TB_MOLD_MODI'
 	   		  and CREATE_TABLE_KEY = A_MOLD_MODI_KEY
 	   		;
