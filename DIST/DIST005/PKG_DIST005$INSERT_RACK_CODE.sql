@@ -27,7 +27,7 @@ begin
   
   	SET V_RACK_DIV = (select CODE
   					  from SYS_DATA
-  					  where path = 'cfg.dist.rack'
+  					  where path = 'cfg.dist.rack.item'
   					    and DATA_ID = A_RACK_DIV);
   
     SET V_RACK_CODE := CONCAT(V_RACK_DIV, LPAD(A_FLOOR, 3, '0'), LPAD(A_ROOM, 3, '0'));
