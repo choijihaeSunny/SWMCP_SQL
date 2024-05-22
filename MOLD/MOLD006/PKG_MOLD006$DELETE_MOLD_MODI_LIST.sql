@@ -88,7 +88,7 @@ begin
     		A_MOLD_MODI_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
     		V_CUST_CODE, -- V_CUST_CODE
-    		'01', -- A_WARE_POS    		
+    		null, -- A_WARE_POS    		
     		'Y', -- A_SUBUL_YN
     		'DELETE', -- A_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
@@ -118,7 +118,7 @@ begin
     		A_MOLD_MODI_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
     		V_CUST_CODE, -- V_CUST_CODE
-    		'01', -- A_WARE_POS    		
+    		null, -- A_WARE_POS    		
     		'Y', -- A_SUBUL_YN
     		'DELETE', -- A_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
