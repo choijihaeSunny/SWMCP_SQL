@@ -14,6 +14,7 @@ begin
 	declare V_QTY decimal(10, 0);
 	declare V_COST decimal(16, 4);
 	declare V_AMT decimal(16, 4);
+	declare V_MOLD_CODE	varchar(20);
 
 	declare V_IO_GUBN bigint(20);
 
@@ -27,8 +28,10 @@ begin
   	SET V_RETURN = '저장되었습니다.'; 
    
   	 select 
-	 		QTY, COST, AMT
-	 into V_QTY, V_COST, V_AMT
+	 		QTY, COST, AMT,
+	 		MOLD_CODE
+	 into V_QTY, V_COST, V_AMT,
+	 	  V_MOLD_CODE
 	 from TB_MOLD_SCRAP
 	 where MOLD_SCRAP_KEY = A_MOLD_SCRAP_KEY
 	 ;
@@ -73,7 +76,7 @@ begin
     		'DELETE', -- A_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
     		'Y', -- A_STOCK_CHK
-    		A_MOLD_CODE, -- A_MOLD_CODE
+    		V_MOLD_CODE, -- A_MOLD_CODE
     		A_SYS_EMP_NO, -- A_SYS_EMP_NO
     		A_SYS_ID, -- A_SYS_ID
     		N_SUBUL_RETURN,
