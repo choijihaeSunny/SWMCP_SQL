@@ -40,7 +40,7 @@ PROC:BEGIN
 	where A.path = 'cfg.dist.rack.mold'
 	  and case 
 			  when A_DATA_ID != 0
-			  then FIND_IN_SET(A.DATA_ID, A_DATA_ID)
+			  then A.DATA_ID = A_DATA_ID
 			  else A.DATA_ID like '%'
 		  end 
 	;
