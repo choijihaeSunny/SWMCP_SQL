@@ -1,4 +1,5 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD007$GET_MOLD_LOT_LIST_POP`(
+			IN A_COMP_ID VARCHAR(10),
 			IN A_MOLD_CODE		VARCHAR(20),
 			IN A_MOLD_NAME		VARCHAR(50),
             OUT N_RETURN      	INT,
@@ -31,13 +32,14 @@ PROC:begin
 								 and A.MOLD_CODE = B.MOLD_CODE
 								 and A.LOT_NO = B.LOT_NO)
 		inner join TB_MOLD C on (B.MOLD_CODE = C.MOLD_CODE)
-	where C.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
+	where A.COMP_ID = A_COMP_ID
+	  and C.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
 	  and C.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
 	  and C.USE_YN = 'Y'
 	  and B.LOT_STATE in (select DATA_ID
 	  					  from SYS_DATA 
 	  					  where path = 'cfg.mold.lotstate'
-						    and CODE <> 'P')
+						    and CODE <> 'P') -- 폐기가 아닌 내역 호출
 	  and A.STOCK_QTY > 0
 	;
 

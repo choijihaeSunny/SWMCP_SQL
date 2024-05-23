@@ -1,7 +1,7 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD005$GET_MOLD_LOT_LIST_POP`(
 			IN A_COMP_ID VARCHAR(10),
-			IN A_ST_DATE 			TIMESTAMP,
-			IN A_ED_DATE			TIMESTAMP,
+			IN A_MOLD_CODE		VARCHAR(20),
+			IN A_MOLD_NAME		VARCHAR(50),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
@@ -33,8 +33,9 @@ PROC:begin
 								 and A.LOT_NO = B.LOT_NO)
 		inner join TB_MOLD C on (A.MOLD_CODE = C.MOLD_CODE)
 	where A.COMP_ID = A_COMP_ID
--- 		and A.MOLD_CODE like CONCAT('%', A_MOLD_CODE, '%')
-		and B.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+		and C.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
+	    and C.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
+		-- and B.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 		and A.STOCK_QTY > 0
 -- 	order by A.MOLD_CODE, STR_TO_DATE(B.SET_DATE, '%Y%m%d'), A.LOT_NO
 	;

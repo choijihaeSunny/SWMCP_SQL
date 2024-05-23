@@ -1,5 +1,4 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_DIST020$GET_RACK_DIV`(
-	IN `A_PARENT_PATH` VARCHAR(200),
 	IN `A_DATA_ID` BIGINT(20),
 	IN `A_LANG` VARCHAR(100),
 	OUT `N_RETURN` INT,
@@ -38,7 +37,7 @@ PROC:BEGIN
 	      A.MODI_KEY,
 	      A.PARENT
 	from SYS_DATA A
-	where A.path = A_PARENT_PATH
+	where A.path = 'cfg.dist.rack.item'
 	  and case 
 			  when A_DATA_ID != 0
 			  then FIND_IN_SET(A.DATA_ID, A_DATA_ID)
