@@ -3,6 +3,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC117$GET_MORDER`(
 	in A_ST_DATE DATETIME,
 	in A_ED_DATE DATETIME,
 	in A_CUST_CODE VARCHAR(10),
+	IN A_CUST_NAME		varchar(100),
 	in A_END_YN VARCHAR(1),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
@@ -65,6 +66,7 @@ begin
 	 	and A.SET_DATE between date_format(A_ST_DATE, '%Y%m%d') 
 	 					   and date_format(A_ED_DATE, '%Y%m%d')
 	 	and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%') 
+	 	and C.CUST_NAME like CONCAT('%', A_CUST_NAME, '%')
 	 	and A.END_YN = A_END_YN
 	;
 	
