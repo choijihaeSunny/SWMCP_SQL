@@ -49,6 +49,7 @@ begin
 		str_to_date(A.OUTSIDE_CONFIRM_DATE,'%Y%m%d') as OUTSIDE_CONFIRM_DATE,
 		A.OUTSIDE_OUT_QTY,
 		A.END_YN,
+		str_to_date(A.END_DATE,'%Y%m%d') as END_DATE,
 		A.IN_QTY,
 		A.OUTSIDE_PROG_OUT_QTY,
 		A.SYS_ID,
