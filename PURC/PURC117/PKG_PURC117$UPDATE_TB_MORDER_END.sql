@@ -17,24 +17,39 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
  	
-  	set V_END_YN = (select
-  						  if (END_YN = 'N', 'Y', 'N')
+  	set V_END_YN = (select END_YN
   					from TB_MORDER
   					where COMP_ID = A_COMP_ID
 	  				and MORDER_MST_KEY = A_MORDER_MST_KEY);
    
-    UPDATE TB_MORDER
-    	SET
-	    	END_YN = V_END_YN,
-	    	END_EMP = A_UPD_EMP_NO,
-	    	END_DT = SYSDATE(),
-	   		RMK = A_RMK
-	    	,UPD_EMP_NO = A_UPD_EMP_NO
-	    	,UPD_ID = A_UPD_ID
-	    	,UPD_DATE = SYSDATE()
-	where COMP_ID = A_COMP_ID
-	  and MORDER_MST_KEY = A_MORDER_MST_KEY
-    ;
+	if V_END_YN = 'N' then
+		UPDATE TB_MORDER
+	    	SET
+		    	END_YN = 'Y',
+		    	END_EMP_NO = A_UPD_EMP_NO,
+		    	END_DATE = date_format(sysdate() , '%Y%m%d'),
+		   		RMK = A_RMK
+		    	,UPD_EMP_NO = A_UPD_EMP_NO
+		    	,UPD_ID = A_UPD_ID
+		    	,UPD_DT = SYSDATE()
+		where COMP_ID = A_COMP_ID
+		  and MORDER_MST_KEY = A_MORDER_MST_KEY
+	    ;
+	else
+		UPDATE TB_MORDER
+	    	SET
+		    	END_YN = 'N',
+		    	END_EMP_NO = NULL,
+		    	END_DATE = NULL,
+		   		RMK = A_RMK
+		    	,UPD_EMP_NO = A_UPD_EMP_NO
+		    	,UPD_ID = A_UPD_ID
+		    	,UPD_DT = SYSDATE()
+		where COMP_ID = A_COMP_ID
+		  and MORDER_MST_KEY = A_MORDER_MST_KEY
+	    ;
+	end if;
+    
    
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
