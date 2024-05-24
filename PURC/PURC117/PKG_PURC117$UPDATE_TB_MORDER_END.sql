@@ -1,6 +1,7 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC117$UPDATE_TB_MORDER_END`(		
 	IN A_COMP_ID varchar(10),
 	IN A_MORDER_MST_KEY varchar(30),
+	IN A_MORDER_REQ_MST_KEY varchar(30),
 	IN A_RMK varchar(100),
 	IN A_UPD_EMP_NO varchar(10),
 	IN A_UPD_ID varchar(30),
@@ -35,6 +36,22 @@ begin
 		where COMP_ID = A_COMP_ID
 		  and MORDER_MST_KEY = A_MORDER_MST_KEY
 	    ;
+	   
+	    if A_MORDER_REQ_MST_KEY is not null and A_MORDER_REQ_MST_KEY != '' then 
+		    UPDATE TB_MORDER_REQ_MST
+		    	SET
+			    	END_YN = 'Y',
+			    	END_EMP_NO = A_UPD_EMP_NO,
+			    	END_DATE = date_format(sysdate() , '%Y%m%d'),
+			   		#RMK = A_RMK
+			    	UPD_EMP_NO = A_UPD_EMP_NO
+			    	,UPD_ID = A_UPD_ID
+			    	,UPD_DT = SYSDATE()
+			where COMP_ID = A_COMP_ID
+			  and MORDER_REQ_MST_KEY = A_MORDER_REQ_MST_KEY
+		    ;
+	    end if;
+	    
 	else
 		UPDATE TB_MORDER
 	    	SET
@@ -48,8 +65,25 @@ begin
 		where COMP_ID = A_COMP_ID
 		  and MORDER_MST_KEY = A_MORDER_MST_KEY
 	    ;
+	   
+	    if A_MORDER_REQ_MST_KEY is not null and A_MORDER_REQ_MST_KEY != '' then 
+	    	UPDATE TB_MORDER_REQ_MST
+		    	SET
+			    	END_YN = 'N',
+			    	END_EMP_NO = NULL,
+			    	END_DATE = NULL,
+			   		#RMK = A_RMK
+			    	UPD_EMP_NO = A_UPD_EMP_NO
+			    	,UPD_ID = A_UPD_ID
+			    	,UPD_DT = SYSDATE()
+			where COMP_ID = A_COMP_ID
+			  and MORDER_REQ_MST_KEY = A_MORDER_REQ_MST_KEY
+		    ;
+	    end if;
+	   	
 	end if;
     
+	-- tb_morder_req_mst도 변경해야 하나?
    
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
