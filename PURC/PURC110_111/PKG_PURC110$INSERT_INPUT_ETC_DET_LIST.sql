@@ -24,7 +24,6 @@ begin
 
 	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
-	declare V_WARE_CODE bigint(20);
     declare V_CUST_CODE varchar(10);
    
     declare V_ITEM_KIND bigint(20);
@@ -54,9 +53,6 @@ begin
 
    	set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
    	
-   	set V_WARE_CODE = (select WARE_CODE
-   					   from DEPT_CODE
-   					   where DEPT_CODE = A_DEPT_CODE);
    					  
    	set V_ITEM_KIND = (select ITEM_KIND
    					   from TB_ITEM_CODE
@@ -72,7 +68,7 @@ begin
     			substring(V_SET_DATE, 3, 4), -- A_YYMM
     			LPAD(V_SET_SEQ, 5, '0'), -- A_LOT_SEQ
     			
-    			V_SET_DATE, -- A_SET_DATE
+    			str_to_date(V_SET_DATE,'%Y%m%d'), -- A_SET_DATE
     			'LP', -- A_LOT_KIND
     			'00', -- A_LOT_REV
     			A_ITEM_CODE, -- A_ITEM_CODE
@@ -165,7 +161,7 @@ begin
         'INSERT', -- A_SAVE_DIV VARCHAR(10),
         V_SET_DATE, -- A_IO_DATE VARCHAR(8),
         1, -- A_-- IN_OUT VARCHAR(1),
-        V_WARE_CODE, -- A_WARE_CODE big--t,        
+        A_WARE_CODE, -- A_WARE_CODE big--t,        
         V_ITEM_KIND, -- A_ITEM_K--D big--t, input_etc 에 ITEM_KIND 항목이 없음.
         A_ITEM_CODE, -- A_ITEM_CODE VARCHAR(30),
         V_LOT_NO, -- V_LOT_NO VARCHAR(30),

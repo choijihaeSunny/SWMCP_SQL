@@ -32,7 +32,8 @@ begin
 			on (	A.COMP_ID = B.COMP_ID 
 				and A.MOLD_CODE = B.MOLD_CODE 
 				and A.LOT_NO = B.LOT_NO 
-				and B.LOT_STATE = 'NORMAL') 
+				#and B.LOT_STATE = 'NORMAL'
+				) 
 		inner join TB_MOLD C 
 			on (A.MOLD_CODE = C.MOLD_CODE)
 	where A.COMP_ID = A_COMP_ID 

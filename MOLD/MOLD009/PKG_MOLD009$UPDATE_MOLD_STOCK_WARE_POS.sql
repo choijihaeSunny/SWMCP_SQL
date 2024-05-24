@@ -2,7 +2,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD009$UPDATE_MOLD_STOCK_WAR
 	IN A_COMP_ID varchar(10),
 	IN A_RACK_CODE varchar(20),
 	IN A_WARE_CODE bigint(20),
-	IN A_ITEM_CODE varchar(30),
+	IN A_MOLD_CODE varchar(30),
 	IN A_LOT_NO varchar(30),
 	IN A_UPD_EMP_NO varchar(10),
 	IN A_UPD_ID varchar(30),
@@ -23,10 +23,10 @@ begin
 	    	,WARE_POS_DATE = SYSDATE()
 	    	,UPD_EMP_NO = A_UPD_EMP_NO
 	    	,UPD_ID = A_UPD_ID
-	    	,UPD_DT = SYSDATE()
+	    	,UPD_DATE = SYSDATE()
 	 WHERE COMP_ID = A_COMP_ID
 	   and WARE_CODE = A_WARE_CODE
-	   AND ITEM_CODE = A_ITEM_CODE
+	   AND MOLD_CODE = A_MOLD_CODE
 	   AND LOT_NO = A_LOT_NO
 	 ;
 	
@@ -34,7 +34,7 @@ begin
 	from TB_MOLD_STOCK
 	WHERE COMP_ID = A_COMP_ID
 	   and WARE_CODE = A_WARE_CODE
-	   AND ITEM_CODE = A_ITEM_CODE
+	   AND MOLD_CODE = A_MOLD_CODE
 	   AND LOT_NO = A_LOT_NO
 	   and WARE_POS = A_RACK_CODE
 	 ;
