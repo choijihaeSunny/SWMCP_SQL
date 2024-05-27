@@ -18,6 +18,7 @@ begin
 	declare V_QTY decimal(10, 0);
 	declare V_COST decimal(16, 4);
 	declare V_SET_DATE varchar(8);
+	declare V_SET_SEQ varchar(4);
 	declare V_INPUT_DATE varchar(8);
 	
 	declare V_IO_GUBN bigint(20);
@@ -36,22 +37,16 @@ begin
   
   	select
 		  ware_code, item_code, lot_no, amt, qty,
-		  cost, set_date, input_date
+		  cost, set_date, set_seq, input_date
 	into V_WARE_CODE, V_ITEM_CODE, V_LOT_NO, V_AMT, V_QTY,
-		 V_COST, V_SET_DATE, V_INPUT_DATE
+		 V_COST, V_SET_DATE, V_SET_SEQ, V_INPUT_DATE
 	from tb_input_etc_det
 	where COMP_ID = A_COMP_ID
       and INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
       and INPUT_ETC_KEY = A_INPUT_ETC_KEY
 	;
-  
-  	delete from TB_INPUT_ETC_DET
-    where COMP_ID = A_COMP_ID
-      and INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
-      and INPUT_ETC_KEY = A_INPUT_ETC_KEY
-    ;
-   
-    SET V_CUST_CODE = (select CUST_CODE
+
+	SET V_CUST_CODE = (select CUST_CODE
    					   from TB_INPUT_ETC_MST
    					   where INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY);
    					  
@@ -63,6 +58,57 @@ begin
 					   from TB_ITEM_CODE
 					   where ITEM_CODE = V_ITEM_CODE);
 					  
+					  
+	CALL PKG_LOT$CREATE_ITEM_LOT_IUD (
+    			'DELETE', -- A_SAVE_DIV
+    			A_COMP_ID, -- A_COMP_ID
+    			V_LOT_NO, -- A_LOT_NO
+    			substring(V_SET_DATE, 3, 4), -- A_YYMM
+    			LPAD(V_SET_SEQ, 5, '0'), -- A_LOT_SEQ
+    			
+    			str_to_date(V_SET_DATE,'%Y%m%d'), -- A_SET_DATE
+    			'LP', -- A_LOT_KIND
+    			'00', -- A_LOT_REV
+    			V_ITEM_CODE, -- A_ITEM_CODE
+    			V_CUST_CODE, -- A_IN_CUST -- 매입거래처
+    			V_COST, -- A_IN_COST -- 매입단가
+    			0, -- A_PROC_COST -- 가공단가
+    			null, -- A_LOT_NO_ORI
+    			null, -- A_LOT_NO_PRE
+    			'NORMAL', -- A_LOT_STATE -- SP_GET_USE_CODE.LOT_STATE 참조. / 정상으로 지정
+    			40809, -- A_LOT_STATE_DET --tb_item_lot_det LOT상태DET cfg.code.lot.status / 정상으로 지정
+    			V_QTY, -- A_QTY
+    			0, -- A_WET
+    			'TB_INPUT_ETC_DET', -- A_CREATE_TABLE
+    			A_INPUT_ETC_KEY, -- A_CREATE_TABLE_KEY
+    			null, -- A_ORDER_KEY -- ???
+    			100, -- A_PROG_CURR -- tb_item_lot_det PROG_CODE cfg.code.proc / 재고상태로 지정
+    			0, -- A_PROG_SEQ_CURR -- tb_item_lot_det PROG_SEQ -- / 현재 공정 순서
+    			167945, -- A_PROG_KIND -- tb_item_lot_det LOT생성사유(cfg.code.lot.init) / 상품입고로 지정
+    			'기타재고', -- A_RMK
+    			 V_ITEM_KIND, -- A_ITEM_KIND
+    			'NEW', -- A_CREATE_DIV
+    			 0, -- A_PROD_UNIT_WET
+    			 0, -- A_MATR_UNIT_WET
+    			 null, -- A_ITEM_CODE_PRE
+    			 0, -- A_QTY_PRE
+    			 0, -- A_WET_PRE
+    			 167945, -- A_LOT_DIVI_KIND -- tb_item_lot_chase  LOT분할통합종류(cfg.code.lot.init) / 상품입고로 지정
+    			 A_SYS_ID, -- A_SYS_ID
+    			 A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    			 V_LOT_NO, -- V_LOT_NO
+    			 N_RETURN, 
+    			 V_RETURN
+    		);		  
+	
+  
+  	delete from TB_INPUT_ETC_DET
+    where COMP_ID = A_COMP_ID
+      and INPUT_ETC_MST_KEY = A_INPUT_ETC_MST_KEY
+      and INPUT_ETC_KEY = A_INPUT_ETC_KEY
+    ;
+   
+    
     call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
         CONCAT('TB_INPUT_ETC_DET-', A_INPUT_ETC_KEY),-- A_KEY_VAL VARCHAR(100),

@@ -59,14 +59,14 @@ begin
    					   where ITEM_CODE = A_ITEM_CODE);
    	
    	-- LP(제품:LP,자재:LM,상품:LG,금형:MO) + 년월(4자리:YYMM) + 순번(5자리) + REV(2자리)
-   	set V_LOT_NO = CONCAT('LP', substring(V_SET_DATE, 3, 4), LPAD(V_SET_SEQ, 5, '0'), '00');
+--    	set V_LOT_NO = CONCAT('LP', substring(V_SET_DATE, 3, 4), LPAD(V_SET_SEQ, 5, '0'), '00');
    
     CALL PKG_LOT$CREATE_ITEM_LOT_IUD (
     			'INSERT', -- A_SAVE_DIV
     			A_COMP_ID, -- A_COMP_ID
-    			V_LOT_NO, -- A_LOT_NO
-    			substring(V_SET_DATE, 3, 4), -- A_YYMM
-    			LPAD(V_SET_SEQ, 5, '0'), -- A_LOT_SEQ
+    			null, -- A_LOT_NO -- 새로 생성해야 하므로 null로 넣는다.
+    			null, -- A_YYMM
+    			null, -- A_LOT_SEQ
     			
     			str_to_date(V_SET_DATE,'%Y%m%d'), -- A_SET_DATE
     			'LP', -- A_LOT_KIND
@@ -75,15 +75,15 @@ begin
     			V_CUST_CODE, -- A_IN_CUST -- 매입거래처
     			A_COST, -- A_IN_COST -- 매입단가
     			0, -- A_PROC_COST -- 가공단가
-    			'', -- A_LOT_NO_ORI
-    			'', -- A_LOT_NO_PRE
+    			null, -- A_LOT_NO_ORI
+    			null, -- A_LOT_NO_PRE
     			'NORMAL', -- A_LOT_STATE -- SP_GET_USE_CODE.LOT_STATE 참조. / 정상으로 지정
     			40809, -- A_LOT_STATE_DET --tb_item_lot_det LOT상태DET cfg.code.lot.status / 정상으로 지정
     			A_QTY, -- A_QTY
     			0, -- A_WET
     			'TB_INPUT_ETC_DET', -- A_CREATE_TABLE
     			V_INPUT_ETC_KEY, -- A_CREATE_TABLE_KEY
-    			'', -- A_ORDER_KEY -- ???
+    			null, -- A_ORDER_KEY -- ???
     			100, -- A_PROG_CURR -- tb_item_lot_det PROG_CODE cfg.code.proc / 재고상태로 지정
     			0, -- A_PROG_SEQ_CURR -- tb_item_lot_det PROG_SEQ -- / 현재 공정 순서
     			167945, -- A_PROG_KIND -- tb_item_lot_det LOT생성사유(cfg.code.lot.init) / 상품입고로 지정
@@ -92,7 +92,7 @@ begin
     			'NEW', -- A_CREATE_DIV
     			 0, -- A_PROD_UNIT_WET
     			 0, -- A_MATR_UNIT_WET
-    			 '', -- A_ITEM_CODE_PRE
+    			 null, -- A_ITEM_CODE_PRE
     			 0, -- A_QTY_PRE
     			 0, -- A_WET_PRE
     			 167945, -- A_LOT_DIVI_KIND -- tb_item_lot_chase  LOT분할통합종류(cfg.code.lot.init) / 상품입고로 지정

@@ -23,6 +23,7 @@ begin
 	
 	declare V_SET_DATE varchar(8);
 	declare V_SET_SEQ varchar(4);
+	declare V_LOT_NO varchar(30);
 
 	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
@@ -79,15 +80,15 @@ begin
     			V_CUST_CODE, -- A_IN_CUST -- 매입거래처
     			A_COST, -- A_IN_COST -- 매입단가
     			0, -- A_PROC_COST -- 가공단가
-    			'', -- A_LOT_NO_ORI
-    			'', -- A_LOT_NO_PRE
+    			null, -- A_LOT_NO_ORI
+    			null, -- A_LOT_NO_PRE
     			'NORMAL', -- A_LOT_STATE -- SP_GET_USE_CODE.LOT_STATE 참조. / 정상으로 지정
     			40809, -- A_LOT_STATE_DET --tb_item_lot_det LOT상태DET cfg.code.lot.status / 정상으로 지정
     			A_QTY, -- A_QTY
     			0, -- A_WET
     			'TB_INPUT_ETC_DET', -- A_CREATE_TABLE
     			A_INPUT_ETC_KEY, -- A_CREATE_TABLE_KEY
-    			'', -- A_ORDER_KEY -- ???
+    			null, -- A_ORDER_KEY -- ???
     			100, -- A_PROG_CURR -- tb_item_lot_det PROG_CODE cfg.code.proc / 재고상태로 지정
     			0, -- A_PROG_SEQ_CURR -- tb_item_lot_det PROG_SEQ -- / 현재 공정 순서
     			167945, -- A_PROG_KIND -- tb_item_lot_det LOT생성사유(cfg.code.lot.init) / 상품입고로 지정
@@ -96,13 +97,13 @@ begin
     			'NEW', -- A_CREATE_DIV
     			 0, -- A_PROD_UNIT_WET
     			 0, -- A_MATR_UNIT_WET
-    			 '', -- A_ITEM_CODE_PRE
+    			 null, -- A_ITEM_CODE_PRE
     			 0, -- A_QTY_PRE
     			 0, -- A_WET_PRE
     			 167945, -- A_LOT_DIVI_KIND -- tb_item_lot_chase  LOT분할통합종류(cfg.code.lot.init) / 상품입고로 지정
     			 A_UPD_ID, -- A_SYS_ID
     			 A_UPD_EMP_NO, -- A_SYS_EMP_NO
-    			 A_LOT_NO, -- A_LOT_NO
+    			 V_LOT_NO, -- A_LOT_NO
     			 N_RETURN, 
     			 V_RETURN
     		);
