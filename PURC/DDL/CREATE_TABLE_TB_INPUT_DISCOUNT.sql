@@ -3,6 +3,7 @@
 CREATE TABLE `tb_input_discount` (
   `COMP_ID` varchar(10) NOT NULL COMMENT '사업장코드',
   `SET_DATE` varchar(8) NOT NULL COMMENT '등록일자',
+  `DISCOUNT_KEY` varchar(30) NOT NULL COMMENT '구매할인KEY : 구분(DM) + 일자(8자리) + 순번(3자리)',
   `CUST_CODE` varchar(10) NOT NULL COMMENT '거래처',
   `INPUT_AMT` decimal(16,4) DEFAULT 0.0000 COMMENT '총입고금액',
   `DS_RATE` decimal(16,4) DEFAULT 0.0000 COMMENT '할인비율(%)',
@@ -23,5 +24,5 @@ CREATE TABLE `tb_input_discount` (
   `UPD_EMP_NO` varchar(10) DEFAULT NULL COMMENT '수정사번',
   `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
   `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
-  PRIMARY KEY (`COMP_ID`,`SET_DATE`,`CUST_CODE`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='금형구매의뢰';
+  PRIMARY KEY (`COMP_ID`,`SET_DATE`,`DISCOUNT_KEY`,`CUST_CODE`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='구매할인관리';

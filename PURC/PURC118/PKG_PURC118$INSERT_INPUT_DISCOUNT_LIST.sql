@@ -17,15 +17,33 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC118$INSERT_INPUT_DISCOUNT
 	)
 begin
 	
+	declare V_DISCOUNT_KEY varchar(30);
+	declare V_SET_NO varchar(5);
+
+	declare V_DUP_CNT INT;
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
-	
+	set V_SET_NO = (select COUNT(*) + 1
+					from TB_INPUT_DISCOUNT
+					where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d'));
+
+	set V_DISCOUNT_KEY = CONCAT('DM', DATE_FORMAT(A_SET_DATE, '%Y%m%d'), LPAD(V_SET_NO, 3, '0'));
    					  
+	set V_DUP_CNT = (select COUNT(*)
+					 from TB_INPUT_DISCOUNT
+					 where DISCOUNT_KEY = V_DISCOUNT_KEY);
+					
+	if V_DUP_CNT <> 0 then
+		set V_SET_NO = V_SET_NO + 1;
+		set V_DISCOUNT_KEY = CONCAT('DM', DATE_FORMAT(A_SET_DATE, '%Y%m%d'), LPAD(V_SET_NO, 3, '0'));
+	end if;
+
     INSERT INTO TB_INPUT_DISCOUNT (
     	COMP_ID,
     	SET_DATE,
+    	DISCOUNT_KEY,
     	CUST_CODE,
     	INPUT_AMT,
     	DS_RATE,
@@ -41,6 +59,7 @@ begin
     ) values (
    		A_COMP_ID,
     	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
+    	V_DISCOUNT_KEY,
     	A_CUST_CODE,
     	A_INPUT_AMT,
     	A_DS_RATE,

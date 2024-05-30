@@ -1,0 +1,34 @@
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC118$GET_INPUT_DISCOUNT_LIST`(
+	IN A_SET_DATE 		TIMESTAMP,
+	OUT N_RETURN INT,
+	OUT V_RETURN VARCHAR(4000)
+)
+PROC:begin
+	
+	
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+	
+	select 
+		  A.DISCOUNT_KEY,
+		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
+		  A.CUST_CODE,
+		  B.CUST_NAME,
+		  A.INPUT_AMT,
+		  A.DS_RATE,
+		  A.DS_AMT,
+		  A.DS_CAUSE,
+		  STR_TO_DATE(A.DS_INPUT_FROM, '%Y%m%d') as DS_INPUT_FROM,
+		  STR_TO_DATE(A.DS_INPUT_TO, '%Y%m%d') as DS_INPUT_TO,
+		  A.END_AMT,
+		  A.RMK
+	from TB_INPUT_DISCOUNT A
+		inner join tc_cust_code B
+			on A.CUST_CODE = B.CUST_CODE
+	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+	group by A.CUST_CODE
+	;
+	
+	set N_RETURN := 0;
+    set V_RETURN := '조회 되었습니다';
+end
