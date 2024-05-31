@@ -10,7 +10,7 @@ PROC:begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 	
 	select 
-		  A.DISCOUNT_KEY,
+		  A.DS_KEY,
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.CUST_CODE,
 		  B.CUST_NAME,
