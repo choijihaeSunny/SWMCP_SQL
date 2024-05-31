@@ -21,7 +21,7 @@ PROC:begin
 		  A.COST,
 		  A.AMT,
 		  A.DS_KEY,
-		  A.DS_AMT,
+		  if(A.DS_AMT = 0, A.AMT, A.DS_AMT) as DS_AMT,
 		  A.INPUT_MST_KEY as DB_KEY,
 		  'TB_INPUT_MST' as DB_NAME
 	from TB_INPUT_MST A
@@ -42,7 +42,7 @@ PROC:begin
 		  A.COST,
 		  A.AMT,
 		  A.DS_KEY,
-		  A.DS_AMT,
+		  if(A.DS_AMT = 0, A.AMT, A.DS_AMT) as DS_AMT,
 		  A.INPUT_OUTSIDE_KEY as DB_KEY,
 		  'TB_INPUT_OUTSIDE' as DB_NAME
 	from TB_INPUT_OUTSIDE A

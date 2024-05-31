@@ -1,6 +1,6 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC118$DELETE_INPUT_DISCOUNT_LIST`(		
 	IN A_COMP_ID varchar(10),
-    IN A_SET_DATE varchar(8),
+    IN A_SET_DATE TIMESTAMP,
     IN A_DS_KEY varchar(30),
     IN A_CUST_CODE varchar(10),
 	IN A_SYS_EMP_NO varchar(10),
@@ -14,7 +14,8 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
-	
+	SET N_RETURN = 0;
+  	SET V_RETURN = '저장되었습니다.'; 
    					  
     delete from TB_INPUT_DISCOUNT
     where COMP_ID = A_COMP_ID

@@ -19,6 +19,9 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
+	SET N_RETURN = 0;
+  	SET V_RETURN = '저장되었습니다.'; 
+
 	if A_UPD_DIV = 'UPDATE' then
 		set V_DS_AMT = A_DS_AMT;
 		set V_DS_KEY = A_DS_KEY;
@@ -27,24 +30,24 @@ begin
 		set V_DS_KEY = null;
 	end if;
 	
-	if A_DB_KEY = 'TB_INPUT_MST' then
+	if A_DB_NAME = 'TB_INPUT_MST' then
 		update TB_INPUT_MST
 			set DS_AMT = V_DS_AMT,
 			    DS_KEY = V_DS_KEY
 			    ,UPD_EMP_NO = A_UPD_EMP_NO
 		    	,UPD_ID = A_UPD_ID
-		    	,UPD_DATE = SYSDATE()
+		    	,UPD_DT = SYSDATE()
 	    where COMP_ID = A_COMP_ID
 		  and INPUT_MST_KEY = A_DB_KEY
 		  and CUST_CODE = A_CUST_CODE
 		;
-	elseif A_DB_KEY = 'TB_INPUT_OUTSIDE' then
+	elseif A_DB_NAME = 'TB_INPUT_OUTSIDE' then
 		update TB_INPUT_OUTSIDE
 			set DS_AMT = V_DS_AMT,
 			    DS_KEY = V_DS_KEY
 			    ,UPD_EMP_NO = A_UPD_EMP_NO
 		    	,UPD_ID = A_UPD_ID
-		    	,UPD_DATE = SYSDATE()
+		    	,UPD_DT = SYSDATE()
 	    where COMP_ID = A_COMP_ID
 		  and INPUT_OUTSIDE_KEY = A_DB_KEY
 		  and CUST_CODE = A_CUST_CODE

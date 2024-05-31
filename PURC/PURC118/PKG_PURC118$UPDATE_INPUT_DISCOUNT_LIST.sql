@@ -1,14 +1,14 @@
 CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_PURC118$UPDATE_INPUT_DISCOUNT_LIST`(		
 	IN A_COMP_ID varchar(10),
-    IN A_SET_DATE varchar(8),
+    IN A_SET_DATE TIMESTAMP,
     IN A_DS_KEY varchar(30),
     IN A_CUST_CODE varchar(10),
     IN A_INPUT_AMT decimal(16, 4),
     IN A_DS_RATE decimal(16, 4),
     IN A_DS_AMT decimal(16, 4),
     IN A_DS_CAUSE varchar(50),
-    IN A_DS_INPUT_FROM varchar(8),
-    IN A_DS_INPUT_TO varchar(8),
+    IN A_DS_INPUT_FROM TIMESTAMP,
+    IN A_DS_INPUT_TO TIMESTAMP,
     IN A_END_AMT decimal(16, 4),
     IN A_RMK varchar(100),
 	IN A_UPD_EMP_NO varchar(10),
@@ -22,7 +22,8 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
-	
+	SET N_RETURN = 0;
+  	SET V_RETURN = '저장되었습니다.'; 
    					  
     UPDATE TB_INPUT_DISCOUNT
     	SET
