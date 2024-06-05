@@ -1,7 +1,7 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROD035$SET_COATING_PLAN_INSERT`(	
 	IN A_COMP_ID		varchar(10),
     IN A_MATR_LOT_NO	varchar(30),
-    IN A_SET_SEQ		varchar(2),
+#    IN V_SET_SEQ		varchar(2),
     INOUT A_PLAN_MST_KEY	varchar(50),
     IN A_WORK_LINE		varchar(10),
     IN A_ORDER_KEY		varchar(30),
@@ -19,6 +19,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROD035$SET_COATING_PLAN_INSERT
 	)
 begin
 	declare V_PLAN_MST_KEY VARCHAR(50);
+	declare V_SET_SEQ varchar(2);
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -26,7 +27,12 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
-  	set V_PLAN_MST_KEY = CONCAT(A_MATR_LOT_NO, A_WORK_LINE, A_SET_SEQ); # 계획 MST KEY (원자재LOT NO + 생산라인 + 순번(2))
+  	set V_SET_SEQ = (select LPAD(IFNULL(MAX(SET_SEQ), 0) + 1, 2, '0')
+  					 from TB_COATING_PLAN
+  					 where MATR_LOT_NO = A_MATR_LOT_NO
+  					   and WORK_LINE = A_WORK_LINE);
+  
+  	set V_PLAN_MST_KEY = CONCAT(A_MATR_LOT_NO, A_WORK_LINE, V_SET_SEQ); # 계획 MST KEY (원자재LOT NO + 생산라인 + 순번(2))
   
     
     insert into TB_COATING_PLAN (
@@ -49,7 +55,7 @@ begin
     ) values (
    		A_COMP_ID,
     	A_MATR_LOT_NO,
-    	A_SET_SEQ,
+    	V_SET_SEQ,
     	V_PLAN_MST_KEY,
     	A_WORK_LINE,
     	A_ORDER_KEY,
@@ -64,7 +70,8 @@ begin
 		A_SYS_EMP_NO,
 		SYSDATE()
     );
-							
+				
+    set A_PLAN_MST_KEY = V_PLAN_MST_KEY;
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
