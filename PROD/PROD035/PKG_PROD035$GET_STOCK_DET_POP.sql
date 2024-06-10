@@ -7,7 +7,8 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
-	select 
+	select  
+	      'N' as IS_CHK,
 		  A.ITEM_CODE,
 		  B.ITEM_NAME,
 		  B.ITEM_SPEC,

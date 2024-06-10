@@ -101,6 +101,7 @@ begin
     			 0, -- A_QTY_PRE
     			 0, -- A_WET_PRE
     			 167945, -- A_LOT_DIVI_KIND -- tb_item_lot_chase  LOT분할통합종류(cfg.code.lot.init) / 상품입고로 지정
+    			 'Y', -- A_COM_YN
     			 A_UPD_ID, -- A_SYS_ID
     			 A_UPD_EMP_NO, -- A_SYS_EMP_NO
     			 V_LOT_NO, -- A_LOT_NO

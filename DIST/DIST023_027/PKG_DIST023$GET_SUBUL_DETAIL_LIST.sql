@@ -22,7 +22,8 @@ begin
 
 	set V_ST_DATE = DATE_FORMAT(A_ST_DATE, '%Y%m%d');
 	set V_ED_DATE = DATE_FORMAT(A_ED_DATE, '%Y%m%d');
-	set V_PRE_DATE = DATE_FORMAT(DATE_ADD(A_ST_DATE, interval - 1 month), '%Y%m%d'); -- 이월된 값 (한달 전)
+	set V_PRE_DATE = DATE_FORMAT(DATE_ADD(A_ST_DATE, interval - 1 day), '%Y%m%d'); -- 이월된 값(하루 전)
+	-- TO_CHAR(V_SETDATE - 1, 'YYYYMMDD') 이 하루 전으로 표시된다...
 
 	-- LEETEK의 PKG_ITEMSTOCKDETAILR, PKG_MATRSTOCKDETAILR 참조
 	-- TC_IO_END <=> TB_IO_END
@@ -46,7 +47,7 @@ begin
 	
 	--
 	select
-		  A.TOP_SORT, A.IN_OUT, A.ITEM_CODE, /*STR_TO_DATE(A.IO_DATE, '%Y%m%d') as IO_DATE*/A.IO_DATE, A.ITEM_NAME,
+		  A.TOP_SORT, A.IN_OUT, A.ITEM_CODE, A.ITEM_CODE as ITEM_CODE_2, /*STR_TO_DATE(A.IO_DATE, '%Y%m%d') as IO_DATE*/A.IO_DATE, A.ITEM_NAME,
 		  A.ITEM_SPEC, A.IO_GUBUN, A.PRE_QTY, A.IN_QTY, A.OUT_QTY,
 		  SUM(A.NEXT_QTY) OVER(PARTITION BY A.ITEM_CODE 
 		  					   ORDER BY A.TOP_SORT, A.IO_DATE, A.IN_OUT, A.KEY_VAL) AS STOCK_QTY,
@@ -87,7 +88,7 @@ begin
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
 			  and AAA.WARE_CODE = A_WARE_CODE
-			  and AAA.IO_DATE between V_END_YYMM and V_PRE_DATE
+			  and AAA.IO_DATE between CONCAT(V_END_YYMM, '32') and V_PRE_DATE
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 			  and AAA.ITEM_KIND = A_ITEM_KIND
 		) AA
@@ -114,6 +115,7 @@ begin
 		  and AA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 		  and AA.ITEM_KIND = A_ITEM_KIND
 	) A
+	order by A.IO_DATE, A.PRE_QTY, A.IN_QTY, A.OUT_QTY
 	;
 
 	--

@@ -22,7 +22,8 @@ begin
 
 	set V_ST_DATE = DATE_FORMAT(A_ST_DATE, '%Y%m%d');
 	set V_ED_DATE = DATE_FORMAT(A_ED_DATE, '%Y%m%d');
-	set V_PRE_DATE = DATE_FORMAT(DATE_ADD(A_ST_DATE, interval - 1 month), '%Y%m%d');
+	set V_PRE_DATE = DATE_FORMAT(DATE_ADD(A_ST_DATE, interval - 1 day), '%Y%m%d'); -- 이월된 값(하루 전)
+	-- TO_CHAR(V_SETDATE - 1, 'YYYYMMDD') 이 하루 전으로 표시된다...
 
 	-- LEETEK의 PKG_ITEMSTOCKTOTALR, PKG_MATRSTOCKTOTALR 참조
 	-- TC_IO_END <=> TB_IO_END
