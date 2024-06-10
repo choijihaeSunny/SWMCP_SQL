@@ -68,7 +68,7 @@ begin
 			  SUM(case when AA.IN_OUT = '1' then AA.IO_AMT else AA.IO_AMT * -1 END) as NEXT_AMT,
 			  AA.LOT_NO
 		from (
-			select	
+			select	-- 마감한 내역
 				  AAA.ITEM_CODE, BBB.ITEM_NAME, BBB.ITEM_SPEC, '1' as IN_OUT, AAA.NEXT_QTY as IO_QTY,
 				  AAA.NEXT_AMT as IO_AMT, AAA.LOT_NO
 			from TB_IO_END AAA
@@ -80,7 +80,7 @@ begin
 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
 			  and AAA.ITEM_KIND = A_ITEM_KIND 
 			union all 
-			select	
+			select	-- 이월한(주어진 기간 이전의 내역 중 마감되지 않은) 내역
 				  AAA.ITEM_CODE, BBB.ITEM_NAME, BBB.ITEM_SPEC, AAA.IN_OUT, AAA.IO_QTY,
 				  AAA.IO_AMT, AAA.LOT_NO
 			from TB_SUBUL AAA
@@ -94,7 +94,7 @@ begin
 		) AA
 		group by AA.ITEM_CODE, AA.ITEM_NAME, AA.ITEM_SPEC
 		union all
-		select 
+		select -- 기간 내의 내역
 			  '1' as TOP_SORT, AA.IN_OUT, AA.ITEM_CODE, BB.ITEM_NAME, BB.ITEM_SPEC,
 			  AA.IO_DATE, AA.IO_GUBN, 
 			  0 as PRE_QTY,
