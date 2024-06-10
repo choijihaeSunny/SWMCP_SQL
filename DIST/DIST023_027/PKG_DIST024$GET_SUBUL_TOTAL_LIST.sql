@@ -108,6 +108,7 @@ begin
 	  and A.ITEM_KIND = A_ITEM_KIND
 	group by A.ITEM_CODE, A.ITEM_NAME, A.ITEM_SPEC, A.COMP_ID, A.WARE_CODE,
 			 A.ITEM_KIND, A.LOT_NO, A.CUST_CODE
+	order by A.ITEM_CODE
 	;
 	
 	
