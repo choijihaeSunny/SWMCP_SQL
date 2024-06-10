@@ -75,10 +75,10 @@ begin
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
-			  and AAA.WARE_CODE = A_WARE_CODE
+-- 			  and AAA.WARE_CODE = A_WARE_CODE
 			  and AAA.YYMM = V_END_YYMM
-			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
-			  and AAA.ITEM_KIND = A_ITEM_KIND 
+-- 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
+-- 			  and AAA.ITEM_KIND = A_ITEM_KIND 
 			union all 
 			select	-- 이월한(주어진 기간 이전의 내역 중 마감되지 않은) 내역
 				  AAA.ITEM_CODE, BBB.ITEM_NAME, BBB.ITEM_SPEC, AAA.IN_OUT, AAA.IO_QTY,
@@ -87,10 +87,10 @@ begin
 				inner join VIEW_ITEM BBB
 					on AAA.ITEM_CODE = BBB.ITEM_CODE
 			where AAA.COMP_ID = A_COMP_ID
-			  and AAA.WARE_CODE = A_WARE_CODE
+-- 			  and AAA.WARE_CODE = A_WARE_CODE
 			  and AAA.IO_DATE between CONCAT(V_END_YYMM, '32') and V_PRE_DATE
-			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
-			  and AAA.ITEM_KIND = A_ITEM_KIND
+-- 			  and AAA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
+-- 			  and AAA.ITEM_KIND = A_ITEM_KIND
 		) AA
 		group by AA.ITEM_CODE, AA.ITEM_NAME, AA.ITEM_SPEC
 		union all
@@ -110,12 +110,11 @@ begin
 			inner join VIEW_ITEM BB
 				on AA.ITEM_CODE = BB.ITEM_CODE
 		where AA.COMP_ID = A_COMP_ID
-		  and AA.WARE_CODE = A_WARE_CODE
+-- 		  and AA.WARE_CODE = A_WARE_CODE
 		  and AA.IO_DATE between V_ST_DATE and V_ED_DATE
-		  and AA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
-		  and AA.ITEM_KIND = A_ITEM_KIND
+-- 		  and AA.ITEM_CODE like CONCAT('%', A_ITEM_CODE, '%')
+-- 		  and AA.ITEM_KIND = A_ITEM_KIND
 	) A
-	order by A.IO_DATE, A.PRE_QTY, A.IN_QTY, A.OUT_QTY
 	;
 
 	--
