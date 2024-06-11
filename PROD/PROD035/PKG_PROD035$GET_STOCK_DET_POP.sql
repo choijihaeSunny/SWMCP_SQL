@@ -8,7 +8,7 @@ begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	select  
-	      'N' as IS_CHK,
+	      'N' as IS_CHECK,
 		  A.ITEM_CODE,
 		  B.ITEM_NAME,
 		  B.ITEM_SPEC,
@@ -16,13 +16,18 @@ begin
 		  A.STOCK_QTY - NVL(C.STOCK_QTY, 0) as PLAN_QTY, -- 마감이 안 되어 실적이 되지 못한 계획 건 조회
 		  A.LOT_NO,
 		  A.STOCK_QTY,
-		  A.WARE_CODE 
-	from tb_stock A
-		inner join tb_item_code B
+		  A.WARE_CODE,
+		  D.ORDER_KEY
+	from TB_STOCK A
+		inner join TB_ITEM_CODE B
 			on A.ITEM_CODE = B.ITEM_CODE
-		LEFT join tb_coating_plan C
+		LEFT join TB_COATING_PLAN C
 			on A.ITEM_CODE = C.MATR_CODE 
-	where A.ITEM_KIND = (select DATA_ID 
+		LEFT join TB_ORDER_DET D
+			on C.COMP_ID = D.COMP_ID
+		   and C.ORDER_KEY = D.ORDER_KEY
+	where A.COMP_ID = A_COMP_ID
+	  and A.ITEM_KIND = (select DATA_ID 
 						 from SYS_DATA 
 						 where path = 'cfg.item' 
 						 and CODE = 'M') -- 원자재'
