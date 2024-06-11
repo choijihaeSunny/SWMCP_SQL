@@ -17,6 +17,8 @@ begin
 		  A.WORK_KEY,
 		  A.WORK_DATE,
 		  A.MATR_CODE,
+		  C.ITEM_NAME,
+		  C.ITEM_SPEC,
 		  A.PROG_CODE,
 		  A.LOT_NO,
 		  A.WORK_QTY,

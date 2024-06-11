@@ -27,6 +27,8 @@ begin
 		  A.WORK_KEY,
 		  A.WORK_DATE,
 		  A.MATR_CODE,
+		  C.ITEM_NAME,
+		  C.ITEM_SPEC,
 		  A.PROG_CODE,
 		  A.EQUI_CODE,
 		  A.ORDER_KEY,
@@ -43,6 +45,8 @@ begin
 		  A.WARE_CODE,
 		  A.RMK
 	from tb_coating_work A 
+		inner join TB_ITEM_CODE C
+			on A.MATR_CODE = C.ITEM_CODE
 	where A.COMP_ID = A_COMP_ID
 	  and A.WORK_LINE = A_WORK_LINE
 	  and A.SET_DATE = V_SET_DATE
