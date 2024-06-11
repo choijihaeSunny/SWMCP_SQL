@@ -139,9 +139,10 @@ PROC_BODY : begin
 	end if;
 	*/
 	
-	update TB_WORK_PLAN_DET 
+	update TB_COATING_PLAN_DET 
 	set    WORK_QTY = WORK_QTY - (V_WORK_QTY - V_BAD_QTY) +  (A_WORK_QTY - A_BAD_QTY)
-	where  COMP_ID = A_COMP_ID and WORK_PLAN_KEY = A_WORK_PLAN_KEY;
+	where  COMP_ID = A_COMP_ID 
+	  and WORK_PLAN_KEY = A_WORK_PLAN_KEY;
 
 	update TB_COATING_WORK
 	set    WORK_QTY = A_WORK_QTY,
@@ -149,7 +150,6 @@ PROC_BODY : begin
 		   END_TIME = SYSDATE(),
 		   WORK_EMP	= A_WORK_EMP,
 		   WORK_DATE = V_WORK_DATE,
-		   FIELD_YN = A_FIELD_YN,
 		   RMK	= A_RMK,
 		   UPD_ID = A_SYS_ID,
 		   UPD_EMP_NO = A_SYS_EMP_NO,
