@@ -1,0 +1,56 @@
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROC041$GET_COATING_WORK`(	
+	in A_COMP_ID VARCHAR(10),
+	in A_SET_DATE	DATETIME,
+	in A_SET_SEQ	VARCHAR(10),
+	in A_WORK_LINE	VARCHAR(10),
+	in A_DEPT_CODE	VARCHAR(10),
+	OUT N_RETURN INT,
+	OUT V_RETURN VARCHAR(4000)
+	)
+begin
+	
+	declare V_SET_DATE	VARCHAR(8);
+	declare V_SET_SEQ	VARCHAR(3);
+	
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	SET V_SET_DATE = date_format(A_SET_DATE,'%Y%m%d');
+	set V_SET_SEQ = TRIM(LPAD(CONVERT(A_SET_SEQ, INT), 3, '0'));
+
+	select
+		  A.COMP_ID,
+		  A.WORK_LINE,
+		  date_format(A.SET_DATE,'%Y%m%d') as SET_DATE,
+		  A.SET_SEQ,
+		  A.SET_NO,
+		  A.WORK_KEY,
+		  A.WORK_DATE,
+		  A.MATR_CODE,
+		  A.PROG_CODE,
+		  A.EQUI_CODE,
+		  A.ORDER_KEY,
+		  A.WORK_PLAN_KEY,
+		  A.LOT_NO,
+		  A.PLAN_QTY,
+		  A.WORK_QTY,
+		  A.BAD_QTY,
+		  A.START_TIME,
+		  A.END_TIME,
+		  A.SHIP_INFO,
+		  A.WORK_DEPT,
+		  A.WORK_EMP,
+		  A.WARE_CODE,
+		  A.RMK
+	from tb_coating_work A 
+	where A.COMP_ID = A_COMP_ID
+	  and A.WORK_LINE = A_WORK_LINE
+	  and A.SET_DATE = V_SET_DATE
+	  and A.SET_SEQ = V_SET_SEQ
+	;
+
+		
+	SET N_RETURN = 0;
+    SET V_RETURN = '조회되었습니다.';
+   
+END
