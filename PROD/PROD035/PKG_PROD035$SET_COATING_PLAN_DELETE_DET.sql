@@ -1,7 +1,7 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROD035$SET_COATING_PLAN_DELETE_DET`(	
 	IN A_COMP_ID varchar(10),
 	IN A_MATR_LOT_NO varchar(30),
-	IN A_PLAN_DATE TIMESTAMP,
+	IN A_PLAN_DATE varchar(8),
 	IN A_ORDER_KEY		varchar(30),
 	IN A_WORK_LINE varchar(10),
 	IN A_PROG_CODE varchar(10),
@@ -28,7 +28,7 @@ begin
 	where COMP_ID = A_COMP_ID
 	  and ORDER_KEY = A_ORDER_KEY
 	  and WORK_LINE = A_WORK_LINE
-	  and PLAN_DATE = DATE_FORMAT(A_PLAN_DATE, '%Y%m%d')
+	  and PLAN_DATE = A_PLAN_DATE
 	;
 
 
