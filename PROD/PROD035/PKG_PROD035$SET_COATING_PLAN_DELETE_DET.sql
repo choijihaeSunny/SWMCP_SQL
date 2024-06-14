@@ -16,6 +16,7 @@ begin
 	
 	declare V_TOT_QTY DECIMAL;
 	declare V_PLAN_QTY2 DECIMAL;
+	declare V_CNT INT;
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -32,29 +33,38 @@ begin
 	;
 
 
-	-- 총 수량 MST 테이블에 반영
-	select SUM(PLAN_QTY) 
-	into V_TOT_QTY
-	from TB_COATING_PLAN_DET
-	where COMP_ID = A_COMP_ID
-	  and MATR_LOT_NO = A_MATR_LOT_NO
-	  and WORK_LINE = A_WORK_LINE
-	;
+	set V_CNT = (select COUNT(*)
+				 FROM TB_COATING_PLAN
+				 where COMP_ID = A_COMP_ID
+				   and WORK_LINE = A_WORK_LINE);
+	
+	if V_CNT > 0 then
+		-- 총 수량 MST 테이블에 반영
+		select SUM(PLAN_QTY) 
+		into V_TOT_QTY
+		from TB_COATING_PLAN_DET
+		where COMP_ID = A_COMP_ID
+		  and MATR_LOT_NO = A_MATR_LOT_NO
+		  and WORK_LINE = A_WORK_LINE
+		;
+	
+	-- 	select NVL(SUM(PLAN_TOT_QTY), 0)
+	-- 	into V_PLAN_QTY2
+	-- 	from TB_COATING_PLAN
+	-- 	where COMP_ID = A_COMP_ID
+	-- 	  and ORDER_KEY = A_ORDER_KEY
+	-- 	  and WORK_LINE = A_WORK_LINE
+	-- 	;
+	
+		update TB_COATING_PLAN
+			set PLAN_TOT_QTY = V_TOT_QTY
+		where COMP_ID = A_COMP_ID
+	-- 	  and ORDER_KEY = A_ORDER_KEY
+		  and WORK_LINE = A_WORK_LINE
+		;
+	end if;
 
--- 	select NVL(SUM(PLAN_TOT_QTY), 0)
--- 	into V_PLAN_QTY2
--- 	from TB_COATING_PLAN
--- 	where COMP_ID = A_COMP_ID
--- 	  and ORDER_KEY = A_ORDER_KEY
--- 	  and WORK_LINE = A_WORK_LINE
--- 	;
-
-	update TB_COATING_PLAN
-		set PLAN_TOT_QTY = V_TOT_QTY
-	where COMP_ID = A_COMP_ID
--- 	  and ORDER_KEY = A_ORDER_KEY
-	  and WORK_LINE = A_WORK_LINE
-	;
+	
 	  
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
