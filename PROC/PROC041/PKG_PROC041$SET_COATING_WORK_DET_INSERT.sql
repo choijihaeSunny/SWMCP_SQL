@@ -32,7 +32,7 @@ PROC_BODY : begin
   	SET V_RETURN = '저장되었습니다.'; 
 
   	
-  	set V_SET_DATE = date_format(A_SET_DATE,'%Y%m%d');
+  	set V_SET_DATE = date_format(A_WORK_DATE,'%Y%m%d');
     
 	select WARE_CODE 
 	into V_WARE_CODE
@@ -42,6 +42,7 @@ PROC_BODY : begin
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
 
+/*
 	if A_MATR_END_YN = 'Y' then -- 원자재 사용완료일때 처리	
 		select STOCK_QTY into V_STOCK_QTY
 		from   tb_stock
@@ -59,7 +60,8 @@ PROC_BODY : begin
 		
 	# 원자재공정투입출고수불
 	set V_IO_GUBN = 34304; -- 생산공정투입
-	
+	*/
+	/*
 	call SP_SUBUL_CREATE(
 		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '2', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
 		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, A_LOT_NO), 'Y', 1, '', '', 
@@ -68,7 +70,7 @@ PROC_BODY : begin
 	if N_RETURN = -1 then
 		leave PROC_BODY;
 	end if;		
-
+*/
 
   	insert into TB_COATING_WORK_DET (
   		COMP_ID, WORK_LINE, WORK_KEY, WORK_DATE, MATR_CODE,
@@ -76,7 +78,7 @@ PROC_BODY : begin
   		RMK,
   		SYS_EMP_NO, SYS_ID, SYS_DATE
   	) values (
-  		A_COMP_ID, A_WORK_LINE, A_WORK_KEY, A_WORK_DATE, A_MATR_CODE,
+  		A_COMP_ID, A_WORK_LINE, A_WORK_KEY, DATE_FORMAT(A_WORK_DATE, '%Y%m%d'), A_MATR_CODE,
   		A_PROG_CODE, A_LOT_NO, A_WORK_QTY, A_WORK_DEPT, A_WARE_CODE,
   		A_RMK,
   		A_SYS_EMP_NO, A_SYS_ID, SYSDATE()
