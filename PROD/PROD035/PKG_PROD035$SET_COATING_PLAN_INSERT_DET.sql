@@ -4,7 +4,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROD035$SET_COATING_PLAN_INSERT
 #	IN A_SET_SEQ varchar(2),
 	IN A_PLAN_DATE varchar(8),
 	IN A_PLAN_MST_KEY varchar(50),
-	IN A_ORDER_KEY		varchar(30),
+-- 	IN A_ORDER_KEY		varchar(30),
 #	IN A_WORK_PLAN_KEY varchar(50),
 	IN A_WORK_LINE varchar(10),
 	IN A_MATR_CODE varchar(30),
@@ -58,7 +58,7 @@ begin
 	) values (
 		A_COMP_ID,
 		A_MATR_LOT_NO,
-		A_SET_SEQ,
+		V_SET_SEQ,
 		A_PLAN_DATE,
 		A_PLAN_MST_KEY,
 		V_WORK_PLAN_KEY,
@@ -95,7 +95,7 @@ begin
 	update TB_COATING_PLAN
 		set PLAN_TOT_QTY = V_TOT_QTY
 	where COMP_ID = A_COMP_ID
-	  and ORDER_KEY = A_ORDER_KEY
+-- 	  and ORDER_KEY = A_ORDER_KEY
 	  and WORK_LINE = A_WORK_LINE
 	;
 	  

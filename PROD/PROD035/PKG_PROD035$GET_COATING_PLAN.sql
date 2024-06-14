@@ -20,14 +20,14 @@ begin
 		  A.SET_SEQ,
 		  A.PLAN_MST_KEY,
 		  A.WORK_LINE,
-		  A.ORDER_KEY,
+#		  A.ORDER_KEY,
 		  A.MATR_CODE,
 		  A.PROG_CODE,
 		  A.PLAN_TOT_QTY,
 		  A.STOCK_QTY,
 		  A.DEPT_CODE,
 		  A.WARE_CODE,
-		  D.QTY as ORDER_QTY,
+#		  D.QTY as ORDER_QTY,
 		  C.ITEM_NAME,
 		  C.ITEM_SPEC,
 		  
@@ -127,9 +127,10 @@ begin
 		) B
 			on A.COMP_ID = B.COMP_ID 
 			and A.PLAN_MST_KEY = B.PLAN_MST_KEY
-		inner join TB_MATR_CODE C on A.MATR_CODE = C.ITEM_CODE
-		inner join TB_ORDER_DET D on A.COMP_ID = D.COMP_ID 
-		 						 and A.ORDER_KEY = D.ORDER_KEY
+-- 		inner join TB_MATR_CODE C on A.MATR_CODE = C.ITEM_CODE
+		inner join TB_ITEM_CODE C on A.MATR_CODE = C.ITEM_CODE
+-- 		inner join TB_ORDER_DET D on A.COMP_ID = D.COMP_ID 
+-- 		 						 and A.ORDER_KEY = D.ORDER_KEY
 	where A.COMP_ID = A_COMP_ID
 	  and A.DEPT_CODE = A_DEPT_CODE
 	;

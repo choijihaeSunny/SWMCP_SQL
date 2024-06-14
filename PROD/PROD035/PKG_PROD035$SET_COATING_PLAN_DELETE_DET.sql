@@ -2,7 +2,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROD035$SET_COATING_PLAN_DELETE
 	IN A_COMP_ID varchar(10),
 	IN A_MATR_LOT_NO varchar(30),
 	IN A_PLAN_DATE varchar(8),
-	IN A_ORDER_KEY		varchar(30),
+-- 	IN A_ORDER_KEY		varchar(30),
 	IN A_WORK_LINE varchar(10),
 	IN A_PROG_CODE varchar(10),
 	IN A_PLAN_QTY decimal(16, 4),
@@ -26,7 +26,7 @@ begin
     
 	delete FROM TB_COATING_PLAN_DET 
 	where COMP_ID = A_COMP_ID
-	  and ORDER_KEY = A_ORDER_KEY
+-- 	  and ORDER_KEY = A_ORDER_KEY
 	  and WORK_LINE = A_WORK_LINE
 	  and PLAN_DATE = A_PLAN_DATE
 	;
@@ -52,7 +52,7 @@ begin
 	update TB_COATING_PLAN
 		set PLAN_TOT_QTY = V_TOT_QTY
 	where COMP_ID = A_COMP_ID
-	  and ORDER_KEY = A_ORDER_KEY
+-- 	  and ORDER_KEY = A_ORDER_KEY
 	  and WORK_LINE = A_WORK_LINE
 	;
 	  

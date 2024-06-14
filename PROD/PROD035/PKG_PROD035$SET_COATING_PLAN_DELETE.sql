@@ -1,7 +1,7 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROD035$SET_COATING_PLAN_DELETE`(	
 	IN A_COMP_ID		varchar(10),
     IN A_WORK_LINE		varchar(10),
-    IN A_ORDER_KEY		varchar(30),
+--     IN A_ORDER_KEY		varchar(30),
 	IN A_SYS_ID 		decimal(10,0), 
 	IN A_SYS_EMP_NO 	varchar(10),
 	OUT N_RETURN INT,
@@ -18,7 +18,7 @@ begin
    
     delete FROM TB_COATING_PLAN
      where COMP_ID = A_COMP_ID
-       and ORDER_KEY = A_ORDER_KEY
+--        and ORDER_KEY = A_ORDER_KEY
        and WORK_LINE = A_WORK_LINE
     ;
 							

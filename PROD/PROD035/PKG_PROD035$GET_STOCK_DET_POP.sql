@@ -13,9 +13,9 @@ begin
 		  B.ITEM_NAME,
 		  B.ITEM_SPEC,
 		  A.PROG_CODE,
-		  A.STOCK_QTY - NVL(C.STOCK_QTY, 0) as PLAN_QTY, -- 마감이 안 되어 실적이 되지 못한 계획 건 조회
+		  NVL(C.PLAN_TOT_QTY, 0)  as PLAN_QTY, -- 마감이 안 되어 실적이 되지 못한 계획 건 조회
 		  A.LOT_NO,
-		  A.STOCK_QTY,
+		  A.STOCK_QTY - NVL(C.PLAN_TOT_QTY, 0) as STOCK_QTY,
 		  A.WARE_CODE,
 		  D.ORDER_KEY
 	from TB_STOCK A
