@@ -31,6 +31,10 @@ PROC_BODY : begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
 
+  	-- 현재 LOT_NO 중복 오류가 발생하는데
+  	-- LA24060000200
+    -- LA2406 0000 200
+    -- 0000 부분에 +1 하는 식으로 처리해야 하는가?
   	
   	set V_SET_DATE = date_format(A_WORK_DATE,'%Y%m%d');
     
@@ -42,8 +46,11 @@ PROC_BODY : begin
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
 
+	-- 코팅실적은 출고로 처리하여 수불한다. (1개씩 처리)
+	-- 재고의 WARE_CODE 로부터 출고처리한다.
+
 /*
-	if A_MATR_END_YN = 'Y' then -- 원자재 사용완료일때 처리	
+	if A_MATR_END_YN = 'Y' then -- 원자재 사용완료일때 처리	--?? 코팅은 사용완료로 처리하는가?
 		select STOCK_QTY into V_STOCK_QTY
 		from   tb_stock
 		where  COMP_ID = A_COMP_ID 
@@ -71,6 +78,8 @@ PROC_BODY : begin
 		leave PROC_BODY;
 	end if;		
 */
+
+	
 
   	insert into TB_COATING_WORK_DET (
   		COMP_ID, WORK_LINE, WORK_KEY, WORK_DATE, MATR_CODE,
