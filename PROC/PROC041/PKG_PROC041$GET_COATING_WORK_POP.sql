@@ -46,6 +46,7 @@ begin
 	      A.SHIP_INFO,
 	      A.WORK_LINE,
 	      A.WORK_DEPT,
+	      A.LOT_NO,
 	      A.RMK
 	from TB_COATING_WORK A
 		inner join TB_ITEM_CODE C 
