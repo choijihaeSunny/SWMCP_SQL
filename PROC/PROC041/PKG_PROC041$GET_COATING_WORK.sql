@@ -16,7 +16,7 @@ begin
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET V_SET_DATE = date_format(A_SET_DATE,'%Y%m%d');
-	set V_SET_SEQ = TRIM(LPAD(CONVERT(A_SET_SEQ, INT), 3, '0'));
+	set V_SET_SEQ = TRIM(LPAD(A_SET_SEQ, 3, '0'));
 
 	select
 		  A.COMP_ID,
