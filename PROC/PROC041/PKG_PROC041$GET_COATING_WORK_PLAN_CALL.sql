@@ -22,6 +22,7 @@ begin
 		  A.MATR_CODE,
 		  C.ITEM_NAME,
 		  C.ITEM_SPEC,
+		  D.LOT_NO,
 		  A.PLAN_QTY - A.WORK_QTY as PLAN_QTY,
 		  A.DEPT_CODE, --
 		  A.CONFIRM_YN,
@@ -36,12 +37,16 @@ begin
 		inner join TB_COATING_PLAN B 
 			on A.COMP_ID = B.COMP_ID
 		   and A.PLAN_MST_KEY = B.PLAN_MST_KEY
+	    inner join TB_STOCK D
+			on A.COMP_ID = D.COMP_ID
+		   and A.MATR_CODE = D.ITEM_CODE 
 	where A.COMP_ID = A_COMP_ID
 	  and A.PLAN_DATE between date_format(A_DATE1, '%Y%m%d') and date_format(A_DATE2, '%Y%m%d')
-	  and A.WORK_LINE = A_WORK_LINE
+	  and A.WORK_LINE LIKE CONCAT('%', A_WORK_LINE, '%')
 	  and A.CONFIRM_YN = 'Y'
 	  and A.END_YN = 'N'
 	  and A.PLAN_QTY - A.WORK_QTY > 0
+	group by A.WORK_PLAN_KEY
 	;
 		
 	SET N_RETURN = 0;
