@@ -24,6 +24,8 @@ PROC_BODY : begin
 	declare V_IO_GUBN			bigint;
 	DECLARE V_INPUT_REAL_QTY DECIMAL(16,4);
 	declare V_STOCK_QTY		DECIMAL(16,4);
+	declare V_SEQ			VARCHAR(3);
+	declare V_LOT_NO		VARCHAR(30);
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -31,10 +33,6 @@ PROC_BODY : begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
 
-  	-- 현재 LOT_NO 중복 오류가 발생하는데
-  	-- LA24060000200
-    -- LA2406 0000 200
-    -- 0000 부분에 +1 하는 식으로 처리해야 하는가?
   	
   	set V_SET_DATE = date_format(A_WORK_DATE,'%Y%m%d');
     
@@ -43,8 +41,19 @@ PROC_BODY : begin
 	from   dept_code
 	where  DEPT_CODE = A_WORK_DEPT;
 
+	-- 240617 문의결과
+	-- 기존 LOT_NO에 세자리 순번 추가하여야 한다.
+	set V_SEQ = (select
+					   LPAD(IFNULL(MAX(RIGHT(LOT_NO, 3)), 0) + 1, 3, '0')
+				 from TB_COATING_WORK_DET
+				 where COMP_ID = A_COMP_ID
+				   and WORK_KEY = A_WORK_KEY
+				);
+
+	set V_LOT_NO = CONCAT(A_LOT_NO, V_SEQ);
+
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
-	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
+	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, V_LOT_NO);
 
 	-- 코팅실적은 출고로 처리하여 수불한다. (1개씩 처리)
 	-- 재고의 WARE_CODE 로부터 출고처리한다.
@@ -56,7 +65,7 @@ PROC_BODY : begin
 		where  COMP_ID = A_COMP_ID 
 		 and WARE_CODE = A_WARE_CODE 
 		 and ITEM_CODE = A_ITEM_CODE 
-		 and LOT_NO = A_LOT_NO;
+		 and LOT_NO = V_LOT_NO;
 		
 		if V_STOCK_QTY > 0 then 
 			set V_INPUT_REAL_QTY = V_STOCK_QTY;
@@ -70,8 +79,8 @@ PROC_BODY : begin
 	*/
 	/*
 	call SP_SUBUL_CREATE(
-		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '2', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
-		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, A_LOT_NO), 'Y', 1, '', '', 
+		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '2', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, A_PROG_CODE, 
+		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, V_LOT_NO), 'Y', 1, '', '', 
 		'N', V_SET_DATE, '', 'N', 'Y', 'Y', 
 		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
 	if N_RETURN = -1 then
@@ -88,7 +97,7 @@ PROC_BODY : begin
   		SYS_EMP_NO, SYS_ID, SYS_DATE
   	) values (
   		A_COMP_ID, A_WORK_LINE, A_WORK_KEY, DATE_FORMAT(A_WORK_DATE, '%Y%m%d'), A_MATR_CODE,
-  		A_PROG_CODE, A_LOT_NO, A_WORK_QTY, A_WORK_DEPT, A_WARE_CODE,
+  		A_PROG_CODE, V_LOT_NO, A_WORK_QTY, A_WORK_DEPT, A_WARE_CODE,
   		A_RMK,
   		A_SYS_EMP_NO, A_SYS_ID, SYSDATE()
   	)

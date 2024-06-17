@@ -18,6 +18,5 @@ CREATE TABLE `tb_coating_work_det` (
   `UPD_EMP_NO` varchar(10) DEFAULT NULL,
   `UPD_ID` decimal(10,0) DEFAULT NULL,
   `UPD_DATE` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`COMP_ID`,`WORK_KEY`,`LOT_NO`),
-  UNIQUE KEY `tb_coating_work_det_unique` (`COMP_ID`,`WORK_LINE`)
+  PRIMARY KEY (`COMP_ID`,`WORK_KEY`,`LOT_NO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='코팅생산실적관리det';

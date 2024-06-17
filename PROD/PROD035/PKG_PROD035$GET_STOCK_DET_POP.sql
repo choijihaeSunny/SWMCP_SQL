@@ -31,6 +31,7 @@ begin
 						 from SYS_DATA 
 						 where path = 'cfg.item' 
 						 and CODE = 'M') -- 원자재'
+	  and A.LOT_NO like 'LM%' -- 원자재
 	;
 
 	
