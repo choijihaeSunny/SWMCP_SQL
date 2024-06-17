@@ -32,6 +32,8 @@ PROC:begin
 		  A.CHECK_HIS, -- 점검내용
 		  A.RESULT_HIS, -- 조치내용
 		  A.ETC_RMK -- 비고
+		  ,A.TEMP_SEQ
+		  ,A.SET_DATE
 	from tb_msur_equicheck_result A
 		 left join tb_msur_equi B
 		 		on A.COMP_ID = B.COMP_ID

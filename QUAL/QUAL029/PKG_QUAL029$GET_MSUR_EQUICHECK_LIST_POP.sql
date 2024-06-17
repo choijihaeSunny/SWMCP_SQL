@@ -12,6 +12,7 @@ PROC:begin
 	select
 		  A.IDX,
 		  A.TEMP_SEQ,
+		  A.CHECK_RESULT,
 		  A.EQUI_CODE, -- 관리번호
 		  A.CHECK_ITEM, -- 점검항목
 		  B.EQUI_NAME, -- 검사장비명 
