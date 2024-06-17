@@ -113,13 +113,15 @@ begin
 				  MAX(case when AA.CAL_ROWNUM = 19 then BB.END_YN else 'N' end) as END_YN19,
 				  MAX(case when AA.CAL_ROWNUM = 20 then BB.END_YN else 'N' end) as END_YN20
 			from   (
-					select COMP_ID, CONCAT(YYYY, MM, DD) as CAL_DATE, 
-					row_number() OVER(order by CONCAT(YYYY, MM, DD) asc) as CAL_ROWNUM
-					from   TC_FACT_CAL
-					where  COMP_ID = A_COMP_ID 
-					and DEPT_CODE = A_DEPT_CODE
-					and HOLY_KND = 'D'
-					and CONCAT(YYYY, MM, DD) >= V_SET_DATE
+					select 
+						  COMP_ID, 
+						  CONCAT(YYYY, MM, DD) as CAL_DATE, 
+						  ROW_NUMBER() OVER(order by CONCAT(YYYY, MM, DD) asc) as CAL_ROWNUM
+					from TC_FACT_CAL
+					where COMP_ID = A_COMP_ID 
+					  and DEPT_CODE = A_DEPT_CODE
+					  and HOLY_KND = 'D'
+					  and CONCAT(YYYY, MM, DD) >= V_SET_DATE
 					) AA
 					left outer join TB_COATING_PLAN_DET BB
 						on AA.COMP_ID = BB.COMP_ID 
@@ -129,7 +131,6 @@ begin
 		) B
 			on A.COMP_ID = B.COMP_ID 
 			and A.PLAN_MST_KEY = B.PLAN_MST_KEY
--- 		inner join TB_MATR_CODE C on A.MATR_CODE = C.ITEM_CODE
 		inner join TB_ITEM_CODE C on A.MATR_CODE = C.ITEM_CODE
 -- 		inner join TB_ORDER_DET D on A.COMP_ID = D.COMP_ID 
 -- 		 						 and A.ORDER_KEY = D.ORDER_KEY

@@ -33,6 +33,9 @@ begin
 	declare V_ITEM_KIND varchar(10);
     declare V_CUST_CODE varchar(10);
 	
+    declare V_QTY decimal(10, 0);
+   	declare V_COST decimal(16, 4);
+
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
 
@@ -86,6 +89,10 @@ begin
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
 					 where full_path = 'cfg.com.io.mat.in.ret');
+					
+	-- 입고 반품시에는 수불 이후에 재고가 줄어들어야 한다. 음수처리 필요
+	set V_QTY = A_QTY * -1;
+	set V_COST = A_COST * -1;
    
    	call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),
@@ -99,8 +106,8 @@ begin
         A_LOT_NO, -- A_LOT_NO VARCHAR(30),
         100, -- A_PROG_CODE big--t,
         V_IO_GUBN, -- A_IO_GUBN	big--t,
-        A_QTY, -- A_IO_QTY		DECIMAL,
-        A_COST,-- A_IO_PRC		DECIMAL,
+        V_QTY, -- A_IO_QTY		DECIMAL,
+        V_COST,-- A_IO_PRC		DECIMAL,
         V_AMT,-- A_IO_AMT		DECIMAL,
         'TB_INPUT_RETURN_DET', -- V_TABLE_NAME	VARCHAR(50),
         A_INPUT_RETURN_KEY, -- V_TABLE_KEY	VARCHAR(100),

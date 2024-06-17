@@ -60,6 +60,10 @@ begin
    	SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
 					 where full_path = 'cfg.com.io.mat.in.ret');
+					
+	-- 입고 반품시에는 수불 이후에 재고가 줄어들어야 한다. 음수처리 필요
+	set V_QTY = A_QTY * -1;
+	set V_COST = A_COST * -1;
 	
     call SP_SUBUL_CREATE(
    		A_COMP_ID,-- A_COMP_ID VARCHAR(10),

@@ -3,6 +3,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROC041$SET_COATING_WORK_DET_DE
 	IN A_WORK_LINE varchar(10), 
 	IN A_WORK_KEY varchar(30), 
 	IN A_WORK_DATE DATETIME, 
+	IN A_LOT_NO VARCHAR(30),
 	IN A_MATR_CODE varchar(30),
 	IN A_SYS_ID decimal(10,0), 
 	IN A_SYS_EMP_NO varchar(10),
@@ -26,7 +27,7 @@ PROC_BODY : begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
 
-  	set V_SET_DATE = date_format(A_SET_DATE,'%Y%m%d');
+  	set V_SET_DATE = date_format(A_WORK_DATE,'%Y%m%d');
     
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
