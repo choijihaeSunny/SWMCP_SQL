@@ -50,16 +50,6 @@ PROC_BODY : begin
 	where  COMP_ID = A_COMP_ID 
 	and WORK_KEY = A_WORK_KEY;
 	
-	-- LOT 삭제  
-	call PKG_LOT$CREATE_ITEM_LOT_IUD ('DELETE', A_COMP_ID, A_LOT_NO, '', '', A_SET_DATE, 'LP', '', A_ITEM_CODE,
-									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, V_WORK_QTY - V_BAD_QTY, 0, 'TB_COATING_WORK', A_WORK_KEY,
-									  A_ORDER_KEY, V_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', 0, 0,
-									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
-									 
-	
-	if N_RETURN = -1 then
-		leave PROC_BODY;
-	end if;
 
 	set V_SUBUL_KEY = concat('TB_COATING_WORK-', A_WORK_KEY); #  입고수불 삭제
 	

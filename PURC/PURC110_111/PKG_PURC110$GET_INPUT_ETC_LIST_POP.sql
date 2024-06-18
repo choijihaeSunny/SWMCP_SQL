@@ -15,19 +15,32 @@ PROC:begin
 		  A.INPUT_ETC_MST_KEY,
 		  STR_TO_DATE(A.INPUT_DATE, '%Y%m%d') as INPUT_DATE,
 		  A.CUST_CODE,
-		  (select CUST_NAME
-		   from tc_cust_code
-		   where cust_code = A.CUST_CODE) as CUST_NAME,
+		  C.CUST_NAME,
+		  B.ITEM_CODE,
+		  D.ITEM_NAME,
+		  D.ITEM_SPEC,
+		  B.QTY,
+		  B.COST,
+		  B.AMT,
 		  A.EMP_NO,
-		  (select kor_name
-		   from insa_mst 
-		   where emp_no = A.EMP_NO) as EMP_NAME,
+		  E.KOR_NAME as EMP_NAME,
 		  A.DEPT_CODE,
 		  A.SHIP_INFO,
 		  A.PJ_NO,
 		  A.PJ_NAME,
 		  A.RMKS
 	from TB_INPUT_ETC_MST A
+		inner join TB_INPUT_ETC_DET B
+			on (A.COMP_ID = B.COMP_ID
+			and A.INPUT_ETC_MST_KEY = B.INPUT_ETC_MST_KEY)
+		inner join TC_CUST_CODE C
+			on A.COMP_ID = C.COMP_ID
+			and A.CUST_CODE = C.CUST_CODE
+		LEFT join TB_ITEM_CODE D
+			on B.ITEM_CODE = D.ITEM_CODE
+		LEFT join INSA_MST E
+			on A.COMP_ID = E.COMP_ID
+			and A.EMP_NO = E.KOR_NAME
 	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 	;
 

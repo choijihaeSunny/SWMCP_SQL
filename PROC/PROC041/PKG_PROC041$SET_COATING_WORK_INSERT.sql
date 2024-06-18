@@ -93,32 +93,8 @@ PROC_BODY : begin
    
     set V_PROG_CODE = A_PROG_CODE;
 	
+   -- 기존 LOT_NO를 받아와서 처리하는 부분이므로 LOT_NO 프로시저 처리 삭제.
    	
-   -- 생산 LOT NO 없을때  생성 
-   	if A_LOT_NO is null or A_LOT_NO = '' then
-    	call PKG_LOT$CREATE_ITEM_LOT_IUD ('INSERT', A_COMP_ID, '', SUBSTRING(V_SET_DATE,3,4), '', A_SET_DATE, 'LM', '', A_MATR_CODE,
-										  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, A_WORK_QTY - A_BAD_QTY, 0, 'TB_COATING_WORK', V_WORK_KEY,
-										  A_ORDER_KEY, A_PROG_CODE, V_PROG_SEQ, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', V_PROD_UNIT_WET, V_MATR_UNIT_WET,
-										  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
-		if N_RETURN = -1 then
-			leave PROC_BODY;
-		end if;
-										  
-		set A_LOT_NO = V_LOT_NO;	
-	
-	else -- LOT NO가 이미 있으면 PROG로 처리 -- PROG란?
-	
-		set V_YYMM = SUBSTR(A_LOT_NO, 3, 4);
-		set V_LOT_SEQ = SUBSTR(A_LOT_NO,7, 2);
-    	call PKG_LOT$CREATE_ITEM_LOT_IUD ('INSERT', A_COMP_ID, A_LOT_NO, V_YYMM, V_LOT_SEQ, A_SET_DATE, 'LM', '', A_MATR_CODE,
-										  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, A_WORK_QTY - A_BAD_QTY, 0, 'TB_COATING_WORK', V_WORK_KEY,
-										  A_ORDER_KEY, A_PROG_CODE, V_PROG_SEQ, V_PROG_KIND, '', V_ITEM_KIND, 'PROG', V_PROD_UNIT_WET, V_MATR_UNIT_WET,
-										  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
-		if N_RETURN = -1 then
-			leave PROC_BODY;
-		end if;										 
-	end if;	
-
 	select WARE_CODE, WARE_CODE_PROC 
 	into V_WARE_CODE, V_WARE_CODE_PROC
 	from   dept_code
@@ -132,7 +108,7 @@ PROC_BODY : begin
 	-- 실적 DET -> 코팅 후 각자의 LOT 번호를 부여한다. 
 	-- 	 MST는 총 갯수로 입고, DET는 각자 1개씩 출고
 
-	/*
+	
 	-- 수불생성 (공정중 실적 내역은 선점 처리 안함) 최종공정일때만 선점처리함 
 	if V_FINAL_PROG_YN = 'Y' then -- 최종공정일때 
 		# 제품입고수불(최종공정)
@@ -148,7 +124,7 @@ PROC_BODY : begin
 		end if;			
 	else
 		# 재공입고수불(현재공정)
-		set V_IO_GUBN = 169911; -- 생산공정입고
+		set V_IO_GUBN = 169911; -- 생산공정입고 cfg.com.io.mat.out.proc
 
 		call SP_SUBUL_CREATE(
 			A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE_PROC, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
@@ -173,7 +149,7 @@ PROC_BODY : begin
 			leave PROC_BODY;
 		end if;			
 	end if;
-	*/
+	
 
   	update TB_COATING_PLAN_DET
   	   set WORK_QTY = WORK_QTY + (A_WORK_QTY - A_BAD_QTY)

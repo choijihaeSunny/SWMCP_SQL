@@ -80,14 +80,6 @@ PROC_BODY : begin
 	from   TB_COATING_WORK
 	where  COMP_ID = A_COMP_ID 
 	and WORK_KEY = A_WORK_KEY;		
-   
-	call PKG_LOT$CREATE_ITEM_LOT_IUD ('UPDATE', A_COMP_ID, A_LOT_NO, '', '', A_SET_DATE, 'LP', '', A_ITEM_CODE,
-									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK', A_WORK_KEY,
-									  A_ORDER_KEY, A_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', V_PROD_UNIT_WET, V_MATR_UNIT_WET,
-									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
-	if N_RETURN = -1 then
-		leave PROC_BODY;
-	end if;
 
 	select WARE_CODE, WARE_CODE_PROC 
 	into V_WARE_CODE, V_WARE_CODE_PROC
@@ -154,7 +146,8 @@ PROC_BODY : begin
 		   UPD_ID = A_SYS_ID,
 		   UPD_EMP_NO = A_SYS_EMP_NO,
 		   UPD_DATE = SYSDATE()
-	where  COMP_ID = A_COMP_ID and WORK_KEY = A_WORK_KEY;		   
+	where  COMP_ID = A_COMP_ID 
+	  and WORK_KEY = A_WORK_KEY;		   
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;

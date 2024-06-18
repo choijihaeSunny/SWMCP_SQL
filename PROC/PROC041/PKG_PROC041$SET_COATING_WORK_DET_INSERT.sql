@@ -27,6 +27,9 @@ PROC_BODY : begin
 	declare V_SEQ			VARCHAR(3);
 	declare V_LOT_NO		VARCHAR(30);
 
+	declare V_PROG_KIND		bigint;
+	declare V_LOT_STATE_DET		bigint;
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -52,7 +55,18 @@ PROC_BODY : begin
 
 	set V_LOT_NO = CONCAT(A_LOT_NO, V_SEQ);
 
+	SET V_PROG_KIND = 40879; -- cfg.code.lot.init LOT생성사유 공정생산  
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
+	set V_LOT_STATE_DET = 40809; -- cfg.code.lot.status 정상  
+	
+	call PKG_LOT$CREATE_ITEM_LOT_IUD ('INSERT', A_COMP_ID, A_LOT_NO, '', '', A_SET_DATE, 'LM', '', A_ITEM_CODE,
+									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK_DET', A_WORK_KEY,
+									  A_ORDER_KEY, A_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', V_PROD_UNIT_WET, V_MATR_UNIT_WET,
+									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
+	if N_RETURN = -1 then
+		leave PROC_BODY;
+	end if;
+	
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, V_LOT_NO);
 
 	-- 코팅실적은 출고로 처리하여 수불한다. (1개씩 처리)
@@ -75,7 +89,7 @@ PROC_BODY : begin
 	end if;
 		
 	# 원자재공정투입출고수불
-	set V_IO_GUBN = 34304; -- 생산공정투입
+	set V_IO_GUBN = 34304; -- 생산공정투입 cfg.com.io.mat.in.proc
 	*/
 	/*
 	call SP_SUBUL_CREATE(
@@ -92,12 +106,12 @@ PROC_BODY : begin
 
   	insert into TB_COATING_WORK_DET (
   		COMP_ID, WORK_LINE, WORK_KEY, WORK_DATE, MATR_CODE,
-  		PROG_CODE, LOT_NO, WORK_QTY, WORK_DEPT, WARE_CODE,
+  		PROG_CODE, LOT_NO_PRE, LOT_NO, WORK_QTY, WORK_DEPT, WARE_CODE,
   		RMK,
   		SYS_EMP_NO, SYS_ID, SYS_DATE
   	) values (
   		A_COMP_ID, A_WORK_LINE, A_WORK_KEY, DATE_FORMAT(A_WORK_DATE, '%Y%m%d'), A_MATR_CODE,
-  		A_PROG_CODE, V_LOT_NO, A_WORK_QTY, A_WORK_DEPT, A_WARE_CODE,
+  		A_PROG_CODE, A_LOT_NO, V_LOT_NO, A_WORK_QTY, A_WORK_DEPT, A_WARE_CODE,
   		A_RMK,
   		A_SYS_EMP_NO, A_SYS_ID, SYSDATE()
   	)
