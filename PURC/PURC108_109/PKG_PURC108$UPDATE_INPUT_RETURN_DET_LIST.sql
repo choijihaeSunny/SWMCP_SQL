@@ -27,7 +27,6 @@ begin
 	declare V_SET_DATE varchar(8);
 	declare V_SET_SEQ varchar(4);
 
-	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
 	declare V_WARE_CODE bigint(20);
 	declare V_ITEM_KIND varchar(10);
@@ -45,8 +44,6 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
-  	set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
-  	
   	select
   		  SET_DATE, SET_SEQ, ITEM_KIND, CUST_CODE
   	into V_SET_DATE, V_SET_SEQ, V_ITEM_KIND, V_CUST_CODE
@@ -70,7 +67,7 @@ begin
 	    	,LOT_NO = A_LOT_NO
 	    	,QTY = A_QTY
 	    	,COST = A_COST
-	    	,AMT = V_AMT
+	    	,AMT = A_AMT
 	    	,WARE_CODE = A_WARE_CODE
 	    	,DEPT_CODE = A_DEPT_CODE
 	    	,RETURN_CAUSE = A_RETURN_CAUSE
@@ -108,7 +105,7 @@ begin
         V_IO_GUBN, -- A_IO_GUBN	big--t,
         V_QTY, -- A_IO_QTY		DECIMAL,
         V_COST,-- A_IO_PRC		DECIMAL,
-        V_AMT,-- A_IO_AMT		DECIMAL,
+        A_AMT,-- A_IO_AMT		DECIMAL,
         'TB_INPUT_RETURN_DET', -- V_TABLE_NAME	VARCHAR(50),
         A_INPUT_RETURN_KEY, -- V_TABLE_KEY	VARCHAR(100),
         'Y', -- A_STOCK_YN	VARCHAR(1),

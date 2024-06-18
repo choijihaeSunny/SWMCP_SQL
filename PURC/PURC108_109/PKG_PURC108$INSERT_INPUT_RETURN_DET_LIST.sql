@@ -25,7 +25,6 @@ begin
 	declare V_SET_SEQ varchar(4);
 	declare V_SET_NO varchar(4);
 
-	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
 	declare V_WARE_CODE bigint(20);
 	declare V_ITEM_KIND varchar(10);
@@ -56,8 +55,6 @@ begin
     				); 	
     			
     SET V_INPUT_RETURN_KEY := CONCAT(A_INPUT_RETURN_MST_KEY, LPAD(V_SET_NO, 4, '0'));
-
-   	set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
    	
    	set V_WARE_CODE = (select WARE_CODE
    					   from DEPT_CODE
@@ -98,7 +95,7 @@ begin
     	A_LOT_NO,
     	A_QTY,
     	A_COST,
-    	V_AMT,
+    	A_AMT,
     	V_WARE_CODE,
     	A_DEPT_CODE,
     	A_RETURN_CAUSE,
@@ -135,7 +132,7 @@ begin
         V_IO_GUBN, -- A_IO_GUBN	big--t,
         V_QTY, -- A_IO_QTY		DECIMAL,
         V_COST,-- A_IO_PRC		DECIMAL,
-        V_AMT,-- A_IO_AMT		DECIMAL,
+        A_AMT,-- A_IO_AMT		DECIMAL,
         'TB_INPUT_RETURN_DET', -- V_TABLE_NAME	VARCHAR(50),
         V_INPUT_RETURN_KEY, -- V_TABLE_KEY	VARCHAR(100),
         'Y', -- A_STOCK_YN	VARCHAR(1),

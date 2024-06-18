@@ -1,6 +1,8 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC108$GET_INPUT_LIST_POP`(
 			IN A_ST_DATE 			TIMESTAMP,
 			IN A_ED_DATE			TIMESTAMP,
+			IN A_CUST_CODE		 	VARCHAR(10),
+			IN A_PJ_NO				VARCHAR(30),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
@@ -24,7 +26,9 @@ PROC:begin
 		  A.EMP_NO,
 		  A.SHIP_INFO,
 		  A.PJ_NO,
-		  A.PJ_NAME
+		  A.PJ_NAME,
+		  L.LOT_NO,
+		  A.DEPT_CODE
 	from TB_INPUT_MST A
 		 left outer join ( -- 반품등록된 내역이 있을 경우 반품된 수량을 표시해야 한다.
 					 	select
@@ -59,8 +63,13 @@ PROC:begin
 		 inner join TB_ITEM_CODE D
 		 	on (A.ITEM_CODE = D.ITEM_CODE
 		 	)
+		 inner join TB_ITEM_LOT L
+		 	on (A.COMP_ID = L.COMP_ID
+		 	and D.ITEM_CODE = L.ITEM_CODE)
     where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') 
 					     AND DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+	  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
+	  and A.PJ_NO like CONCAT('%', A_PJ_NO, '%')
 	;
 
 	set N_RETURN := 0;
