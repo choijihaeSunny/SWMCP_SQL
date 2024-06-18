@@ -29,6 +29,7 @@ PROC_BODY : begin
 	declare V_ITEM_KIND		bigint;
 	declare V_LOT_STATE_DET		bigint;
 	declare V_PROG_CODE			bigint;
+	declare V_IO_GUBN			bigint;
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -53,19 +54,18 @@ PROC_BODY : begin
 
 	set V_SUBUL_KEY = concat('TB_COATING_WORK-', A_WORK_KEY); #  입고수불 삭제
 	
-	/*
+	set V_IO_GUBN = (select DATA_ID
+					 from SYS_DATA
+					 where FULL_PATH = 'cfg.com.io.mat.out.proc'); -- 생산투입 
+	set V_SUBUL_PRE_KEY = CONCAT(V_SUBUL_KEY, 'PRE');  
 	call SP_SUBUL_CREATE(
-		A_COMP_ID, V_SUBUL_KEY, 'DELETE', V_SET_DATE, '1', 0, 0, A_ITEM_CODE, A_LOT_NO, 0, 
-		0, 0, 0, 0, 'TB_COATING_WORK', A_WORK_KEY, 'Y', 1, '', '', 
-		'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
-		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
-	
+			A_COMP_ID, V_SUBUL_PRE_KEY, 'DELETE', V_SET_DATE, '2', V_WARE_CODE_PROC, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE_PRE, 
+			V_IO_GUBN, A_WORK_QTY, 0, 0, 'TB_COATING_WORK', V_WORK_KEY, 'Y', 1, '', '', 
+			'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
+			A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
 	if N_RETURN = -1 then
 		leave PROC_BODY;
-	end if;		
-
-	--
-	*/
+	end if;	
 	
 
 	update TB_COATING_PLAN_DET 

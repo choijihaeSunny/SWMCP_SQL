@@ -51,6 +51,7 @@ PROC_BODY : begin
 				 from TB_COATING_WORK_DET
 				 where COMP_ID = A_COMP_ID
 				   and WORK_KEY = A_WORK_KEY
+				   and LOT_NO_PRE = A_LOT_NO
 				);
 
 	set V_LOT_NO = CONCAT(A_LOT_NO, V_SEQ);
@@ -72,7 +73,7 @@ PROC_BODY : begin
 	-- 코팅실적은 출고로 처리하여 수불한다. (1개씩 처리)
 	-- 재고의 WARE_CODE 로부터 출고처리한다.
 
-/*
+
 	if A_MATR_END_YN = 'Y' then -- 원자재 사용완료일때 처리	--?? 코팅은 사용완료로 처리하는가?
 		select STOCK_QTY into V_STOCK_QTY
 		from   tb_stock
@@ -88,19 +89,20 @@ PROC_BODY : begin
 		set V_INPUT_REAL_QTY = A_INPUT_QTY;
 	end if;
 		
-	# 원자재공정투입출고수불
-	set V_IO_GUBN = 34304; -- 생산공정투입 cfg.com.io.mat.in.proc
-	*/
-	/*
+	# 원자재공정투입입고수불
+	set V_IO_GUBN = (select DATA_ID
+					 from SYS_DATA
+					 where FULL_PATH = 'cfg.com.io.mat.in.proc'); -- 생산공정투입 
+					 
+	-- DET에 입고
 	call SP_SUBUL_CREATE(
-		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '2', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, A_PROG_CODE, 
+		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, A_PROG_CODE, 
 		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, V_LOT_NO), 'Y', 1, '', '', 
 		'N', V_SET_DATE, '', 'N', 'Y', 'Y', 
 		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
 	if N_RETURN = -1 then
 		leave PROC_BODY;
 	end if;		
-*/
 
 	
 

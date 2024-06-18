@@ -109,46 +109,19 @@ PROC_BODY : begin
 	-- 	 MST는 총 갯수로 입고, DET는 각자 1개씩 출고
 
 	
-	-- 수불생성 (공정중 실적 내역은 선점 처리 안함) 최종공정일때만 선점처리함 
-	if V_FINAL_PROG_YN = 'Y' then -- 최종공정일때 
-		# 제품입고수불(최종공정)
-		set V_IO_GUBN = 169917; -- 생산입고(최종공정)
-		set V_PROG_CODE = 100; -- 재고상태
-		call SP_SUBUL_CREATE(
-			A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, V_PROG_CODE, 
-			V_IO_GUBN, A_WORK_QTY - A_BAD_QTY, 0, 0, 'TB_COATING_WORK', V_WORK_KEY, 'Y', 1, '', '', 
-			'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
-			A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
-		if N_RETURN = -1 then
-			leave PROC_BODY;
-		end if;			
-	else
-		# 재공입고수불(현재공정)
-		set V_IO_GUBN = 169911; -- 생산공정입고 cfg.com.io.mat.out.proc
-
-		call SP_SUBUL_CREATE(
-			A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE_PROC, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
-			V_IO_GUBN, A_WORK_QTY - A_BAD_QTY, 0, 0, 'TB_COATING_WORK', V_WORK_KEY, 'Y', 1, '', '', 
-			'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
-			A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
-		if N_RETURN = -1 then
-			leave PROC_BODY;
-		end if;	
-	end if;
-
-	if A_PROG_CODE_PRE is not null AND A_PROG_CODE_PRE <> 0 THEN
-		# 재공입고수불(이전공정)
-		set V_IO_GUBN = 169918; -- 생산공정출고
-		set V_SUBUL_PRE_KEY = CONCAT(V_SUBUL_KEY, 'PRE');  
-		call SP_SUBUL_CREATE(
+	-- MST에서 출고처리
+	set V_IO_GUBN = (select DATA_ID
+					 from SYS_DATA
+					 where FULL_PATH = 'cfg.com.io.mat.out.proc'); -- 생산투입 
+	set V_SUBUL_PRE_KEY = CONCAT(V_SUBUL_KEY, 'PRE');  
+	call SP_SUBUL_CREATE(
 			A_COMP_ID, V_SUBUL_PRE_KEY, 'INSERT', V_SET_DATE, '2', V_WARE_CODE_PROC, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE_PRE, 
 			V_IO_GUBN, A_WORK_QTY, 0, 0, 'TB_COATING_WORK', V_WORK_KEY, 'Y', 1, '', '', 
 			'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
 			A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
-		if N_RETURN = -1 then
-			leave PROC_BODY;
-		end if;			
-	end if;
+	if N_RETURN = -1 then
+		leave PROC_BODY;
+	end if;		
 	
 
   	update TB_COATING_PLAN_DET

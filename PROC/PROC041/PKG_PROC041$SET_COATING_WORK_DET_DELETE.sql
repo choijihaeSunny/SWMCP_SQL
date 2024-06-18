@@ -55,18 +55,14 @@ PROC_BODY : begin
 	  and LOT_NO = A_LOT_NO
 	;
 	
-	/*
-	# 원자재공정투입출고수불
-	set V_IO_GUBN = 34304; -- 생산공정투입
 	call SP_SUBUL_CREATE(
-		A_COMP_ID, V_SUBUL_KEY, 'DELETE', V_SET_DATE, '2', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
-		V_IO_GUBN, V_WORK_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, A_LOT_NO), 'Y', 1, '', '', 
+		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, A_PROG_CODE, 
+		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, V_LOT_NO), 'Y', 1, '', '', 
 		'N', V_SET_DATE, '', 'N', 'Y', 'Y', 
 		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
 	if N_RETURN = -1 then
 		leave PROC_BODY;
-	end if;			
-	*/
+	end if;	
 
 	delete FROM TB_COATING_WORK_DET 
 	 where  COMP_ID = A_COMP_ID 
