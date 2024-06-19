@@ -6,6 +6,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD007$INSERT_MOLD_SCRAP_LIS
     IN A_LOT_NO varchar(30),
     IN A_QTY decimal(10, 0),
     IN A_COST decimal(16, 4),
+    IN A_AMT decimal(16, 4),
     IN A_DEPT_CODE varchar(10),
     IN A_SCRAP_CAUSE bigint(20),
     IN A_RMK varchar(100),
@@ -22,8 +23,6 @@ begin
 	declare V_MOLD_SCRAP_KEY varchar(30);
 
 	declare V_DUP_CNT INT;
-
-	declare V_AMT decimal(16, 4);
 
 	declare V_IO_GUBN bigint(20);
 
@@ -51,8 +50,6 @@ begin
     	set V_SET_NO = V_SET_NO + 1;
     	SET V_MOLD_SCRAP_KEY := CONCAT('DD', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
     end if;
-   
-   	set V_AMT = A_QTY * A_COST;
   	
     INSERT INTO TB_MOLD_SCRAP (
     	COMP_ID,
@@ -81,7 +78,7 @@ begin
     	A_LOT_NO,
     	A_QTY,
     	A_COST,
-    	V_AMT,
+    	A_AMT,
     	A_DEPT_CODE,
     	A_SCRAP_CAUSE,
     	A_RMK
@@ -116,7 +113,7 @@ begin
     		V_IO_GUBN, -- IO_GUBN 
     		A_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
-    		V_AMT, -- A_IO_AMT
+    		A_AMT, -- A_IO_AMT
     		'TB_MOLD_SCRAP', -- A_TABLE_NAME
     		V_MOLD_SCRAP_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영

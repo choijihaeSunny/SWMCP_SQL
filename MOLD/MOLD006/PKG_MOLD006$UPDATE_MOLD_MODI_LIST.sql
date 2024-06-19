@@ -8,6 +8,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$UPDATE_MOLD_MODI_LIST
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
+	IN A_AMT decimal(16, 4),
 	IN A_MOLD_CODE_AFT varchar(30),
 	IN A_LOT_NO_AFT varchar(30),
 	IN A_DEPT_CODE varchar(10),
@@ -25,8 +26,6 @@ begin
 	declare V_LOT_STATE varchar(10);
 	declare V_MODI_DIV_ORI VARCHAR(10);
 	declare V_MODI_DIV varchar(10);
-
-	declare V_AMT decimal(16, 4);
 
 	declare V_LOT_NO varchar(20);
 	declare V_MOLD_CODE varchar(30);
@@ -47,8 +46,6 @@ begin
   						   where COMP_ID = A_COMP_ID
 							 and MOLD_MODI_KEY = A_MOLD_MODI_KEY);
 					  
-	
-	set V_AMT = A_QTY * A_COST;	
 						
 	set V_MOLD_CODE = (select MOLD_CODE
 						 from TB_MOLD_LOT
@@ -139,7 +136,7 @@ begin
 				    LOT_NO = A_LOT_NO,
 				    QTY = A_QTY,
 				    COST = A_COST,
-				    AMT = V_AMT,
+				    AMT = A_AMT,
 				    MOLD_CODE_AFT = V_MOLD_CODE,
 				    LOT_NO_AFT = V_LOT_NO,
 				    DEPT_CODE = A_DEPT_CODE,
@@ -168,7 +165,7 @@ begin
 	    		V_IO_GUBN, -- IO_GUBN
 	    		A_QTY, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
-	    		V_AMT, -- A_IO_AMT
+	    		A_AMT, -- A_IO_AMT
 	    		'TB_MOLD_MODI', -- A_TABLE_NAME
 	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
@@ -199,7 +196,7 @@ begin
 	    		V_IO_GUBN, -- IO_GUBN 
 	    		A_QTY, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
-	    		V_AMT, -- A_IO_AMT
+	    		A_AMT, -- A_IO_AMT
 	    		'TB_MOLD_MODI', -- A_TABLE_NAME
 	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
@@ -253,7 +250,7 @@ begin
 				    LOT_NO = A_LOT_NO,
 				    QTY = A_QTY,
 				    COST = A_COST,
-				    AMT = V_AMT,
+				    AMT = A_AMT,
 				    MOLD_CODE_AFT = A_MOLD_CODE,
 				    LOT_NO_AFT = A_LOT_NO,
 				    DEPT_CODE = A_DEPT_CODE,
@@ -282,7 +279,7 @@ begin
 	    		V_IO_GUBN, -- IO_GUBN
 	    		A_QTY, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
-	    		V_AMT, -- A_IO_AMT
+	    		A_AMT, -- A_IO_AMT
 	    		'TB_MOLD_MODI', -- A_TABLE_NAME
 	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
@@ -313,7 +310,7 @@ begin
 	    		V_IO_GUBN, -- IO_GUBN 
 	    		A_QTY, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
-	    		V_AMT, -- A_IO_AMT
+	    		A_AMT, -- A_IO_AMT
 	    		'TB_MOLD_MODI', -- A_TABLE_NAME
 	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
@@ -344,7 +341,7 @@ begin
 			    LOT_NO = A_LOT_NO,
 			    QTY = A_QTY,
 			    COST = A_COST,
-			    AMT = V_AMT,
+			    AMT = A_AMT,
 			    MOLD_CODE_AFT = A_MOLD_CODE_AFT,
 			    LOT_NO_AFT = A_LOT_NO_AFT,
 			    DEPT_CODE = A_DEPT_CODE,
@@ -380,7 +377,7 @@ begin
 	    		V_IO_GUBN, -- IO_GUBN
 	    		A_QTY, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
-	    		V_AMT, -- A_IO_AMT
+	    		A_AMT, -- A_IO_AMT
 	    		'TB_MOLD_MODI', -- A_TABLE_NAME
 	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영
@@ -412,7 +409,7 @@ begin
 	    		V_IO_GUBN, -- IO_GUBN 
 	    		A_QTY, -- IO_QTY 수량
 	    		A_COST, -- A_IO_PRC 단가
-	    		V_AMT, -- A_IO_AMT
+	    		A_AMT, -- A_IO_AMT
 	    		'TB_MOLD_MODI', -- A_TABLE_NAME
 	    		A_MOLD_MODI_KEY, -- A_TABLE_KEY
 	    		'Y', -- A_STOCK_YN 재고반영

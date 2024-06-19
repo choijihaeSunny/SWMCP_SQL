@@ -7,6 +7,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$INSERT_MOLD_MODI_LIST
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
+	IN A_AMT decimal(16, 4),
 #	IN A_MOLD_CODE_AFT varchar(30),
 #	IN A_LOT_NO_AFT varchar(30),
 	IN A_DEPT_CODE varchar(10),
@@ -25,8 +26,6 @@ begin
 	declare V_MOLD_MODI_KEY varchar(30);
 	declare V_LOT_STATE varchar(10);
 	declare V_MODI_DIV varchar(10);
-
-	declare V_AMT decimal(16, 4);
 	
 	declare V_LOT_NO varchar(30);
 	declare V_MOLD_CODE varchar(30);
@@ -66,7 +65,6 @@ begin
    					  where path = 'cfg.mold.modi'
    					    and DATA_ID = A_MODI_DIV);
    	
-   	set V_AMT = A_QTY * A_COST;
    
     set V_MOLD_CODE = (select MOLD_CODE
 						 from TB_MOLD_LOT
@@ -188,7 +186,7 @@ begin
     	A_LOT_NO,
     	A_QTY,
     	A_COST,
-    	V_AMT,
+    	A_AMT,
     	V_MOLD_CODE, -- 새로 생성된 LOT_NO와 MOLD_CODE를 입력하였다.
     	V_LOT_NO,
     	A_DEPT_CODE,
@@ -219,7 +217,7 @@ begin
     		V_IO_GUBN, -- IO_GUBN
     		A_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
-    		V_AMT, -- A_IO_AMT
+    		A_AMT, -- A_IO_AMT
     		'TB_MOLD_MODI', -- A_TABLE_NAME
     		V_MOLD_MODI_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
@@ -250,7 +248,7 @@ begin
     		V_IO_GUBN, -- IO_GUBN 
     		A_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
-    		V_AMT, -- A_IO_AMT
+    		A_AMT, -- A_IO_AMT
     		'TB_MOLD_MODI', -- A_TABLE_NAME
     		V_MOLD_MODI_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영

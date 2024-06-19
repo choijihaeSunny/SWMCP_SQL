@@ -7,6 +7,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD007$UPDATE_MOLD_SCRAP_LIS
     IN A_LOT_NO varchar(30),
     IN A_QTY decimal(10, 0),
     IN A_COST decimal(16, 4),
+    IN A_AMT decimal(16, 4),
     IN A_DEPT_CODE varchar(10),
     IN A_SCRAP_CAUSE bigint(20),
     IN A_RMK varchar(100),
@@ -16,8 +17,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD007$UPDATE_MOLD_SCRAP_LIS
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
-	
-	declare V_AMT decimal(16, 4);
 
 	declare V_IO_GUBN bigint(20);
 
@@ -29,8 +28,6 @@ begin
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
-  
-    set V_AMT = A_QTY * A_COST;
    
     UPDATE TB_MOLD_SCRAP
     	SET
@@ -43,7 +40,7 @@ begin
 	    	LOT_NO = A_LOT_NO,
 	    	QTY = A_QTY,
 	    	COST = A_COST,
-	    	AMT = V_AMT,
+	    	AMT = A_AMT,
 	    	DEPT_CODE = A_DEPT_CODE,
 	    	SCRAP_CAUSE = A_SCRAP_CAUSE,
 	    	RMK = A_RMK
@@ -68,7 +65,7 @@ begin
     		V_IO_GUBN, -- IO_GUBN 
     		A_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
-    		V_AMT, -- A_IO_AMT
+    		A_AMT, -- A_IO_AMT
     		'TB_MOLD_SCRAP', -- A_TABLE_NAME
     		A_MOLD_SCRAP_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
