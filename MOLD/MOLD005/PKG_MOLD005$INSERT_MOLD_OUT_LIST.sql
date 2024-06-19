@@ -23,7 +23,6 @@ begin
 	declare V_DUP_CNT INT;
 	
 	declare V_IO_GUBN bigint(20);
-	declare V_AMT decimal(16, 4);
 
 	declare N_SUBUL_RETURN INT;
 	declare V_SUBUL_RETURN VARCHAR(4000);
@@ -53,8 +52,6 @@ begin
     SET V_IO_GUBN = (select DATA_ID
 					 from sys_data
 					 where full_path = 'cfg.com.io.mold.out.out');
-	
-	SET V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
   	
     INSERT INTO TB_MOLD_OUT (
     	COMP_ID,
@@ -84,7 +81,7 @@ begin
     	A_LOT_NO,
     	A_QTY,
     	A_COST,
-    	V_AMT,
+    	A_AMT,
     	A_DEPT_CODE,
     	A_RMK
     	,A_SYS_EMP_NO
@@ -102,7 +99,7 @@ begin
    		V_IO_GUBN, -- IO_GUBN 
    		A_QTY, -- IO_QTY 수량
    		A_COST, -- A_IO_PRC 단가
-   		V_AMT, -- A_IO_AMT
+   		A_AMT, -- A_IO_AMT
    		'TB_MOLD_OUT', -- A_TABLE_NAME 
    		V_MOLD_OUT_KEY, -- A_TABLE_KEY
    		'Y', -- A_STOCK_YN 재고반영

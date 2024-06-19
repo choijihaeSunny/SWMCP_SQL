@@ -8,6 +8,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD005$UPDATE_MOLD_OUT_LIST`
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
+	IN A_AMT decimal(16, 4),
 	IN A_DEPT_CODE varchar(10),
 	IN A_RMK varchar(100),
 	IN A_SYS_EMP_NO varchar(10),
@@ -16,8 +17,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD005$UPDATE_MOLD_OUT_LIST`
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
-	
-	declare V_AMT decimal(16, 4);
 
 	declare V_IO_GUBN bigint(20);
 
@@ -30,7 +29,6 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
-  	SET V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
    
     UPDATE TB_MOLD_OUT
     	SET 
@@ -44,7 +42,7 @@ begin
 	    	LOT_NO = A_LOT_NO,
 	    	QTY = A_QTY,
 	    	COST = A_COST,
-	    	AMT = V_AMT,
+	    	AMT = A_AMT,
 	    	DEPT_CODE = A_DEPT_CODE,
 	    	RMK = A_RMK
 	    	,UPD_EMP_NO = A_SYS_EMP_NO
@@ -68,7 +66,7 @@ begin
    		V_IO_GUBN, -- IO_GUBN ?? 입출고 구분
    		A_QTY, -- IO_QTY 수량
    		A_COST, -- A_IO_PRC 단가
-   		V_AMT, -- A_IO_AMT
+   		A_AMT, -- A_IO_AMT
    		'TB_MOLD_OUT', -- A_TABLE_NAME 
    		A_MOLD_OUT_KEY, -- A_TABLE_KEY
    		'Y', -- A_STOCK_YN 재고반영

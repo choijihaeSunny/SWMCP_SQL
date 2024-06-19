@@ -24,6 +24,8 @@ PROC:begin
 		  B.LOT_NO_PRE,
 		  B.LOT_STATE,
 		  B.QTY,
+		  D.COST,
+		  D.AMT,
 		  B.WET,
 		  B.HIT_CNT,
 		  B.RMK 
@@ -32,10 +34,11 @@ PROC:begin
 								 and A.MOLD_CODE = B.MOLD_CODE
 								 and A.LOT_NO = B.LOT_NO)
 		inner join TB_MOLD C on (A.MOLD_CODE = C.MOLD_CODE)
+		inner join TB_MOLD_INPUT D on (B.COMP_ID = D.COMP_ID
+								   and B.CREATE_TABLE_KEY = D.MOLD_INPUT_KEY)
 	where A.COMP_ID = A_COMP_ID
 		and C.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
 	    and C.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
-		-- and B.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 		and A.STOCK_QTY > 0
 -- 	order by A.MOLD_CODE, STR_TO_DATE(B.SET_DATE, '%Y%m%d'), A.LOT_NO
 	;
