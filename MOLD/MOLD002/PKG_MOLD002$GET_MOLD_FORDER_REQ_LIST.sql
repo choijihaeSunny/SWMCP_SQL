@@ -37,7 +37,7 @@ PROC:begin
 		  A.DEPT_CODE,
 		  A.RMK
 	from TB_MOLD_FORDER_REQ A
-		left join TB_MOLD B
+		INNER join TB_MOLD B
 		 	    on A.MOLD_CODE = B.MOLD_CODE
 	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	  and A.SET_SEQ = V_SET_SEQ

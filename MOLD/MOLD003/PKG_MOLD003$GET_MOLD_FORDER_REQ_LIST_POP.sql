@@ -18,6 +18,7 @@ PROC:begin
 		  B.MOLD_NAME,
 		  B.MOLD_SPEC,
 		  A.QTY,
+		  A.QTY - SUM(IFNULL(C.QTY, 0)) as FORDER_QTY,
 		  STR_TO_DATE(A.DELI_DATE, '%Y%m%d') as DELI_DATE,
 		  A.STOCK_QTY,
 		  A.CUST_CODE,
@@ -31,9 +32,13 @@ PROC:begin
 		  A.DEPT_CODE,
 		  A.RMK
 	from TB_MOLD_FORDER_REQ A
-		left join TB_MOLD B
+		INNER join TB_MOLD B
 		 	    on A.MOLD_CODE = B.MOLD_CODE
-	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+		LEFT join TB_MOLD_FORDER C
+				on A.MOLD_MORDER_REQ_KEY = C.CALL_KEY
+	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') 
+						 and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+	group by A.MOLD_MORDER_REQ_KEY, A.QTY
 	;
 
 	set N_RETURN := 0;

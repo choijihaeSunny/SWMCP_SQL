@@ -24,23 +24,23 @@ PROC:begin
 		  B.MOLD_NAME,
 		  B.MOLD_SPEC,
 		  A.CUST_CODE,
-		  (select CUST_NAME
-		   from tc_cust_code
-		   where cust_code = A.CUST_CODE) as CUST_NAME,
+		  C.CUST_NAME,
 		  A.QTY,
 		  STR_TO_DATE(A.DELI_DATE, '%Y%m%d') as DELI_DATE,
 		  A.COST,
 		  A.AMT,
 		  A.EMP_NO,
-		  (select kor_name
-		   from insa_mst 
-		   where emp_no = A.EMP_NO) as EMP_NAME,
+		  E.KOR_NAME as EMP_NAME,
 		  A.DEPT_CODE,
 		  A.RMK,
 		  A.CALL_KEY
 	from TB_MOLD_FORDER A
-		left join TB_MOLD B
+		INNER join TB_MOLD B
 		 	    on A.MOLD_CODE = B.MOLD_CODE
+		LEFT join TC_CUST_CODE C
+				on A.CUST_CODE = C.CUST_CODE
+		LEFT join INSA_MST E
+				on A.EMP_NO = E.EMP_NO
 	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	  and A.SET_SEQ = V_SET_SEQ
 	;

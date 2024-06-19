@@ -23,7 +23,6 @@ begin
 	declare V_SET_DATE varchar(8);
 	declare V_SET_SEQ varchar(4);
 
-	declare V_AMT decimal(16, 4);
 	declare V_IO_GUBN bigint(20);
 	declare V_WARE_CODE bigint(20);
     declare V_CUST_CODE varchar(10);
@@ -39,7 +38,6 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
   
-  	set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
   	
   	select
   		  SET_DATE, SET_SEQ, CUST_CODE
@@ -98,7 +96,7 @@ begin
         V_IO_GUBN, -- A_IO_GUBN	big--t,
         A_QTY, -- A_IO_QTY		DECIMAL,
         A_COST,-- A_IO_PRC		DECIMAL,
-        V_AMT,-- A_IO_AMT		DECIMAL,
+        A_AMT,-- A_IO_AMT		DECIMAL,
         'TB_MATR_ETC_OUT_DET', -- V_TABLE_NAME	VARCHAR(50),
         A_MATR_ETC_OUT_KEY, -- V_TABLE_KEY	VARCHAR(100),
         'Y', -- A_STOCK_YN	VARCHAR(1),

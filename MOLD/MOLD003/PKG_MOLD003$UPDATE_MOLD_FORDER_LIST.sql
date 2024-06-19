@@ -8,6 +8,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$UPDATE_MOLD_FORDER_LI
 	IN A_QTY decimal(10, 0),
 	IN A_DELI_DATE TIMESTAMP,
 	IN A_COST decimal(16, 4),
+	IN A_AMT decimal(16, 4),
 	IN A_EMP_NO varchar(10),
 	IN A_DEPT_CODE varchar(10),
 	IN A_RMK varchar(100),
@@ -17,16 +18,12 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$UPDATE_MOLD_FORDER_LI
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
-	
-	declare V_AMT decimal(16, 4);
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
-   
-    set V_AMT = A_QTY * A_COST; -- 단가 * 갯수 = 금액
   
     UPDATE TB_MOLD_FORDER
     	SET 
@@ -38,9 +35,9 @@ begin
 	    	MOLD_CODE = A_MOLD_CODE
 	    	,CUST_CODE = A_CUST_CODE
 	    	,QTY = A_QTY
-	    	,DELI_DATE = A_DELI_DATE
+	    	,DELI_DATE = DATE_FORMAT(A_DELI_DATE, '%Y%m%d')
 	    	,COST = A_COST
-	    	,AMT = V_AMT
+	    	,AMT = A_AMT
 	    	,EMP_NO = A_EMP_NO
 	    	,DEPT_CODE = A_DEPT_CODE
 	    	,RMK = A_RMK
