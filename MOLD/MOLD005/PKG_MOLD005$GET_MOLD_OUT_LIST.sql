@@ -21,9 +21,7 @@ PROC:begin
 		  A.SET_NO,
 		  A.MOLD_OUT_KEY,
 		  A.CUST_CODE,
-		  (select CUST_NAME
-		   from tc_cust_code
-		   where cust_code = A.CUST_CODE) as CUST_NAME,
+		  C.CUST_NAME,
 		  A.MOLD_CODE,
 		  B.MOLD_NAME,
 		  B.MOLD_SPEC,
@@ -34,8 +32,10 @@ PROC:begin
 		  A.DEPT_CODE,
 		  A.RMK
 	from TB_MOLD_OUT A
-		left join TB_MOLD B
+		INNER join TB_MOLD B
 		 	    on A.MOLD_CODE = B.MOLD_CODE
+		LEFT join TC_CUST_CODE C
+				on A.CUST_CODE = C.CUST_CODE
 	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	  and A.SET_SEQ = V_SET_SEQ
 	;
