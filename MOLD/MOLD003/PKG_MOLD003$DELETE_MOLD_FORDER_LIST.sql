@@ -59,7 +59,7 @@ begin
     		V_CUST_CODE, -- V_CUST_CODE
     		'01', -- V_WARE_POS    		
     		'Y', -- V_SUBUL_YN
-    		'INSERT', -- V_SAVE_DIV
+    		'DELETE', -- V_SAVE_DIV
     		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- V_IO_DATE -- 수불 발생일자
     		'Y', -- V_STOCK_CHK
     		V_MOLD_CODE, -- V_MOLD_CODE

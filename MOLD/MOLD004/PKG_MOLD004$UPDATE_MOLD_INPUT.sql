@@ -6,8 +6,9 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$UPDATE_MOLD_INPUT`(
 	IN A_CUST_CODE varchar(10),
 	IN A_MOLD_CODE varchar(20),
 	IN A_LOT_YN bigint(20),
-#	IN A_QTY decimal(10, 0),
+	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
+	IN A_AMT decimal(16, 4),
 	IN A_DEPT_CODE varchar(10),
 	IN A_IN_QTY decimal(10, 0),
 #    IN A_CALL_KIND varchar(10),
@@ -21,7 +22,6 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD004$UPDATE_MOLD_INPUT`(
 	)
 begin
 	
-	declare V_AMT decimal(16, 4);
 
 	declare I INT;
 	declare V_LOT_NO varchar(30);
@@ -39,7 +39,6 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
 
-  	set V_AMT = A_IN_QTY * A_COST;
   
 	update TB_MOLD_INPUT
 		set 
@@ -47,7 +46,7 @@ begin
 			,MOLD_CODE = A_MOLD_CODE
 			,LOT_YN = A_LOT_YN
 			,COST = A_COST
-			,AMT = V_AMT
+			,AMT = A_AMT
 			,DEPT_CODE = A_DEPT_CODE
 			,IN_QTY = A_IN_QTY
 			,RMK = A_RMK
@@ -70,7 +69,7 @@ begin
 
 	if V_USE_YN = 'Y' then
 	
-		set V_AMT = A_COST;
+		set A_AMT = A_COST;
 	
 		set I = 0;
 	
@@ -96,7 +95,7 @@ begin
 		    	V_IO_GUBN, -- IO_GUBN 
 		    	1, -- IO_QTY 수량
 		    	A_COST, -- A_IO_PRC 단가
-		    	V_AMT, -- A_IO_AMT
+		    	A_AMT, -- A_IO_AMT
 		    	'TB_MOLD_INPUT', -- A_TABLE_NAME
 		    	A_MOLD_INPUT_KEY, -- A_TABLE_KEY
 		    	'Y', -- A_STOCK_YN 재고반영
@@ -128,7 +127,7 @@ begin
 	    	V_IO_GUBN, -- IO_GUBN 
 	    	A_IN_QTY, -- IO_QTY 수량
 	    	A_COST, -- A_IO_PRC 단가
-	    	V_AMT, -- A_IO_AMT
+	    	A_AMT, -- A_IO_AMT
 	    	'TB_MOLD_INPUT', -- A_TABLE_NAME
 	    	A_MOLD_INPUT_KEY, -- A_TABLE_KEY
 	    	'Y', -- A_STOCK_YN 재고반영

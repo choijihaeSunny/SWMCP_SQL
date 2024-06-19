@@ -34,7 +34,6 @@ begin
 	declare I INT;
 	declare V_LOT_NO varchar(30);
 
-	declare V_AMT decimal(16, 4);
 
 	declare V_SAVE_DIV varchar(10);
 	declare V_IO_GUBN bigint(20);
@@ -80,8 +79,6 @@ begin
       	SET V_RETURN = '입고하려는 수량이 잔여수량보다 큽니다.'; 
 	end if;
 
-	SET V_AMT = A_IN_QTY * A_COST; -- 단가 * 갯수 = 금액
-
     INSERT INTO TB_MOLD_INPUT (
     	COMP_ID,
     	SET_DATE,
@@ -114,7 +111,7 @@ begin
     	A_LOT_YN,
     	A_QTY,
     	A_COST,
-    	V_AMT,
+    	A_AMT,
     	A_DEPT_CODE,
     	A_IN_QTY,
 #    	A_CALL_KIND,
@@ -183,6 +180,7 @@ begin
     	WHILE I < A_IN_QTY DO
     	
     		SET V_LOT_NO = CONCAT('MO', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(V_SET_NO, 5, '0'), '00');
+    	
     	
     		INSERT INTO TB_MOLD_INPUT_LOT (
 		    	COMP_ID,
@@ -342,7 +340,7 @@ begin
     		V_IO_GUBN, -- IO_GUBN ?? 입출고 구분
     		V_IN_QTY, -- IO_QTY 수량
     		A_COST, -- A_IO_PRC 단가
-    		V_AMT, -- A_IO_AMT
+    		A_AMT, -- A_IO_AMT
     		'TB_MOLD_INPUT', -- A_TABLE_NAME
     		V_MOLD_INPUT_KEY, -- A_TABLE_KEY
     		'Y', -- A_STOCK_YN 재고반영
