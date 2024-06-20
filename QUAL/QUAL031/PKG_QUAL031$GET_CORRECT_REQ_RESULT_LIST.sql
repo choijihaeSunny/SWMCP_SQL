@@ -23,7 +23,9 @@ PROC:begin
 			  A.REQ_KEY,
 			  A.STATUS_DIV,
 			  A.REQ_EMP_NO,
-			  E.KOR_NAME as EMP_NAME,
+			  (select KOR_NAME
+			   from INSA_MST
+			   where EMP_NO = A.REQ_EMP_NO) as REQ_EMP_NAME,
 			  A.REQ_DEPT,
 			  A.REC_DEPT,
 			  STR_TO_DATE(A.REPLY_DATE, '%Y%m%d') as REPLY_DATE,
@@ -40,12 +42,15 @@ PROC:begin
 			  A.ACT_EFFECT_DETAIL,
 			  A.ACT_EFFECT_MANAGE,
 			  A.REPLY_EMP_NO,
+			  (select KOR_NAME
+			   from INSA_MST
+			   where EMP_NO = A.REPLY_EMP_NO) as REPLY_EMP_NAME,
 			  A.CONF_EMP_NO,
+			  (select KOR_NAME
+			   from INSA_MST
+			   where EMP_NO = A.CONF_EMP_NO) as CONF_EMP_NAME,
 			  A.SYS_DATE
 		from TB_CORRECT_REQ_RESULT A -- 20240618 요청상태 내역일 경우 날짜 불문하고 조회하도록 수정.
-			LEFT join INSA_MST E
-				on A.COMP_ID = E.COMP_ID
-				and A.REQ_EMP_NO = E.KOR_NAME
 		where A.ACT_RESULT = A_ACT_RESULT
 		;
 	else -- V_ACT_RESULT = 1 -- 조치완료
@@ -55,7 +60,9 @@ PROC:begin
 			  A.REQ_KEY,
 			  A.STATUS_DIV,
 			  A.REQ_EMP_NO,
-			  E.KOR_NAME as EMP_NAME,
+			  (select KOR_NAME
+			   from INSA_MST
+			   where EMP_NO = A.REQ_EMP_NO) as REQ_EMP_NAME,
 			  A.REQ_DEPT,
 			  A.REC_DEPT,
 			  STR_TO_DATE(A.REPLY_DATE, '%Y%m%d') as REPLY_DATE,
@@ -72,12 +79,15 @@ PROC:begin
 			  A.ACT_EFFECT_DETAIL,
 			  A.ACT_EFFECT_MANAGE,
 			  A.REPLY_EMP_NO,
+			  (select KOR_NAME
+			   from INSA_MST
+			   where EMP_NO = A.REPLY_EMP_NO) as REPLY_EMP_NAME,
 			  A.CONF_EMP_NO,
+			  (select KOR_NAME
+			   from INSA_MST
+			   where EMP_NO = A.CONF_EMP_NO) as CONF_EMP_NAME,
 			  A.SYS_DATE
 		from TB_CORRECT_REQ_RESULT A
-			LEFT join INSA_MST E
-				on A.COMP_ID = E.COMP_ID
-				and A.REQ_EMP_NO = E.KOR_NAME
 		where A.REQ_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 		  and A.ACT_RESULT = A_ACT_RESULT
 		;

@@ -39,7 +39,7 @@ PROC:begin
 	  and B.LOT_STATE in (select DATA_ID
 	  					  from SYS_DATA 
 	  					  where path = 'cfg.mold.lotstate'
-						    and CODE <> 'P') -- 폐기가 아닌 내역 호출
+						    and CODE = 'M') -- 수리상태인 내역 호출
 	  and A.STOCK_QTY > 0
 	;
 

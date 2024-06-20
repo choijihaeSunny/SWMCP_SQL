@@ -71,7 +71,7 @@ begin
 		SYSDATE()
     );
 				
-    set A_PLAN_MST_KEY = V_PLAN_MST_KEY;
+    set A_PLAN_MST_KEY = V_PLAN_MST_KEY;  
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
