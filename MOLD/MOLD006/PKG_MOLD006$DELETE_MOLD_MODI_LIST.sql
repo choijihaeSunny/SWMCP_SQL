@@ -70,7 +70,7 @@ begin
 	   and CREATE_TABLE_KEY = A_MOLD_MODI_KEY
 	;
 
-	if V_MODI_DIV = 'M' then
+	if V_MODI_DIV = 'M' and V_MODI_STATUS = 'C' then
 	
 		SET V_IO_GUBN = (select DATA_ID
 						 from SYS_DATA

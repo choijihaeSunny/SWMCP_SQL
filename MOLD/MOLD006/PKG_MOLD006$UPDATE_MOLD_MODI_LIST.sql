@@ -90,7 +90,8 @@ begin
 
 
 	update TB_MOLD_MODI
-	   set QTY = A_QTY,
+	   set MODI_STATUS = A_MODI_STATUS,
+	       QTY = A_QTY,
 		   COST = A_COST,
 		   AMT = A_AMT,
 		   DEPT_CODE = A_DEPT_CODE,
@@ -102,7 +103,7 @@ begin
 	  and MOLD_MODI_KEY = A_MOLD_MODI_KEY
 	;
 	
-	if V_MODI_DIV = 'M' then
+	if V_MODI_DIV = 'M' and V_MODI_STATUS = 'C' then
 	
 		SET V_IO_GUBN = (select DATA_ID
 						 from SYS_DATA
