@@ -28,7 +28,8 @@ PROC:begin
 		  A.PJ_NO,
 		  A.PJ_NAME,
 		  L.LOT_NO,
-		  A.DEPT_CODE
+		  A.DEPT_CODE,
+		  A.WARE_CODE
 	from TB_INPUT_MST A
 		 left outer join ( -- 반품등록된 내역이 있을 경우 반품된 수량을 표시해야 한다.
 					 	select

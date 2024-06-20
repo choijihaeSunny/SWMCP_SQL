@@ -3,13 +3,14 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_MOLD006$INSERT_MOLD_MODI_LIST
 	IN A_SET_DATE TIMESTAMP,
 	IN A_SET_SEQ varchar(4),
  	IN A_MODI_DIV varchar(10),
+ 	IN A_MODI_STATUS varchar(10),
 	IN A_MOLD_CODE varchar(20),
 	IN A_LOT_NO varchar(30),
 	IN A_QTY decimal(10, 0),
 	IN A_COST decimal(16, 4),
 	IN A_AMT decimal(16, 4),
-#	IN A_MOLD_CODE_AFT varchar(30),
-#	IN A_LOT_NO_AFT varchar(30),
+	IN A_MOLD_CODE_AFT varchar(30),
+	IN A_LOT_NO_AFT varchar(30),
 	IN A_DEPT_CODE varchar(10),
 	IN A_IN_OUT varchar(10),
 	IN A_CUST_CODE varchar(10),
@@ -26,9 +27,12 @@ begin
 	declare V_MOLD_MODI_KEY varchar(30);
 	declare V_LOT_STATE varchar(10);
 	declare V_MODI_DIV varchar(10);
+	declare V_MODI_STATUS varchar(10);
 	
 	declare V_LOT_NO varchar(30);
-	declare V_MOLD_CODE varchar(30);
+
+	declare V_QTY decimal(10, 0);
+	declare V_COST decimal(16, 4);
 
 	declare V_DUP_CNT INT;
 
@@ -60,25 +64,42 @@ begin
     	SET V_MOLD_MODI_KEY := CONCAT('DF', right(DATE_FORMAT(A_SET_DATE, '%Y%m'), 4), LPAD(A_SET_SEQ, 3, '0'), LPAD(V_SET_NO, 3, '0'));
     end if;
    
+   
+    -- 수리/수정구분
     set V_MODI_DIV = (select CODE
    					  from SYS_DATA
    					  where path = 'cfg.mold.modi'
    					    and DATA_ID = A_MODI_DIV);
    	
-   
-    set V_MOLD_CODE = (select MOLD_CODE
-						 from TB_MOLD_LOT
-						where LOT_NO = A_LOT_NO);
-   					  
-   	if V_MODI_DIV = 'M' then -- 수정일 경우
-	   	set V_LOT_STATE = (select DATA_ID
+   	-- 수리/수정상태
+   	set V_MODI_STATUS = (select CODE
+   					     from SYS_DATA
+   					     where path = 'cfg.mold.modistatus'
+   					       and DATA_ID = A_MODI_STATUS);			
+		
+					
+	if V_MODI_STATUS = 'R' then -- 처리상태 접수일 경우
+   		-- 대상이 된 LOT_NO 수리상태로 수정
+   		set V_LOT_STATE = (select DATA_ID
 						   from SYS_DATA
 						   where path = 'cfg.mold.lotstate'
-						     and CODE = 'M');
-						   
-		set V_LOT_NO = (select CONCAT(SUBSTRING(LOT_NO, 1, (length(LOT_NO) - 2)), LPAD(RIGHT(LOT_NO, 2) + 1, 2, '0'))
+							 and CODE = 'M');
+   	else -- V_MODI_STATUS = 'C' -- 처리상태 완료일 경우
+   		-- 대상이 된 LOT_NO 정상상태로 수정
+   		set V_LOT_STATE = (select DATA_ID
+						   from SYS_DATA
+						   where path = 'cfg.mold.lotstate'
+							 and CODE = 'N');
+   	end if
+    ;
+   			
+   
+   	if V_MODI_DIV = 'M' then -- 수정일 경우
+   	
+   		-- 선택한 수정금형 LOT NO 기준으로 REV 번호를 ++1 하여 새로운 LOT NO 가 발생한다.
+   		set V_LOT_NO = (select CONCAT(SUBSTRING(LOT_NO, 1, (length(LOT_NO) - 2)), LPAD(RIGHT(LOT_NO, 2) + 1, 2, '0'))
 						from TB_MOLD_LOT
-						where LOT_NO = A_LOT_NO);    
+						where LOT_NO = A_LOT_NO_AFT);    
 						
 	    insert into TB_MOLD_LOT (
 	    	COMP_ID,
@@ -104,13 +125,13 @@ begin
 		    select
 		    	  COMP_ID,
 		    	  V_LOT_NO, 
-		    	  V_MOLD_CODE,
+		    	  MOLD_CODE,
 		    	  DATE_FORMAT(SYSDATE(), '%Y%m%d'),
 		    	  IN_CUST,
 		    	  IN_COST,
 		      	  LOT_NO_ORI,
-		    	  A_LOT_NO,
-		    	  V_LOT_STATE,
+		    	  A_LOT_NO_AFT,
+		    	  V_LOT_STATE, -- MODI_STATUS 값에 따라 수리 또는 정상상태로 등록한다.
 		    	  QTY,
 		    	  WET,
 		    	  'TB_MOLD_MODI',
@@ -122,92 +143,147 @@ begin
 		    	  A_SYS_ID,
 		    	  SYSDATE()
 		    from TB_MOLD_LOT
-		    where LOT_NO = A_LOT_NO    	  
+		    where LOT_NO = A_LOT_NO_AFT    	  
 	    ;
-	    
-	    -- 대상이 된 LOT_NO 폐기상태로 수정
+	  
+	    -- 기존 금형들을 LOT_NO 폐기상태로 수정
 	    set V_LOT_STATE = (select DATA_ID
 						   from SYS_DATA
 						   where path = 'cfg.mold.lotstate'
 						     and CODE = 'P');
 	  
+		-- REV_NO ++1 된 금형
+		update TB_MOLD_LOT
+	    	set LOT_STATE = V_LOT_STATE
+	    where LOT_NO = A_LOT_NO_AFT
+	    ;				    
+						   
+	    -- 기존금형
 	    update TB_MOLD_LOT
 	    	set LOT_STATE = V_LOT_STATE
 	    where LOT_NO = A_LOT_NO
 	    ;
+	   
+	   	-- 수정내역 입력
+	    INSERT INTO TB_MOLD_MODI (
+	    	COMP_ID,
+	    	SET_DATE,
+	    	SET_SEQ,
+	    	SET_NO,
+	    	MOLD_MODI_KEY,
+	    	MODI_DIV,
+	    	MODI_STATUS,
+	    	MOLD_CODE,
+	    	LOT_NO,
+	    	QTY,
+	    	COST,
+	    	AMT,
+	    	MOLD_CODE_AFT,
+	    	LOT_NO_AFT,
+	    	DEPT_CODE,
+	    	IN_OUT,
+	    	CUST_CODE,
+	    	CONT,
+	    	RMK
+	    	,SYS_EMP_NO
+	    	,SYS_ID
+	    	,SYS_DATE
+	    ) values (
+	    	A_COMP_ID,
+	    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
+	    	LPAD(A_SET_SEQ, 3, '0'),
+	    	V_SET_NO,
+	    	V_MOLD_MODI_KEY,
+	    	A_MODI_DIV,
+	    	A_MODI_STATUS,
+	    	A_MOLD_CODE,
+	    	A_LOT_NO,
+	    	A_QTY,
+	    	A_COST,
+	    	A_AMT,
+	    	A_MOLD_CODE_AFT, -- 수정한 금형코드를 입력한다
+	    	V_LOT_NO, -- ++1된 LOT NO를 입력한다.
+	    	A_DEPT_CODE,
+	    	A_IN_OUT,
+	    	A_CUST_CODE,
+	    	A_CONT,
+	    	A_RMK
+	    	,A_SYS_EMP_NO
+	    	,A_SYS_ID
+	    	,SYSDATE()
+	    )
+	    ;
+	   
    	else -- if V_MODI_DIV = 'R' -- 수리등록일 경우
-   		
-   		-- 대상이 된 LOT_NO 수정상태로 수정
+
    	
-	    set V_LOT_STATE = (select DATA_ID
-						   from SYS_DATA
-						   where path = 'cfg.mold.lotstate'
-						     and CODE = 'M');
+   		-- 수리등록시 금형타수 초기화
    		update TB_MOLD_LOT
-   			set HIT_CNT = 0 -- 수리등록시 금형타수 초기화
+   			set HIT_CNT = 0 
    				,LOT_STATE = V_LOT_STATE
    		where LOT_NO = A_LOT_NO;
    	
-   		set V_LOT_NO = A_LOT_NO;
+   		-- 수정내역 입력
+	    INSERT INTO TB_MOLD_MODI (
+	    	COMP_ID,
+	    	SET_DATE,
+	    	SET_SEQ,
+	    	SET_NO,
+	    	MOLD_MODI_KEY,
+	    	MODI_DIV,
+	    	MODI_STATUS,
+	    	MOLD_CODE,
+	    	LOT_NO,
+	    	QTY,
+	    	COST,
+	    	AMT,
+	    	MOLD_CODE_AFT,
+	    	LOT_NO_AFT,
+	    	DEPT_CODE,
+	    	IN_OUT,
+	    	CUST_CODE,
+	    	CONT,
+	    	RMK
+	    	,SYS_EMP_NO
+	    	,SYS_ID
+	    	,SYS_DATE
+	    ) values (
+	    	A_COMP_ID,
+	    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
+	    	LPAD(A_SET_SEQ, 3, '0'),
+	    	V_SET_NO,
+	    	V_MOLD_MODI_KEY,
+	    	A_MODI_DIV,
+	    	A_MODI_STATUS,
+	    	A_MOLD_CODE,
+	    	A_LOT_NO,
+	    	A_QTY,
+	    	A_COST,
+	    	A_AMT,
+	    	NULL, 
+	    	NULL,
+	    	A_DEPT_CODE,
+	    	A_IN_OUT,
+	    	A_CUST_CODE,
+	    	A_CONT,
+	    	A_RMK
+	    	,A_SYS_EMP_NO
+	    	,A_SYS_ID
+	    	,SYSDATE()
+	    )
+	    ;
    	end if;
    
+    
    
-    -- 수정내역 입력
-    INSERT INTO TB_MOLD_MODI (
-    	COMP_ID,
-    	SET_DATE,
-    	SET_SEQ,
-    	SET_NO,
-    	MOLD_MODI_KEY,
-    	MODI_DIV,
-    	MOLD_CODE,
-    	LOT_NO,
-    	QTY,
-    	COST,
-    	AMT,
-    	MOLD_CODE_AFT,
-    	LOT_NO_AFT,
-    	DEPT_CODE,
-    	IN_OUT,
-    	CUST_CODE,
-    	CONT,
-    	RMK
-    	,SYS_EMP_NO
-    	,SYS_ID
-    	,SYS_DATE
-    ) values (
-    	A_COMP_ID,
-    	DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
-    	LPAD(A_SET_SEQ, 3, '0'),
-    	V_SET_NO,
-    	V_MOLD_MODI_KEY,
-    	A_MODI_DIV,
-    	A_MOLD_CODE,
-    	A_LOT_NO,
-    	A_QTY,
-    	A_COST,
-    	A_AMT,
-    	V_MOLD_CODE, -- 새로 생성된 LOT_NO와 MOLD_CODE를 입력하였다.
-    	V_LOT_NO,
-    	A_DEPT_CODE,
-    	A_IN_OUT,
-    	A_CUST_CODE,
-    	A_CONT,
-    	A_RMK
-    	,A_SYS_EMP_NO
-    	,A_SYS_ID
-    	,SYSDATE()
-    )
-    ;
-   
-   	 
-	if V_MODI_DIV = 'M' then -- 수정등록했을 경우 수불처리가 필요하다
+    -- 수정등록했을 경우 수불처리가 필요하다
+	if V_MODI_DIV = 'M' then 
 	
 		SET V_IO_GUBN = (select DATA_ID
 						 from SYS_DATA
 						 where full_path = 'cfg.com.io.mold.out.out');
 						
-		-- 기존의 LOT_NO는 폐기됐으므로 출고처리한다.
+		-- 폐기된 LOT_NO는 출고처리한다.
 		call SP_SUBUL_MOLD_CREATE( 
     		A_COMP_ID, -- A_COMP_ID
     		CONCAT('TB_MOLD_MODI-', V_MOLD_MODI_KEY), -- A_KEY_VAL
@@ -233,12 +309,46 @@ begin
     		N_SUBUL_RETURN,
     		V_SUBUL_RETURN
     	);
+    
+    	select 
+    		  QTY, IN_COST
+    	into
+    		V_QTY, V_COST
+    	from TB_MOLD_LOT
+    	where LOT_NO = A_LOT_NO_AFT
+    	;
+    
+    	call SP_SUBUL_MOLD_CREATE( 
+    		A_COMP_ID, -- A_COMP_ID
+    		CONCAT('TB_MOLD_MODI-', V_MOLD_MODI_KEY), -- A_KEY_VAL
+    		2, -- A_IN_OUT 
+    		'01', -- A_WARE_CODE -- cfg.com.wh.kind 금형은 무조건 01로 입력.
+    		A_LOT_NO_AFT, -- A_LOT_NO -
+    		V_IO_GUBN, -- IO_GUBN
+    		V_QTY, -- IO_QTY 수량
+    		V_COST, -- A_IO_PRC 단가
+    		(V_QTY * V_COST), -- A_IO_AMT
+    		'TB_MOLD_MODI', -- A_TABLE_NAME
+    		V_MOLD_MODI_KEY, -- A_TABLE_KEY
+    		'Y', -- A_STOCK_YN 재고반영
+    		A_CUST_CODE, -- A_CUST_CODE
+    		null, -- A_WARE_POS    		
+    		'Y', -- A_SUBUL_YN
+    		'INSERT', -- A_SAVE_DIV
+    		DATE_FORMAT(SYSDATE(), '%Y%m%d'), -- A_IO_DATE -- 수불 발생일자
+    		'Y', -- A_STOCK_CHK
+    		A_MOLD_CODE, -- A_MOLD_CODE
+    		A_SYS_EMP_NO, -- A_SYS_EMP_NO
+    		A_SYS_ID, -- A_SYS_ID
+    		N_SUBUL_RETURN,
+    		V_SUBUL_RETURN
+    	);
 	
     	SET V_IO_GUBN = (select DATA_ID
 						 from SYS_DATA
 						 where full_path = 'cfg.com.io.mold.in.in');
 					
-    	-- 새로 생성된 LOT_NO를 입고처리한다.
+    	-- 수정된 LOTNO를 입고처리한다
 		call SP_SUBUL_MOLD_CREATE( 
     		A_COMP_ID, -- A_COMP_ID
     		CONCAT('TB_MOLD_MODI-', V_MOLD_MODI_KEY), -- A_KEY_VAL
@@ -266,6 +376,8 @@ begin
     	);
 	end if;
 	
+
+
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
       SET V_RETURN = V_SUBUL_RETURN; -- '저장이 실패하였습니다.'; 
