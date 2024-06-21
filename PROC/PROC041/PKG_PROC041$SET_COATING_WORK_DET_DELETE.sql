@@ -18,6 +18,8 @@ PROC_BODY : begin
 	declare V_IO_GUBN			bigint;
 	declare V_WORK_QTY		DECIMAL(16,4);
 	declare V_WARE_CODE			bigint;
+	declare V_INPUT_REAL_QTY	DECIMAL(16,4);
+	declare V_PROG_CODE		varchar(10);
 
 	declare V_PROG_KIND		bigint;
 	declare V_LOT_STATE_DET		bigint;
@@ -36,28 +38,26 @@ PROC_BODY : begin
 	SET V_PROG_KIND = 40879; -- cfg.code.lot.init LOT생성사유 공정생산  
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_LOT_STATE_DET = 40809; -- cfg.code.lot.status 정상  
-	
-	call PKG_LOT$CREATE_ITEM_LOT_IUD ('DELETE', A_COMP_ID, A_LOT_NO, '', '', A_SET_DATE, 'LM', '', A_ITEM_CODE,
-									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK_DET', A_WORK_KEY,
-									  A_ORDER_KEY, A_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', V_PROD_UNIT_WET, V_MATR_UNIT_WET,
-									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
-	if N_RETURN = -1 then
-		leave PROC_BODY;
-	end if;
+
 
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
 
-	select WORK_QTY, WARE_CODE 
-	into V_WORK_QTY, V_WARE_CODE
+	select WORK_QTY, WARE_CODE, PROG_CODE
+	into V_WORK_QTY, V_WARE_CODE, V_PROG_CODE
 	from   TB_COATING_WORK_DET 
 	where  COMP_ID = A_COMP_ID 
 	  and WORK_KEY = A_WORK_KEY 
 	  and LOT_NO = A_LOT_NO
 	;
 	
+    # 원자재공정투입입고수불
+	set V_IO_GUBN = (select DATA_ID
+					 from SYS_DATA
+					 where FULL_PATH = 'cfg.com.io.mat.in.proc'); -- 생산공정투입 
+					 
 	call SP_SUBUL_CREATE(
-		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, A_PROG_CODE, 
-		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, V_LOT_NO), 'Y', 1, '', '', 
+		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, V_PROG_CODE, 
+		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, A_LOT_NO), 'Y', 1, '', '', 
 		'N', V_SET_DATE, '', 'N', 'Y', 'Y', 
 		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
 	if N_RETURN = -1 then

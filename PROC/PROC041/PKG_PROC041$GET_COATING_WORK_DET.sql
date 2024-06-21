@@ -15,7 +15,7 @@ begin
 		  A.COMP_ID,
 		  A.WORK_LINE,
 		  A.WORK_KEY,
-		  A.WORK_DATE,
+		  STR_TO_DATE(A.WORK_DATE,'%Y%m%d') as WORK_DATE,
 		  A.MATR_CODE,
 		  C.ITEM_NAME,
 		  C.ITEM_SPEC,

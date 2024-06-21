@@ -30,7 +30,8 @@ begin
 		  A.END_YN, 
 	      A.RMK,
 	      B.PROG_CODE,
-	      B.ORDER_KEY
+	      B.ORDER_KEY,
+	      B.WARE_CODE
 	from TB_COATING_PLAN_DET A
 		inner join TB_ITEM_CODE C 
 			on A.MATR_CODE = C.ITEM_CODE

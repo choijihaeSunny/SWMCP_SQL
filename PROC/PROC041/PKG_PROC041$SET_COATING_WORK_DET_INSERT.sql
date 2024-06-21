@@ -60,34 +60,22 @@ PROC_BODY : begin
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_LOT_STATE_DET = 40809; -- cfg.code.lot.status 정상  
 	
-	call PKG_LOT$CREATE_ITEM_LOT_IUD ('INSERT', A_COMP_ID, A_LOT_NO, '', '', A_SET_DATE, 'LM', '', A_ITEM_CODE,
-									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK_DET', A_WORK_KEY,
-									  A_ORDER_KEY, A_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', V_PROD_UNIT_WET, V_MATR_UNIT_WET,
-									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
-	if N_RETURN = -1 then
-		leave PROC_BODY;
-	end if;
-	
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, V_LOT_NO);
 
 	-- 코팅실적은 출고로 처리하여 수불한다. (1개씩 처리)
 	-- 재고의 WARE_CODE 로부터 출고처리한다.
 
 
-	if A_MATR_END_YN = 'Y' then -- 원자재 사용완료일때 처리	--?? 코팅은 사용완료로 처리하는가?
-		select STOCK_QTY into V_STOCK_QTY
-		from   tb_stock
-		where  COMP_ID = A_COMP_ID 
-		 and WARE_CODE = A_WARE_CODE 
-		 and ITEM_CODE = A_ITEM_CODE 
-		 and LOT_NO = V_LOT_NO;
+	select STOCK_QTY into V_STOCK_QTY
+	from   tb_stock
+	where  COMP_ID = A_COMP_ID 
+	  and WARE_CODE = A_WARE_CODE 
+	  and ITEM_CODE = A_MATR_CODE 
+	  and LOT_NO = V_LOT_NO;
 		
-		if V_STOCK_QTY > 0 then 
-			set V_INPUT_REAL_QTY = V_STOCK_QTY;
-		end if;	
-	else 
-		set V_INPUT_REAL_QTY = A_INPUT_QTY;
-	end if;
+	if V_STOCK_QTY > 0 then 
+		set V_INPUT_REAL_QTY = V_STOCK_QTY;
+	end if;	
 		
 	# 원자재공정투입입고수불
 	set V_IO_GUBN = (select DATA_ID
