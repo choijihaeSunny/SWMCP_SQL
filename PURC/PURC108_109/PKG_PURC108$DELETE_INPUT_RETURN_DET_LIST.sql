@@ -50,6 +50,14 @@ begin
    	from TB_INPUT_RETURN_MST
    	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
    	;
+   
+   	-- 구매입고테이블에 반품수량 업데이트 처리 2024.06.21 (UPDATE, DELETE 에도 적용필요 )
+	update TB_INPUT_MST 
+	set    RETURN_QTY = RETURN_QTY - V_QTY
+	where  COMP_ID = A_COMP_ID 
+	and INPUT_MST_KEY = A_CALL_KEY
+	;
+   
   
   	delete from TB_INPUT_RETURN_DET
     where COMP_ID = A_COMP_ID

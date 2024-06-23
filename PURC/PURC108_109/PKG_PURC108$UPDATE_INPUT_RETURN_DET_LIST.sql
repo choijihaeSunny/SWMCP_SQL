@@ -33,6 +33,7 @@ begin
     declare V_CUST_CODE varchar(10);
 	
     declare V_QTY decimal(10, 0);
+    declare V_QTY_PRE decimal(10, 0);
    	declare V_COST decimal(16, 4);
 
 	declare N_SUBUL_RETURN INT;
@@ -50,10 +51,26 @@ begin
   	from TB_INPUT_RETURN_MST
   	where INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
   	;
+  
+  	select QTY
+  	into V_QTY_PRE
+  	from TB_INPUT_RETURN_DET
+  	where COMP_ID = A_COMP_ID
+      and INPUT_RETURN_MST_KEY = A_INPUT_RETURN_MST_KEY
+      and INPUT_RETURN_KEY = A_INPUT_RETURN_KEY
+    ;
    	
    	set V_WARE_CODE = (select WARE_CODE
    					   from DEPT_CODE
    					   where DEPT_CODE = A_DEPT_CODE);
+   					  
+   	-- 구매입고테이블에 반품수량 업데이트 처리 2024.06.21 (UPDATE, DELETE 에도 적용필요 )
+	update TB_INPUT_MST 
+	set    RETURN_QTY = RETURN_QTY - V_QTY_PRE + A_QTY 
+	where  COMP_ID = A_COMP_ID 
+	  and INPUT_MST_KEY = A_CALL_KEY
+	;
+   
   
   	update TB_INPUT_RETURN_DET
   		set COMP_ID = A_COMP_ID

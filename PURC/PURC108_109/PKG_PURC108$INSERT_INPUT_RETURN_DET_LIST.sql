@@ -24,7 +24,7 @@ begin
 	declare V_SET_DATE varchar(8);
 	declare V_SET_SEQ varchar(4);
 	declare V_SET_NO varchar(4);
-
+	declare V_CALL_KIND 	VARCHAR(10);
 	declare V_IO_GUBN bigint(20);
 	declare V_WARE_CODE bigint(20);
 	declare V_ITEM_KIND varchar(10);
@@ -41,6 +41,8 @@ begin
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.';
+  
+  	set V_CALL_KIND = 'INPUT';
   
   	select
   		  SET_DATE, SET_SEQ, ITEM_KIND, CUST_CODE
@@ -59,6 +61,13 @@ begin
    	set V_WARE_CODE = (select WARE_CODE
    					   from DEPT_CODE
    					   where DEPT_CODE = A_DEPT_CODE);
+   					
+   	-- 구매입고테이블에 반품수량 업데이트 처리 2024.06.21 (UPDATE, DELETE 에도 적용필요 )
+	update TB_INPUT_MST 
+	set    RETURN_QTY = RETURN_QTY + A_QTY 
+	where  COMP_ID = A_COMP_ID 
+	and INPUT_MST_KEY = A_CALL_KEY
+	;
    
     INSERT INTO TB_INPUT_RETURN_DET (
     	COMP_ID,
@@ -100,7 +109,7 @@ begin
     	A_DEPT_CODE,
     	A_RETURN_CAUSE,
     	A_END_AMT,
-    	A_CALL_KIND,
+    	V_CALL_KIND,
     	A_CALL_KEY,
     	A_RMK
     	,A_SYS_EMP_NO
