@@ -41,14 +41,14 @@ begin
 	    inner join TB_STOCK D
 			on A.COMP_ID = D.COMP_ID
 		   and A.MATR_CODE = D.ITEM_CODE 
+		   and A.MATR_LOT_NO = D.LOT_NO
+		   and B.WARE_CODE = D.WARE_CODE 
 	where A.COMP_ID = A_COMP_ID
 	  and A.PLAN_DATE between date_format(A_DATE1, '%Y%m%d') and date_format(A_DATE2, '%Y%m%d')
 	  and A.WORK_LINE LIKE CONCAT('%', A_WORK_LINE, '%')
 	  and A.CONFIRM_YN = 'Y'
 	  and A.END_YN = 'N'
-	  and A.PLAN_QTY - A.WORK_QTY > 0
-	group by A.WORK_PLAN_KEY
-	;
+	  and A.PLAN_QTY - A.WORK_QTY > 0	;
 		
 	SET N_RETURN = 0;
     SET V_RETURN = '조회되었습니다.';

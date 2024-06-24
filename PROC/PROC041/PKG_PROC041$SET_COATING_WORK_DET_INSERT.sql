@@ -19,14 +19,13 @@ PROC_BODY : begin
 	declare V_WORK_KEY 		VARCHAR(50);
 	declare V_SET_DATE		VARCHAR(8);
 	declare V_SUBUL_KEY		VARCHAR(100);
-	declare V_WARE_CODE			bigint;
 	declare V_ITEM_KIND			bigint;
 	declare V_IO_GUBN			bigint;
 	DECLARE V_INPUT_REAL_QTY DECIMAL(16,4);
 	declare V_STOCK_QTY		DECIMAL(16,4);
 	declare V_SEQ			VARCHAR(3);
 	declare V_LOT_NO		VARCHAR(30);
-
+	declare V_PROG_CODE		bigint;
 	declare V_PROG_KIND		bigint;
 	declare V_LOT_STATE_DET		bigint;
 
@@ -38,11 +37,7 @@ PROC_BODY : begin
 
   	
   	set V_SET_DATE = date_format(A_WORK_DATE,'%Y%m%d');
-    
-	select WARE_CODE 
-	into V_WARE_CODE
-	from   dept_code
-	where  DEPT_CODE = A_WORK_DEPT;
+   
 
 	-- 240617 문의결과
 	-- 기존 LOT_NO에 세자리 순번 추가하여야 한다.
@@ -59,6 +54,7 @@ PROC_BODY : begin
 	SET V_PROG_KIND = 40879; -- cfg.code.lot.init LOT생성사유 공정생산  
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_LOT_STATE_DET = 40809; -- cfg.code.lot.status 정상  
+	set V_PROG_CODE = 1703; -- 원자재코팅 공정 
 	
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, V_LOT_NO);
 
@@ -84,7 +80,7 @@ PROC_BODY : begin
 					 
 	-- DET에 입고
 	call SP_SUBUL_CREATE(
-		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, A_PROG_CODE, 
+		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', A_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, V_PROG_CODE, 
 		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, V_LOT_NO), 'Y', 1, '', '', 
 		'N', V_SET_DATE, '', 'N', 'Y', 'Y', 
 		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );

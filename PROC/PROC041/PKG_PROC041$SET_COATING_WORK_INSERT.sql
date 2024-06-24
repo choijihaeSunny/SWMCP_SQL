@@ -41,8 +41,6 @@ PROC_BODY : begin
 	declare V_FINAL_PROG_YN		VARCHAR(1);
 	declare V_SUBUL_KEY			VARCHAR(100);
 	declare V_SUBUL_ORDER_KEY	VARCHAR(100);
-	declare V_WARE_CODE			bigint;
-	declare V_WARE_CODE_PROC	bigint;
 	declare V_ITEM_KIND			bigint;
 	declare V_IO_GUBN			bigint;
 	declare V_PROG_CODE			bigint;
@@ -95,11 +93,6 @@ PROC_BODY : begin
 	
    -- 기존 LOT_NO를 받아와서 처리하는 부분이므로 LOT_NO 프로시저 처리 삭제.
    	
-	select WARE_CODE, WARE_CODE_PROC 
-	into V_WARE_CODE, V_WARE_CODE_PROC
-	from   dept_code
-	where  DEPT_CODE = A_WORK_DEPT;
-
 	set V_SUBUL_KEY = concat('TB_COATING_WORK-', V_WORK_KEY);
 
 	-- 수불처리? 공정은 Z00으로 처리한다고 한다
@@ -115,7 +108,7 @@ PROC_BODY : begin
 					 where FULL_PATH = 'cfg.com.io.mat.out.proc'); -- 생산투입 
 	set V_SUBUL_PRE_KEY = CONCAT(V_SUBUL_KEY, 'PRE');  
 	call SP_SUBUL_CREATE(
-			A_COMP_ID, V_SUBUL_PRE_KEY, 'INSERT', V_SET_DATE, '2', V_WARE_CODE_PROC, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, V_PROG_CODE, 
+			A_COMP_ID, V_SUBUL_PRE_KEY, 'INSERT', V_SET_DATE, '2', A_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, V_PROG_CODE, 
 			V_IO_GUBN, A_WORK_QTY, 0, 0, 'TB_COATING_WORK', V_WORK_KEY, 'Y', 1, '', '', 
 			'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
 			A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
