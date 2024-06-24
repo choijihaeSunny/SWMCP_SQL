@@ -56,6 +56,15 @@ PROC_BODY : begin
 	set V_LOT_STATE_DET = 40809; -- cfg.code.lot.status 정상  
 	set V_PROG_CODE = 1703; -- 원자재코팅 공정 
 	
+	
+	call PKG_LOT$CREATE_ITEM_LOT_IUD ('INSERT', A_COMP_ID, '', '', '', V_SET_DATE, 'LM', '', A_MATR_CODE,
+									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK_DET', A_WORK_KEY,
+									  null, V_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', null, null,
+									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
+	if N_RETURN = -1 then
+		leave PROC_BODY;
+	end if;
+	
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, V_LOT_NO);
 
 	-- 코팅실적은 출고로 처리하여 수불한다. (1개씩 처리)

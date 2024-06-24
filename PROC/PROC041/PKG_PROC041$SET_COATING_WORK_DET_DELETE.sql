@@ -20,6 +20,7 @@ PROC_BODY : begin
 	declare V_WARE_CODE			bigint;
 	declare V_INPUT_REAL_QTY	DECIMAL(16,4);
 	declare V_PROG_CODE		varchar(10);
+	declare V_LOT_NO		VARCHAR(30);
 
 	declare V_PROG_KIND		bigint;
 	declare V_LOT_STATE_DET		bigint;
@@ -39,6 +40,14 @@ PROC_BODY : begin
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_LOT_STATE_DET = 40809; -- cfg.code.lot.status 정상  
 	set V_PROG_CODE = 1703; -- 원자재코팅 공정 
+	
+	call PKG_LOT$CREATE_ITEM_LOT_IUD ('DELETE', A_COMP_ID, A_LOT_NO, '', '', V_SET_DATE, 'LM', '', A_MATR_CODE,
+									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK_DET', A_WORK_KEY,
+									  null, V_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', null, null,
+									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
+	if N_RETURN = -1 then
+		leave PROC_BODY;
+	end if;
 
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
 
