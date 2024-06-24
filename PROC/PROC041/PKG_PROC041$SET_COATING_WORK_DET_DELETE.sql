@@ -38,7 +38,7 @@ PROC_BODY : begin
 	SET V_PROG_KIND = 40879; -- cfg.code.lot.init LOT생성사유 공정생산  
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
 	set V_LOT_STATE_DET = 40809; -- cfg.code.lot.status 정상  
-
+	set V_PROG_CODE = 1703; -- 원자재코팅 공정 
 
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
 
@@ -56,7 +56,7 @@ PROC_BODY : begin
 					 where FULL_PATH = 'cfg.com.io.mat.in.proc'); -- 생산공정투입 
 					 
 	call SP_SUBUL_CREATE(
-		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, V_PROG_CODE, 
+		A_COMP_ID, V_SUBUL_KEY, 'DELETE', V_SET_DATE, '1', V_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, V_PROG_CODE, 
 		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, A_LOT_NO), 'Y', 1, '', '', 
 		'N', V_SET_DATE, '', 'N', 'Y', 'Y', 
 		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );

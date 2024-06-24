@@ -35,8 +35,6 @@ PROC_BODY : begin
 	declare V_MATR_UNIT_WET	DECIMAL(16,4);
 	declare V_FINAL_PROG_YN	VARCHAR(1);
 	declare V_SUBUL_KEY		VARCHAR(100);
-	declare V_WARE_CODE			bigint;
-	declare V_WARE_CODE_PROC	bigint;
 	declare V_ITEM_KIND			bigint;
 	declare V_IO_GUBN			bigint;
 	declare V_WORK_DATE		VARCHAR(8);
@@ -81,11 +79,6 @@ PROC_BODY : begin
 	where  COMP_ID = A_COMP_ID 
 	and WORK_KEY = A_WORK_KEY;		
 
-	select WARE_CODE, WARE_CODE_PROC 
-	into V_WARE_CODE, V_WARE_CODE_PROC
-	from   dept_code
-	where  DEPT_CODE = A_WORK_DEPT;
-
 	set V_SUBUL_KEY = concat('TB_COATING_WORK-', V_WORK_KEY);
 	
 	set V_IO_GUBN = (select DATA_ID
@@ -94,7 +87,7 @@ PROC_BODY : begin
 	set V_SUBUL_PRE_KEY = CONCAT(V_SUBUL_KEY, 'PRE');  
 
 	call SP_SUBUL_CREATE(
-			A_COMP_ID, V_SUBUL_PRE_KEY, 'UPDATE', V_SET_DATE, '2', V_WARE_CODE_PROC, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
+			A_COMP_ID, V_SUBUL_PRE_KEY, 'UPDATE', V_SET_DATE, '2', A_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
 			V_IO_GUBN, A_WORK_QTY, 0, 0, 'TB_COATING_WORK', V_WORK_KEY, 'Y', 1, '', '', 
 			'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
 			A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
