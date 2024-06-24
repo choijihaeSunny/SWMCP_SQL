@@ -27,8 +27,10 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL031$INSERT_CORRECT_REQ_RE
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
-begin
+PROC_BODY : begin
 	
+	declare V_CNT INT;
+
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
@@ -37,6 +39,16 @@ begin
   
     set A_REQ_KEY := concat(DATE_FORMAT(A_REQ_DATE, '%Y%m%d'), LPAD(A_REQ_SEQ, 3, '0')) ;
   
+   	set V_CNT = (select COUNT(*)
+   				 from TB_CORRECT_REQ_RESULT
+   				 where REQ_KEY = A_REQ_KEY);
+   
+   	if V_CNT > 0 then
+   		SET N_RETURN = -1;
+  		SET V_RETURN = '순번 값이 중복됩니다. 다시 확인하여 주십시오.'; 
+  		leave PROC_BODY;
+   	end if;
+   
     insert into TB_CORRECT_REQ_RESULT (
      	  COMP_ID,
     	  REQ_DATE,

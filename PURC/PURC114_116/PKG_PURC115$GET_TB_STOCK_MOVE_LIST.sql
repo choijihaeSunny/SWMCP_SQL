@@ -1,17 +1,21 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC115$GET_TB_STOCK_MOVE_LIST`(
-			IN A_ST_DATE 			TIMESTAMP,
-			IN A_ED_DATE			TIMESTAMP,
-			IN A_CONFIRM_YN			varchar(1),
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC114$GET_TB_STOCK_MOVE_LIST`(
+			IN A_SET_DATE 		TIMESTAMP,
+			IN A_SET_SEQ		varchar(4),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
 PROC:begin
 	
+	declare V_SET_SEQ varchar(4);
+	
 	declare exit HANDLER for sqlexception
-	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN);
+	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	if trim(A_SET_SEQ) <> '' then
+		set V_SET_SEQ := LPAD(A_SET_SEQ, 3, '0');
+	end if;
 
 	select
-		  A.CONFIRM_YN,
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.SET_SEQ,
 		  A.SET_NO,
@@ -31,10 +35,12 @@ PROC:begin
 		  A.WARE_CODE,
 		  A.WARE_CODE_PRE,
 		  A.ITEM_KIND,
-		  A.RMK
+		  A.RMK,
+		  0 as QTY_ORI
 	from TB_STOCK_MOVE A
-	where A.MOVE_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-	  and A.CONFIRM_YN = A_CONFIRM_YN
+	where A.MOVE_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+	  and A.SET_SEQ = V_SET_SEQ
+	  and A.CONFIRM_YN = 'N'
 	;
 
 	set N_RETURN := 0;

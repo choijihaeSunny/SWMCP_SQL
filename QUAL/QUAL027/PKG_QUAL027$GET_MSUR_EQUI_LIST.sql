@@ -34,8 +34,8 @@ PROC:begin
 		  A.USE_DEPT, -- 사용부서
 		  A.RES_STATUS, -- 지원상태
 		  A.ETC_RMK -- 비고
-	from TB_MSUR_EQUICHECK B
-		 left join TB_MSUR_EQUI A
+	from TB_MSUR_EQUI A
+		 inner join TB_MSUR_EQUICHECK B
 		 	    on A.COMP_ID = B.COMP_ID
 	  			and A.EQUI_CODE = B.EQUI_CODE
 	where A.CLASS1 LIKE CONCAT('%', V_CLASS1, '%')

@@ -64,14 +64,21 @@ begin
 						   from SYS_DATA
 						   where path = 'cfg.mold.lotstate'
 							 and CODE = 'M');
-   	else -- V_MODI_STATUS = 'C' -- 처리상태 완료일 경우
+   	elseif  V_MODI_STATUS = 'C' then -- 처리상태 완료일 경우
    		-- 대상이 된 LOT_NO 정상상태로 수정
    		set V_LOT_STATE = (select DATA_ID
 						   from SYS_DATA
 						   where path = 'cfg.mold.lotstate'
 							 and CODE = 'N');
+	elseif V_MODI_STATUS = 'D' then
+		-- 대상이 된 LOT_NO 폐기상태로 수정
+		set V_LOT_STATE = (select DATA_ID
+						   from SYS_DATA
+						   where path = 'cfg.mold.lotstate'
+							 and CODE = 'P');
    	end if
     ;
+   		
 
 	if V_MODI_DIV = 'M' then -- 수정일 경우
 		

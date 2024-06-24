@@ -40,6 +40,10 @@ PROC:begin
 		and C.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
 	    and C.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
 		and A.STOCK_QTY > 0
+		and B.LOT_STATE = (select DATA_ID
+						   from SYS_DATA
+						   where path = 'cfg.mold.lotstate'
+						     and CODE = 'N')
 -- 	order by A.MOLD_CODE, STR_TO_DATE(B.SET_DATE, '%Y%m%d'), A.LOT_NO
 	;
 

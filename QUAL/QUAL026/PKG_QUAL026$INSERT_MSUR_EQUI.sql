@@ -28,10 +28,12 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_QUAL026$INSERT_MSUR_EQUI`(
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
-begin
+PROC_BODY : begin
 	
 	DECLARE V_CLASS1 VARCHAR(20);
 	DECLARE V_CLASS2 VARCHAR(20);
+
+	declare V_CNT INT;
 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
@@ -51,6 +53,16 @@ begin
   
     SET A_EQUI_CODE := CONCAT(LPAD(V_CLASS1, 2, '0'), LPAD(V_CLASS2, 2, '0'), LPAD(A_TEMP_SEQ, 3, '0'));
    
+    
+    set V_CNT = (select COUNT(*)
+   				 from TB_MSUR_EQUI
+   				 where EQUI_CODE = A_EQUI_CODE);
+   
+   	if V_CNT > 0 then
+   		SET N_RETURN = -1;
+  		SET V_RETURN = '순번 값이 중복됩니다. 다시 확인하여 주십시오.'; 
+  		leave PROC_BODY;
+   	end if;
   	
     INSERT INTO TB_MSUR_EQUI (
     	COMP_ID,

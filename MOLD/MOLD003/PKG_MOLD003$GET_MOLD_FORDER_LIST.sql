@@ -1,4 +1,5 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_MOLD003$GET_MOLD_FORDER_LIST`(
+			IN A_COMP_ID		VARCHAR(10),
 			IN A_SET_DATE 		TIMESTAMP,
 			IN A_SET_SEQ		varchar(4),
             OUT N_RETURN      	INT,
@@ -41,7 +42,8 @@ PROC:begin
 				on A.CUST_CODE = C.CUST_CODE
 		LEFT join INSA_MST E
 				on A.EMP_NO = E.EMP_NO
-	where A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+	where A.COMP_ID = A_COMP_ID 
+	  and A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
 	  and A.SET_SEQ = V_SET_SEQ
 	;
 

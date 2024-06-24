@@ -299,7 +299,7 @@ begin
 			    ,SYS_DATE
 	    	) values (
 	    		A_COMP_ID,
-			    CONCAT(A_MOLD_CODE, '00'),
+			    A_MOLD_CODE,
 			    A_MOLD_CODE,
 			    DATE_FORMAT(A_SET_DATE, '%Y%m%d'),
 			    A_CUST_CODE,

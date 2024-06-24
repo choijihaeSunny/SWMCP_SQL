@@ -10,6 +10,7 @@ PROC:begin
 	call USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	select
+		  'N' as IS_CHECK,
 		  STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE,
 		  A.SET_SEQ,
 		  A.SET_NO,
@@ -39,6 +40,7 @@ PROC:begin
 	where A.SET_DATE BETWEEN DATE_FORMAT(A_ST_DATE, '%Y%m%d') 
 						 and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 	group by A.MOLD_MORDER_REQ_KEY, A.QTY
+	having A.QTY - SUM(IFNULL(C.QTY, 0)) > 0
 	;
 
 	set N_RETURN := 0;

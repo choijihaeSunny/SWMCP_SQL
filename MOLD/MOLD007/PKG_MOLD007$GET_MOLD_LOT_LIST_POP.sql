@@ -32,6 +32,10 @@ PROC:begin
 								 and A.MOLD_CODE = B.MOLD_CODE
 								 and A.LOT_NO = B.LOT_NO)
 		inner join TB_MOLD C on (B.MOLD_CODE = C.MOLD_CODE)
+		inner join TB_MOLD_MODI D on (A.COMP_ID = D.COMP_ID
+								 and A.MOLD_CODE = D.MOLD_CODE
+								 and A.LOT_NO = D.LOT_NO
+								)
 	where A.COMP_ID = A_COMP_ID
 	  and C.MOLD_CODE LIKE CONCAT('%', A_MOLD_CODE, '%')
 	  and C.MOLD_NAME like CONCAT('%', A_MOLD_NAME, '%')
@@ -40,6 +44,11 @@ PROC:begin
 	  					  from SYS_DATA 
 	  					  where path = 'cfg.mold.lotstate'
 						    and CODE = 'M') -- 수리상태인 내역 호출
+	  and D.MODI_STATUS in (select DATA_ID
+	  						from SYS_DATA 
+	  						where path = 'cfg.mold.modistatus'
+	  						  and CODE <> 'C' -- 접수, 폐기내역 조회 (완료내역 제외)
+	  					   )
 	  and A.STOCK_QTY > 0
 	;
 

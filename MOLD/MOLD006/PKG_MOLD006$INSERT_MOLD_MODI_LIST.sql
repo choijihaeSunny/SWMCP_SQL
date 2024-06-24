@@ -84,12 +84,18 @@ begin
 						   from SYS_DATA
 						   where path = 'cfg.mold.lotstate'
 							 and CODE = 'M');
-   	else -- V_MODI_STATUS = 'C' -- 처리상태 완료일 경우
+   	elseif  V_MODI_STATUS = 'C' then -- 처리상태 완료일 경우
    		-- 대상이 된 LOT_NO 정상상태로 수정
    		set V_LOT_STATE = (select DATA_ID
 						   from SYS_DATA
 						   where path = 'cfg.mold.lotstate'
 							 and CODE = 'N');
+	elseif V_MODI_STATUS = 'D' then
+		-- 대상이 된 LOT_NO 폐기상태로 수정
+		set V_LOT_STATE = (select DATA_ID
+						   from SYS_DATA
+						   where path = 'cfg.mold.lotstate'
+							 and CODE = 'P');
    	end if
     ;
    			
@@ -214,14 +220,21 @@ begin
 	    )
 	    ;
 	   
-   	else -- if V_MODI_DIV = 'R' -- 수리등록일 경우
+   	else  -- if V_MODI_DIV = 'R' then -- 수리등록일 경우
 
-   	
-   		-- 수리등록시 금형타수 초기화
-   		update TB_MOLD_LOT
-   			set HIT_CNT = 0 
-   				,LOT_STATE = V_LOT_STATE
-   		where LOT_NO = A_LOT_NO;
+   		if V_MODI_STATUS <> 'D' then
+	   		-- 수리등록시 금형타수 초기화
+	   		update TB_MOLD_LOT
+	   			set HIT_CNT = 0 
+	   				,LOT_STATE = V_LOT_STATE
+	   		where LOT_NO = A_LOT_NO;
+   		ELSE
+   			-- 폐기처리일경우 폐기상태로 변경
+	   		update TB_MOLD_LOT
+	   			set LOT_STATE = V_LOT_STATE
+	   		where LOT_NO = A_LOT_NO;
+   		end if;
+   		
    	
    		-- 수정내역 입력
 	    INSERT INTO TB_MOLD_MODI (
@@ -272,6 +285,7 @@ begin
 	    	,SYSDATE()
 	    )
 	    ;
+	   
    	end if;
    
     

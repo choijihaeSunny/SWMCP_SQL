@@ -30,7 +30,8 @@ PROC:begin
 		  A.PJ_NAME,
 		  A.LOT_NO,
 		  A.DEPT_CODE,
-		  A.WARE_CODE
+		  A.WARE_CODE,
+		  A.INPUT_MST_KEY
 	from TB_INPUT_MST A inner join TC_CUST_CODE C  on (A.COMP_ID = C.COMP_ID 
 												 	and A.CUST_CODE = C.CUST_CODE)
 			 inner join TB_ITEM_CODE D on (A.ITEM_CODE = D.ITEM_CODE )
