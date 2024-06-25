@@ -90,7 +90,7 @@ begin
 						   from SYS_DATA
 						   where path = 'cfg.mold.lotstate'
 							 and CODE = 'N');
-	elseif V_MODI_STATUS = 'D' then
+	elseif V_MODI_STATUS = 'D' then -- 처리상태 폐기일 경우
 		-- 대상이 된 LOT_NO 폐기상태로 수정
 		set V_LOT_STATE = (select DATA_ID
 						   from SYS_DATA

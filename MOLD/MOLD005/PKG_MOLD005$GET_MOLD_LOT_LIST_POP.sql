@@ -28,6 +28,7 @@ PROC:begin
 		  D.AMT,
 		  B.WET,
 		  B.HIT_CNT,
+		  D.DEPT_CODE,
 		  B.RMK 
 	from TB_MOLD_STOCK A
 		inner join TB_MOLD_LOT B on (A.COMP_ID = B.COMP_ID

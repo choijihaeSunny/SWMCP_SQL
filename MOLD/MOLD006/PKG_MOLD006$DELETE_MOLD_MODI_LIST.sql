@@ -10,6 +10,9 @@ begin
 	
 	declare V_LOT_STATE varchar(10);
 	declare V_MODI_DIV varchar(10);
+	declare V_MODI_DIV_CODE varchar(10);
+	declare V_MODI_STATUS varchar(10);
+	declare V_MODI_STATUS_CODE varchar(10);
 
 	declare V_LOT_NO varchar(20);
 	declare V_LOT_NO_PRE varchar(20);
@@ -33,25 +36,31 @@ begin
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
    
- 	set V_MODI_DIV = (select CODE
-					  from SYS_DATA
-					  where path = 'cfg.mold.modi'
-					    and DATA_ID = (select MODI_DIV
-					   				   from TB_MOLD_MODI
-					   				   where MOLD_MODI_KEY = A_MOLD_MODI_KEY));
+ 	
 					   		
 	 select LOT_NO, LOT_NO_AFT,
 	 		QTY, COST, AMT,
-	 		CUST_CODE, MOLD_CODE
+	 		CUST_CODE, MOLD_CODE,
+	 		MODI_DIV,
+	 		MODI_STATUS
 	 into V_LOT_NO, V_LOT_NO_AFT,
 	 	  V_QTY, V_COST, V_AMT,
-	 	  V_CUST_CODE, V_MOLD_CODE
+	 	  V_CUST_CODE, V_MOLD_CODE,
+	 	  V_MODI_DIV, V_MODI_STATUS
 	 from TB_MOLD_MODI
 	 where MOLD_MODI_KEY = A_MOLD_MODI_KEY
 	 ;
 	
+	set V_MODI_DIV_CODE = (select CODE
+						   from SYS_DATA
+						   where path = 'cfg.mold.modi'
+						     and DATA_ID = V_MODI_DIV);
 	 
-   	 
+   	 -- 수리/수정상태
+   	set V_MODI_STATUS_CODE = (select CODE
+	   					      from SYS_DATA
+	   					      where path = 'cfg.mold.modistatus'
+	   					        and DATA_ID = V_MODI_STATUS);		
   
 	 DELETE FROM TB_MOLD_MODI
 	 WHERE COMP_ID = A_COMP_ID
@@ -63,14 +72,18 @@ begin
 					     where path = 'cfg.mold.lotstate'
 						   and CODE = 'N');
 							    
-	update TB_MOLD_LOT
-	   set LOT_STATE = V_LOT_STATE
-	 where COMP_ID = A_COMP_ID
-	   and CREATE_TABLE = 'TB_MOLD_MODI'
-	   and CREATE_TABLE_KEY = A_MOLD_MODI_KEY
+	if V_MODI_DIV = 'M' then
+		update TB_MOLD_LOT
+		   set LOT_STATE = V_LOT_STATE
+		 where COMP_ID = A_COMP_ID
+		   and CREATE_TABLE = 'TB_MOLD_MODI'
+		   and CREATE_TABLE_KEY = A_MOLD_MODI_KEY
+		;
+	end if
 	;
+	
 
-	if V_MODI_DIV = 'M' and V_MODI_STATUS = 'C' then
+	if V_MODI_DIV_CODE = 'M' and V_MODI_STATUS_CODE = 'C' then
 	
 		SET V_IO_GUBN = (select DATA_ID
 						 from SYS_DATA
