@@ -1,0 +1,47 @@
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_SALE026$GET_OUT_DET`(	
+	in A_COMP_ID VARCHAR(10),
+	in A_OUT_MST_KEY VARCHAR(30),
+	OUT N_RETURN INT,
+	OUT V_RETURN VARCHAR(4000)
+	)
+begin
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+
+	select 
+		A.COMP_ID,
+		str_to_date(A.SET_DATE,'%Y%m%d') as SET_DATE,
+		A.SET_SEQ,
+		A.SET_NO,
+		A.OUT_MST_KEY,
+		A.OUT_KEY,
+		str_to_date(A.OUT_DATE,'%Y%m%d') as OUT_DATE,
+		A.ITEM_CODE,
+		B.ITEM_NAME,
+		B.ITEM_SPEC,
+		A.QTY,
+		A.COST,
+		A.AMT,
+		A.REQ_KIND,
+		str_to_date(A.DELI_DATE,'%Y%m%d') as DELI_DATE,
+		A.CUST_REQ_RMK,
+		A.PACK_SPEC,
+		A.CUST_ITEM_CODE,
+		A.CUST_ORDER_NO,
+		A.OUT_CONFIRM,
+		A.TAX_YN,
+		A.VAN_CHK_YN,
+		str_to_date(A.VAN_CHK_DATE,'%Y%m%d') as VAN_CHK_DATE,
+		A.RETURN_QTY,
+		A.ORDER_KEY,
+		A.OUT_REQ_KEY,
+		A.RMK
+	from tb_out_det A
+		inner join tb_item_code B on (A.ITEM_CODE = B.ITEM_CODE)
+	where A.COMP_ID = A_COMP_ID 
+	 	and A.OUT_MST_KEY = A_OUT_MST_KEY;
+	
+	
+	SET N_RETURN = 0;
+    SET V_RETURN = '조회되었습니다.'; 
+end
