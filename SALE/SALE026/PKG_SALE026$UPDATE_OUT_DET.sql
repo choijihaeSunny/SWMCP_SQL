@@ -1,0 +1,50 @@
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_SALE026$UPDATE_OUT_DET`(	
+	IN A_COMP_ID varchar(10),
+	IN A_OUT_KEY varchar(30),
+	IN A_OUT_DATE DATETIME,
+	IN A_ITEM_CODE varchar(30),
+	IN A_QTY decimal(20,4),
+	IN A_COST decimal(20,4),
+	IN A_AMT decimal(20,4),
+	IN A_REQ_KIND bigint(20),
+	IN A_DELI_DATE DATETIME,
+	IN A_CUST_REQ_RMK varchar(100),
+	IN A_PACK_SPEC varchar(100),
+	IN A_CUST_ITEM_CODE varchar(30),
+	IN A_CUST_ORDER_NO varchar(30),
+	IN A_RMK varchar(100),
+	IN A_SYS_ID decimal(10,0),
+	IN A_SYS_EMP_NO varchar(10),
+	OUT N_RETURN INT,
+	OUT V_RETURN VARCHAR(4000)
+	)
+begin
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+	SET N_RETURN = 0;
+  	SET V_RETURN = '수정되었습니다.'; 
+  
+  	UPDATE tb_out_det set
+			ITEM_CODE = A_ITEM_CODE,
+			QTY = A_QTY,
+			COST = A_COST,
+			AMT = A_AMT,
+			REQ_KIND = A_REQ_KIND,
+			DELI_DATE = date_format(A_DELI_DATE,'%Y%m%d'),
+			CUST_REQ_RMK = A_CUST_REQ_RMK,
+			PACK_SPEC = A_PACK_SPEC,
+			CUST_ITEM_CODE = A_CUST_ITEM_CODE,
+			CUST_ORDER_NO = A_CUST_ORDER_NO,
+			RMK = A_RMK,
+			UPD_ID = A_SYS_ID,
+			UPD_EMP_NO = A_SYS_EMP_NO,
+			UPD_DT = SYSDATE()
+    	where COMP_ID = A_COMP_ID
+    		and OUT_KEY = A_OUT_KEY;
+	
+	IF ROW_COUNT() = 0 THEN
+  	  SET N_RETURN = -1;
+      SET V_RETURN = '수정에 실패하였습니다.'; 
+  	END IF;  
+  
+end

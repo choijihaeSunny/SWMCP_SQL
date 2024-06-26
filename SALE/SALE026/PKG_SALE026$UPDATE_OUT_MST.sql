@@ -1,0 +1,53 @@
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_SALE026$UPDATE_OUT_MST`(	
+	IN A_COMP_ID varchar(10),
+	IN A_OUT_MST_KEY varchar(30),
+	IN A_OUT_DATE DATETIME,
+	IN A_CUST_CODE varchar(10),
+	IN A_EMP_NO varchar(10),
+	IN A_DEPT_CODE varchar(10),
+	IN A_CURR_UNIT bigint(20),
+	IN A_EX_RATE decimal(20,5),
+	IN A_PJ_NO varchar(30),
+	IN A_PJ_NAME varchar(50),
+	IN A_SHIP_INFO varchar(30),
+	IN A_SALES_TYPE bigint(20),
+	IN A_DELI_PLACE varchar(100),
+	IN A_SALES_KIND bigint(20),
+	IN A_CUST_LOCATION varchar(100),
+	IN A_PACK_SPEC varchar(100),
+	IN A_RMK varchar(100),
+	IN A_SYS_ID decimal(10,0),
+	IN A_SYS_EMP_NO varchar(10),
+	OUT N_RETURN INT,
+	OUT V_RETURN VARCHAR(4000)
+	)
+begin
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
+	SET N_RETURN = 0;
+  	SET V_RETURN = '수정되었습니다.'; 
+  
+  	UPDATE tb_out_mst set
+			CURR_UNIT = A_CURR_UNIT,
+			EX_RATE = A_EX_RATE,
+			PJ_NO = A_PJ_NO,
+			PJ_NAME = A_PJ_NAME,
+			SHIP_INFO = A_SHIP_INFO,
+			SALES_TYPE = A_SALES_TYPE,
+			DELI_PLACE = A_DELI_PLACE,
+			SALES_KIND = A_SALES_KIND,
+			CUST_LOCATION = A_CUST_LOCATION,
+			PACK_SPEC = A_PACK_SPEC,
+			RMK = A_RMK,
+			UPD_ID = A_SYS_ID,
+			UPD_EMP_NO = A_SYS_EMP_NO,
+			UPD_DT = SYSDATE()
+    	where COMP_ID = A_COMP_ID
+    		and OUT_MST_KEY = A_OUT_MST_KEY;
+	
+	IF ROW_COUNT() = 0 THEN
+  	  SET N_RETURN = -1;
+      SET V_RETURN = '수정에 실패하였습니다.'; 
+  	END IF;  
+  
+end
