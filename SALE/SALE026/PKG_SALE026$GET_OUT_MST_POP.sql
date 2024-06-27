@@ -36,7 +36,12 @@ begin
 		left join tb_project D on (A.COMP_ID = D.COMP_ID and A.PJ_NO = D.PJ_CODE)
 		left join dept_code E on (A.DEPT_CODE = E.DEPT_CODE)
 	where A.COMP_ID = A_COMP_ID 
-	 	and A.OUT_DATE between date_format(A_ST_DATE, '%Y%m%d') and date_format(A_ED_DATE, '%Y%m%d');
+	 	and A.OUT_DATE between date_format(A_ST_DATE, '%Y%m%d') and date_format(A_ED_DATE, '%Y%m%d')
+	 	and A.SALES_TYPE = (select DATA_ID
+	 						from SYS_DATA
+	 						where path = 'cfg.sale.S06'
+	 						  and CODE = '02')
+	 ;
 	
 	
 	SET N_RETURN = 0;

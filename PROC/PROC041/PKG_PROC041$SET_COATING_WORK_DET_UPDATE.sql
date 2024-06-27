@@ -56,6 +56,19 @@ PROC_BODY : begin
 
 	set V_SUBUL_KEY = concat('TB_COATING_WORK_DET-', A_WORK_KEY, A_LOT_NO);
 
+
+	select ifnull(STOCK_QTY, 0) 
+	into V_STOCK_QTY
+	from  tb_stock
+	where  COMP_ID = A_COMP_ID 
+	  and WARE_CODE = A_WARE_CODE 
+	  and ITEM_CODE = A_MATR_CODE 
+	  and LOT_NO = A_LOT_NO;
+	 
+	if V_STOCK_QTY > 0 then 
+		set V_INPUT_REAL_QTY = V_STOCK_QTY;
+	end if;	
+
 	# 원자재공정투입입고수불
 	set V_IO_GUBN = (select DATA_ID
 					 from SYS_DATA

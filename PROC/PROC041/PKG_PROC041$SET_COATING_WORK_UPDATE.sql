@@ -25,7 +25,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PROC041$SET_COATING_WORK_UPDATE
 	)
 PROC_BODY : begin
 	
-	declare V_WORK_KEY 		VARCHAR(50);
+	-- declare A_WORK_KEY 		VARCHAR(50);
 	declare V_SET_DATE		VARCHAR(8);
 	declare V_SET_NO		VARCHAR(3);
 	declare V_SET_SEQ		VARCHAR(3);
@@ -79,7 +79,7 @@ PROC_BODY : begin
 	where  COMP_ID = A_COMP_ID 
 	and WORK_KEY = A_WORK_KEY;		
 
-	set V_SUBUL_KEY = concat('TB_COATING_WORK-', V_WORK_KEY);
+	set V_SUBUL_KEY = concat('TB_COATING_WORK-', A_WORK_KEY);
 	
 	set V_IO_GUBN = (select DATA_ID
 					 from SYS_DATA
@@ -88,7 +88,7 @@ PROC_BODY : begin
 
 	call SP_SUBUL_CREATE(
 			A_COMP_ID, V_SUBUL_PRE_KEY, 'UPDATE', V_SET_DATE, '2', A_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, A_LOT_NO, A_PROG_CODE, 
-			V_IO_GUBN, A_WORK_QTY, 0, 0, 'TB_COATING_WORK', V_WORK_KEY, 'Y', 1, '', '', 
+			V_IO_GUBN, A_WORK_QTY, 0, 0, 'TB_COATING_WORK', A_WORK_KEY, 'Y', 1, '', '', 
 			'N', V_SET_DATE, A_ORDER_KEY, 'N', 'Y', 'Y', 
 			A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
 	if N_RETURN = -1 then
@@ -101,7 +101,8 @@ PROC_BODY : begin
 	  and WORK_PLAN_KEY = A_WORK_PLAN_KEY;
 
 	update TB_COATING_WORK
-	set    WORK_QTY = A_WORK_QTY,
+	set    EQUI_CODE = A_EQUI_CODE,
+		   WORK_QTY = A_WORK_QTY,
 		   BAD_QTY	= A_BAD_QTY,
 		   END_TIME = SYSDATE(),
 		   WORK_EMP	= A_WORK_EMP,

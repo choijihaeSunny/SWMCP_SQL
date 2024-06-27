@@ -18,7 +18,7 @@ begin
 	SET V_SET_DATE = date_format(A_SET_DATE,'%Y%m%d');
 
 	select COUNT(*) into V_CNT 
-	from TB_COATING_PLAN_DET A
+	from TB_COATING_PLAN_DET 
 	where COMP_ID = A_COMP_ID 
 	  and DEPT_CODE = A_DEPT_CODE 
 	  and CONFIRM_YN = A_CONFIRM_YN_OLD 

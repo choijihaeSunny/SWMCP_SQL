@@ -71,12 +71,13 @@ PROC_BODY : begin
 	-- 재고의 WARE_CODE 로부터 출고처리한다.
 
 
-	select STOCK_QTY into V_STOCK_QTY
-	from   tb_stock
+	select ifnull(STOCK_QTY, 0) 
+	into V_STOCK_QTY
+	from  tb_stock
 	where  COMP_ID = A_COMP_ID 
 	  and WARE_CODE = A_WARE_CODE 
 	  and ITEM_CODE = A_MATR_CODE 
-	  and LOT_NO = V_LOT_NO;
+	  and LOT_NO = A_LOT_NO;
 		
 	if V_STOCK_QTY > 0 then 
 		set V_INPUT_REAL_QTY = V_STOCK_QTY;
