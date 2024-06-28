@@ -53,7 +53,7 @@ begin
 	call SP_SUBUL_CREATE(
 		A_COMP_ID, V_SUBUL_KEY, 'DELETE', date_format(A_OUT_DATE,'%Y%m%d'), '2', A_WARE_CODE, V_ITEM_KIND, A_ITEM_CODE, A_LOT_NO, 100, 
 		V_IO_GUBN, A_QTY, A_COST, V_AMT, V_TABLE_NAME, A_OUT_KEY, 'Y', A_EX_RATE, '', A_CUST_CODE, 
-		V_PRE_STOCK_YN, date_format(A_OUT_DATE,'%Y%m%d'), A_ORDER_KEY, V_PRE_STOCK_YN, 'Y', 'Y', 
+		V_PRE_STOCK_YN, date_format(A_OUT_DATE,'%Y%m%d'), A_ORDER_KEY, V_PRE_STOCK_YN, 'Y', 'N', 
 		A_SYS_ID, A_SYS_EMP_NO, 
 		N_RETURN, V_RETURN);
   	
