@@ -1,0 +1,30 @@
+-- swmcp.tb_tax_mst definition
+
+CREATE TABLE `tb_tax_mst` (
+  `COMP_ID` varchar(10) NOT NULL COMMENT '사업장코드',
+  `SET_DATE` varchar(8) NOT NULL COMMENT '발행일자',
+  `SET_SEQ` varchar(4) NOT NULL COMMENT '발행순번',
+  `TAX_NUMB` varchar(30) NOT NULL COMMENT '계산서번호 TX + 년월(4) + 순번(4)',
+  `CUST_CODE` varchar(10) DEFAULT NULL COMMENT '거래처',
+  `EMP_NO` varchar(10) DEFAULT NULL COMMENT '담당자',
+  `DEPT_CODE` varchar(10) DEFAULT NULL COMMENT '담당부서',
+  `SUPP_AMT` decimal(20,4) DEFAULT 0.0000 COMMENT '공급가액',
+  `VAT` decimal(20,4) DEFAULT 0.0000 COMMENT '부가세',
+  `TAX_REQ` bigint(20) DEFAULT NULL COMMENT '청구구분 청구:REQ, 영수:REC',
+  `SALES_KIND` bigint(20) DEFAULT NULL COMMENT '매출구분 내수 1 수출 2',
+  `SLIP_NUMB` varchar(30) DEFAULT NULL COMMENT '전표번호',
+  `DIFF_AMT` decimal(20,4) DEFAULT 0.0000 COMMENT '공급가액이자금액',
+  `RMK` varchar(100) DEFAULT NULL COMMENT '비고',
+  `TEMP1` varchar(10) DEFAULT NULL COMMENT '임시01',
+  `TEMP2` varchar(10) DEFAULT NULL COMMENT '임시02',
+  `TEMP3` varchar(10) DEFAULT NULL COMMENT '임시03',
+  `TEMP4` varchar(10) DEFAULT NULL COMMENT '임시04',
+  `TEMP5` varchar(10) DEFAULT NULL COMMENT '임시05',
+  `SYS_EMP_NO` varchar(10) NOT NULL COMMENT '등록사번',
+  `SYS_ID` varchar(30) NOT NULL COMMENT '등록ID',
+  `SYS_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '등록일자',
+  `UPD_EMP_NO` varchar(10) DEFAULT NULL COMMENT '수정사번',
+  `UPD_ID` varchar(30) DEFAULT NULL COMMENT '수정ID',
+  `UPD_DATE` timestamp NULL DEFAULT current_timestamp() COMMENT '수정일자',
+  PRIMARY KEY (`COMP_ID`,`TAX_NUMB`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='세금계산서 MST';
