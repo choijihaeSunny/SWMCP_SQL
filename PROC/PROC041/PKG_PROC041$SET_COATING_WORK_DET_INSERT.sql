@@ -21,10 +21,9 @@ PROC_BODY : begin
 	declare V_SUBUL_KEY		VARCHAR(100);
 	declare V_ITEM_KIND			bigint;
 	declare V_IO_GUBN			bigint;
-	DECLARE V_INPUT_REAL_QTY DECIMAL(16,4);
-	declare V_STOCK_QTY		DECIMAL(16,4);
 	declare V_SEQ			VARCHAR(3);
 	declare V_LOT_NO		VARCHAR(30);
+	declare V_LOT_NO_NEW	VARCHAR(30);
 	declare V_PROG_CODE		bigint;
 	declare V_PROG_KIND		bigint;
 	declare V_LOT_STATE_DET		bigint;
@@ -49,7 +48,7 @@ PROC_BODY : begin
 				   and LOT_NO_PRE = A_LOT_NO
 				);
 
-	set V_LOT_NO = CONCAT(A_LOT_NO, V_SEQ);
+	set V_LOT_NO_NEW = CONCAT(A_LOT_NO, V_SEQ);
 
 	SET V_PROG_KIND = 40879; -- cfg.code.lot.init LOT생성사유 공정생산  
 	set V_ITEM_KIND = 145919; -- cfg.item.M (원자재)
@@ -57,10 +56,10 @@ PROC_BODY : begin
 	set V_PROG_CODE = 1703; -- 원자재코팅 공정 
 	
 	
-	call PKG_LOT$CREATE_ITEM_LOT_IUD ('INSERT', A_COMP_ID, '', '', '', V_SET_DATE, 'LM', '', A_MATR_CODE,
-									  '', 0, 0, '', '', 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK_DET', A_WORK_KEY,
+	call PKG_LOT$CREATE_ITEM_LOT_IUD ('INSERT', A_COMP_ID, V_LOT_NO_NEW, '', '', V_SET_DATE, 'LM', '', A_MATR_CODE,
+									  '', 0, 0, '', A_LOT_NO, 'NORMAL', V_LOT_STATE_DET, 0, 0, 'TB_COATING_WORK_DET', A_WORK_KEY,
 									  null, V_PROG_CODE, 0, V_PROG_KIND, '', V_ITEM_KIND, 'NEW', null, null,
-									  '', 0, 0, V_PROG_KIND, 'Y', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
+									  '', 0, 0, V_PROG_KIND, 'Y', '', A_SYS_ID, A_SYS_EMP_NO, V_LOT_NO, N_RETURN, V_RETURN);
 	if N_RETURN = -1 then
 		leave PROC_BODY;
 	end if;
@@ -69,19 +68,6 @@ PROC_BODY : begin
 
 	-- 코팅실적은 출고로 처리하여 수불한다. (1개씩 처리)
 	-- 재고의 WARE_CODE 로부터 출고처리한다.
-
-
-	select ifnull(STOCK_QTY, 0) 
-	into V_STOCK_QTY
-	from  tb_stock
-	where  COMP_ID = A_COMP_ID 
-	  and WARE_CODE = A_WARE_CODE 
-	  and ITEM_CODE = A_MATR_CODE 
-	  and LOT_NO = A_LOT_NO;
-		
-	if V_STOCK_QTY > 0 then 
-		set V_INPUT_REAL_QTY = V_STOCK_QTY;
-	end if;	
 		
 	# 원자재공정투입입고수불
 	set V_IO_GUBN = (select DATA_ID
@@ -91,14 +77,12 @@ PROC_BODY : begin
 	-- DET에 입고
 	call SP_SUBUL_CREATE(
 		A_COMP_ID, V_SUBUL_KEY, 'INSERT', V_SET_DATE, '1', A_WARE_CODE, V_ITEM_KIND, A_MATR_CODE, V_LOT_NO, V_PROG_CODE, 
-		V_IO_GUBN, V_INPUT_REAL_QTY, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, V_LOT_NO), 'Y', 1, '', '', 
+		V_IO_GUBN, 1, 0, 0, 'TB_COATING_WORK_DET', concat(A_WORK_KEY, V_LOT_NO), 'Y', 1, '', '', 
 		'N', V_SET_DATE, '', 'N', 'Y', 'Y', 
 		A_SYS_ID, A_SYS_EMP_NO, N_RETURN, V_RETURN );
 	if N_RETURN = -1 then
 		leave PROC_BODY;
 	end if;		
-
-	
 
   	insert into TB_COATING_WORK_DET (
   		COMP_ID, WORK_LINE, WORK_KEY, WORK_DATE, MATR_CODE,

@@ -44,6 +44,7 @@ begin
 		  A.WORK_DEPT,
 		  A.WORK_EMP,
 		  A.WARE_CODE,
+		  A.WARE_CODE_PROC ,
 		  A.RMK
 	from tb_coating_work A 
 		inner join TB_ITEM_CODE C
