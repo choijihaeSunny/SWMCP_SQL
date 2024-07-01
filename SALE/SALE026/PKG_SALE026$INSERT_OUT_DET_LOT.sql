@@ -24,7 +24,6 @@ begin
 	DECLARE V_SUBUL_KEY varchar(100);
 	declare V_STOCK_YN VARCHAR(1);
 	declare V_TABLE_NAME VARCHAR(50);
-	declare V_PRE_STOCK_YN VARCHAR(1);
 	declare V_ITEM_KIND bigint(20);
 	declare V_IO_GUBN bigint(20);
 	declare V_IO_GUBN_OUT bigint(20);
@@ -39,11 +38,6 @@ begin
 
 	set V_AMT = A_QTY * A_COST;
 
-	/*if new.PRE_STOCK_KIND = 151920 then
-		set V_PRE_STOCK_YN = 'N';
-	else
-		set V_PRE_STOCK_YN = 'Y';
-	end if;*/
 
 	set V_IO_GUBN_PRE = 174051; # 선점출고 
 	set V_IO_GUBN_OUT = 174052; # 선점출고예정

@@ -21,7 +21,6 @@ begin
 	DECLARE V_SUBUL_KEY varchar(100);
 	declare V_STOCK_YN VARCHAR(1);
 	declare V_TABLE_NAME VARCHAR(50);
-	declare V_PRE_STOCK_YN VARCHAR(1);
 	declare V_ITEM_KIND bigint(20);
 	declare V_IO_GUBN bigint(20);
 	declare V_AMT decimal(20,4);
@@ -39,11 +38,6 @@ begin
 
 	set V_AMT = A_QTY * A_COST;
 
-	/*if new.PRE_STOCK_KIND = 151920 then
-		set V_PRE_STOCK_YN = 'N';
-	else
-		set V_PRE_STOCK_YN = 'Y';
-	end if;*/
 
 	select ITEM_KIND into V_ITEM_KIND from tb_item_code where ITEM_CODE = A_ITEM_CODE;
 	
