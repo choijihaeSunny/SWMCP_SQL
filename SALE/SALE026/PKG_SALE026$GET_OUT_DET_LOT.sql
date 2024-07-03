@@ -21,6 +21,7 @@ begin
 		B.EX_RATE,
 		A.ITEM_CODE,
 		A.QTY,
+		(A.QTY + ST.STOCK_QTY) as QTY_MAX,
 		C.COST,
 		A.RETURN_QTY,
 		A.RMK,
@@ -30,6 +31,7 @@ begin
 	from tb_out_det_lot A
 		inner join tb_out_mst B on (A.COMP_ID = B.COMP_ID and A.OUT_MST_KEY = B.OUT_MST_KEY)
 		inner join tb_out_det C on (A.COMP_ID = C.COMP_ID and A.OUT_KEY = C.OUT_KEY)
+		inner join TB_STOCK ST on (A.COMP_ID = ST.COMP_ID and A.LOT_NO = ST.LOT_NO)
 		left join dept_code D on (B.DEPT_CODE = D.DEPT_CODE)
 	where A.COMP_ID = A_COMP_ID 
 	 	and A.OUT_KEY = A_OUT_KEY;
