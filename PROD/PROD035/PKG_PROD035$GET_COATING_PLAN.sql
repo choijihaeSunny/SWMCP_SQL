@@ -132,10 +132,12 @@ begin
 			on A.COMP_ID = B.COMP_ID 
 			and A.PLAN_MST_KEY = B.PLAN_MST_KEY
 		inner join TB_ITEM_CODE C on A.MATR_CODE = C.ITEM_CODE
+		inner join TB_STOCK ST on A.COMP_ID = ST.COMP_ID and ST.ITEM_CODE = A.MATR_CODE
 -- 		inner join TB_ORDER_DET D on A.COMP_ID = D.COMP_ID 
 -- 		 						 and A.ORDER_KEY = D.ORDER_KEY
 	where A.COMP_ID = A_COMP_ID
 	  and A.DEPT_CODE = A_DEPT_CODE
+	group by A.MATR_CODE, A.MATR_LOT_NO
 	;
 		
 	SET N_RETURN = 0;

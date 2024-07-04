@@ -32,6 +32,8 @@ begin
 						 where path = 'cfg.item' 
 						 and CODE = 'M') -- 원자재'
 	  and A.LOT_NO like 'LM%' -- 원자재
+	  and A.STOCK_QTY - NVL(C.PLAN_TOT_QTY, 0) > 0
+	group by A.ITEM_CODE, A.LOT_NO
 	;
 
 	
