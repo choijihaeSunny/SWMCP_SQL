@@ -1,93 +1,126 @@
 CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE010$GET_TAX_MST`(	
-	in A_COMP_ID VARCHAR(10),
-	in A_ST_DATE DATE,
-	in A_ED_DATE DATE,
-	in A_CUST_CODE VARCHAR(300),
-	in A_SEARCH VARCHAR(10),
-	in A_GUBUN VARCHAR(10),
+	IN A_COMP_ID VARCHAR(10),
+	IN A_ST_DATE TIMESTAMP,
+	IN A_ED_DATE TIMESTAMP,
+	IN A_CREATE_YN VARCHAR(10), -- 생성구분 생성 미생성
+	IN A_SALES_KIND VARCHAR(10), -- 매출구분 내수 1 수출 2
+	IN A_END_GUBUN VARCHAR(10), -- 합산마감 0 /개별마감 1
+	IN A_CUST_CODE VARCHAR(300), -- 거래처
+	IN A_SEARCH VARCHAR(10),
+	
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
-begin
+begIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
-	if A_SEARCH = 'N' then
+	
+
+	-- 리텍의 PKG_SALE_TAX.GET_TAX_M 참조
+	
+	if A_CREATE_YN = 'Y' then -- 생성된 세금계산서를 호출하는 경우
 		
-		 
-		select 
-			'N' IS_CHK,
-			'INSERT' CUD_KEY,
-			A.OID,
-			sysdate() as SET_DATE,
-			'' as SET_SEQ,
-			'' as VBILL_NUM,
-			sysdate() as VBILL_DATE,
-			A.CUST_CODE,
-			B.CUST_NAME,
-			A.END_AMT as TAX_AMT,
-			A.END_AMT * 0.1 as TAX_VAT,
-			A.END_AMT * 1.1 as TOT_AMT,
-			
-			'' as SEND_DIV,
-			'1' as VBILL_DIV,
-			A.END_AMT * 1.1 as T_ENG_AMT,
-			E.CURR_UNIT as CURN_UNIT,
-			E.EX_RATE as CURN_RATE,
-			'' as RMK,
-			'' as SLIP_NUMB,
-			A.MODI_KEY,
-			A.INSERT_ID,
-			A.INSERT_DT,
-			A.UPDATE_ID,
-			A.UPDATE_DT
-		from sale_send_end A 
-			 inner join TC_CUST_CODE B on (A.CUST_CODE = B.CUST_CODE)
-			 left join TC_CUST_CODE C on (A.SALE_CUST_CODE = C.CUST_CODE)
-			 inner join sale_send D on (A.OID = D.END_OID and D.DELETE_YN = 'N')
-			 inner join sale_order_det F on (D.ORDER_OID = F.OID)
-    		 inner join sale_order_mst E on (F.MST_OID  = E.OID) 	
-			 left join tax_det Z on (D.OID = Z.SEND_OID)
+		select distinct
+			  '%' as DIV_MST
+			  ,A.COMP_ID
+			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
+			  ,A.CUST_CODE
+			  ,C.CUST_NAME
+			  
+		from TB_TAX_MST A
+			inner join TC_CUST_CODE C
+				on (A.COMP_ID = C.COMP_ID
+				and A.CUST_CODE = C.CUST_CODE)
+			inner join TB_TAX_DET B
+				on (A.COMP_ID = B.COMP_ID
+				and A.TAX_NUMB = B.TAX_NUMB)
 		where A.COMP_ID = A_COMP_ID
-			and A.END_DATE between date_format(A_ST_DATE, '%Y%m%d') and date_format(A_ED_DATE, '%Y%m%d')
-		 	and case when A_CUST_CODE != '' then FIND_IN_SET(A.CUST_CODE  , A_CUST_CODE) else A.CUST_CODE like '%' end
-		 	and Z.OID is null
-			and A.DELETE_YN = 'N'
-		group by A.OID;
+		  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
+		  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+		  and A.SALES_KIND = A_SALES_KIND
+		;
+		
+	else -- if A_CREATE_YN = 'N' then -- 세금계산서가 아직 생성되지 않은 내역을 호출하는 경우
+		/*
+		if A_END_GUBUN = '0' then -- 합산마감인 경우 거래처별로 조회한다.
+		
+		elseif A_END_GUBUN = '1' then -- 개별마감일 경우 거래처별 + 매출 키값 별로 조회한다.
+		
+		end if;
+		*/
 	
-	else 
-		SELECT 
-			'N' IS_CHK,
-			'UPDATE' CUD_KEY,
-			A.COMP_ID,
-			A.OID,
-			str_to_date(A.SET_DATE, '%Y%m%d') as SET_DATE,
-			A.SET_SEQ,
-			A.VBILL_NUM,
-			str_to_date(A.VBILL_DATE, '%Y%m%d') as VBILL_DATE,
-			A.CUST_CODE,
-			B.CUST_NAME,
-			A.TAX_AMT,
-			A.TAX_VAT,
-			A.TAX_AMT + A.TAX_VAT as TOT_AMT,
-			A.SEND_DIV,
-			A.VBILL_DIV,
-			A.T_ENG_AMT,
-			A.CURN_UNIT,
-			A.CURN_RATE,
-			A.RMK,
-			A.SLIP_NUMB,
-			A.MODI_KEY,
-			A.INSERT_ID,
-			A.INSERT_DT,
-			A.UPDATE_ID,
-			A.UPDATE_DT
-	    FROM   tax_mst A
-	    		inner join TC_CUST_CODE B on (A.CUST_CODE = B.CUST_CODE)
-	    WHERE 	A.COMP_ID = A_COMP_ID
-	    	and A.VBILL_DATE BETWEEN date_format(A_ST_DATE, '%Y%m%d') and date_format(A_ED_DATE, '%Y%m%d')
-		 	and case when A_CUST_CODE != '' then FIND_IN_SET(A.CUST_CODE  , A_CUST_CODE) else A.CUST_CODE like '%' end;
-	
-	end if;
+		select
+			  '출고' as DIV_MST
+			  ,A.COMP_ID
+			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
+			  ,B.CUST_CODE
+			  ,B.EMP_NO
+			  ,B.DEPT_CODE
+			  ,B.RMK
+			  ,B.SALES_TYPE
+			  ,A.ITEM_CODE
+			  ,A.QTY
+			  ,A.COST
+			  ,A.AMT
+			  ,A.OUT_MST_KEY as MASTER_KEY
+		from TB_OUT_DET A
+			inner join TB_OUT_MST B
+				on (A.COMP_ID = B.COMP_ID
+				and A.OUT_MST_KEY = B.OUT_MST_KEY)
+		where A.COMP_ID = A_COMP_ID
+		  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
+		  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+		  and A.TAX_YN = 'N'
+		  and B.SALES_TYPE <> '168981'
+		union all 
+		select
+			  '원자재출고' as DIV_MST
+			  ,A.COMP_ID
+			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
+			  ,B.CUST_CODE
+			  ,B.EMP_NO
+			  ,B.DEPT_CODE
+			  ,B.RMK
+			  ,B.SALES_TYPE
+			  ,A.ITEM_CODE
+			  ,A.QTY
+			  ,A.COST
+			  ,A.AMT
+			  ,A.OUT_MST_KEY as MASTER_KEY
+		from TB_OUT_DET A
+			inner join TB_OUT_MST B
+				on (A.COMP_ID = B.COMP_ID
+				and A.OUT_MST_KEY = B.OUT_MST_KEY)
+		where A.COMP_ID = A_COMP_ID
+		  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
+		  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+		  and A.TAX_YN = 'N'
+		  and B.SALES_TYPE = '168981'
+		union all 
+		select
+			  '출고반품' as DIV_MST
+			  ,A.COMP_ID
+			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
+			  ,B.CUST_CODE
+			  ,B.EMP_NO
+			  ,B.DEPT_CODE
+			  ,B.RMK
+			  ,B.SALES_TYPE
+			  ,A.ITEM_CODE
+			  ,A.QTY
+			  ,A.COST
+			  ,A.AMT
+			  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
+		from TB_OUT_RETURN_DET A
+			inner join TB_OUT_RETURN_MST B
+				on (A.COMP_ID = B.COMP_ID
+				and A.OUT_RETURN_MST_KEY = B.OUT_RETURN_MST_KEY)
+		where A.COMP_ID = A_COMP_ID
+		  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
+		  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+		  and A.TAX_YN = 'N'
+		;
+	end if; -- if A_CREATE_YN = 'Y' then end
 	
 	SET N_RETURN = 0;
     SET V_RETURN = '조회되었습니다.';
