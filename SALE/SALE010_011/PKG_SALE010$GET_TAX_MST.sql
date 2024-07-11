@@ -21,11 +21,13 @@ begIN
 	if A_CREATE_YN = 'Y' then -- 생성된 세금계산서를 호출하는 경우
 		
 		select distinct
-			  NULL as DIV_MST
+			  'N' as CHK
+			  ,NULL as DIV_MST
 			  ,A.COMP_ID
 			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
 			  ,A.CUST_CODE
 			  ,C.CUST_NAME
+			  ,C.CUST_NUMB
 			  ,A.EMP_NO
 			  ,A.DEPT_CODE
 			  ,A.RMK
@@ -36,6 +38,7 @@ begIN
 			  ,SUM(B.COST) as COST
 			  ,SUM(B.SUPP_AMT) as AMT
 			  ,SUM(B.VAT) as VAT
+			  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
 			  ,A.TAX_NUMB as MASTER_KEY
 		from TB_TAX_MST A
 			inner join TC_CUST_CODE C
@@ -60,11 +63,13 @@ begIN
 		if A_END_GUBUN = '0' then -- 합산마감인 경우 거래처별로 조회한다.
 		
 			select 
-				  NULL as DIV_MST
+				  'N' as CHK
+			  	  ,NULL as DIV_MST
 				  ,X.COMP_ID
 				  ,date_format(null, '%Y%m%d') as SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
+				  ,C.CUST_NUMB
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
@@ -75,6 +80,7 @@ begIN
 				  ,SUM(X.COST) as COST
 				  ,SUM(X.AMT) as AMT
 				  ,SUM(X.VAT) as VAT
+				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
 				  ,X.MASTER_KEY
 			from (
 				select
@@ -167,11 +173,13 @@ begIN
 		else -- if A_END_GUBUN = '1' then -- 개별마감일 경우 거래처별 + 매출 키값 별로 조회한다.
 		
 			select 
-				  X.DIV_MST
+				  'N' as CHK
+			  	  ,X.DIV_MST
 				  ,X.COMP_ID
 				  ,X.SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
+				  ,C.CUST_NUMB
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
@@ -182,6 +190,7 @@ begIN
 				  ,SUM(X.COST) as COST
 				  ,SUM(X.AMT) as AMT
 				  ,SUM(X.VAT) as VAT
+				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
 				  ,X.MASTER_KEY
 			from (
 				select
