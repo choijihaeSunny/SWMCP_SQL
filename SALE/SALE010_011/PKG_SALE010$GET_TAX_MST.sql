@@ -24,6 +24,7 @@ begIN
 			  'N' as CHK
 			  ,NULL as DIV_MST
 			  ,A.COMP_ID
+			  ,A.TAX_NUMB
 			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
 			  ,A.CUST_CODE
 			  ,C.CUST_NAME
@@ -39,7 +40,7 @@ begIN
 			  ,SUM(B.SUPP_AMT) as AMT
 			  ,SUM(B.VAT) as VAT
 			  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
-			  ,A.TAX_NUMB as MASTER_KEY
+			  ,NULL as MASTER_KEY
 		from TB_TAX_MST A
 			inner join TC_CUST_CODE C
 				on (A.COMP_ID = C.COMP_ID
@@ -66,6 +67,7 @@ begIN
 				  'N' as CHK
 			  	  ,NULL as DIV_MST
 				  ,X.COMP_ID
+				  ,null as TAX_NUMB
 				  ,date_format(null, '%Y%m%d') as SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
@@ -176,6 +178,7 @@ begIN
 				  'N' as CHK
 			  	  ,X.DIV_MST
 				  ,X.COMP_ID
+				  ,null as TAX_NUMB
 				  ,X.SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
