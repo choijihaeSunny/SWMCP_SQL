@@ -7,7 +7,6 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE010$GET_TAX_MST`(
 	IN A_END_GUBUN VARCHAR(10), -- 합산마감 0 /개별마감 1
 	IN A_CUST_CODE VARCHAR(300), -- 거래처
 	IN A_SEARCH VARCHAR(10),
-	
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
@@ -54,6 +53,7 @@ begIN
 		  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 		  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 		  and A.SALES_KIND = A_SALES_KIND
+		  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
 		group by A.COMP_ID, A.CUST_CODE, A.EMP_NO, A.DEPT_CODE, A.RMK,
 				 A.SALES_KIND, B.ITEM_CODE
 		order by A.CUST_CODE
@@ -65,10 +65,10 @@ begIN
 		
 			select 
 				  'N' as CHK
-			  	  ,'' AS DIV_MST
+			  	  ,X.DIV_MST
 				  ,X.COMP_ID
 				  ,'' AS TAX_NUMB
-				  ,date_format(null, '%Y%m%d') as SET_DATE
+				  ,date_format('', '%Y%m%d') as SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
 				  ,C.CUST_NUMB
@@ -86,7 +86,8 @@ begIN
 				  ,X.MASTER_KEY
 			from (
 				select
-					  A.COMP_ID
+					  '출고' as DIV_MST
+					  ,A.COMP_ID
 					  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO
@@ -113,7 +114,8 @@ begIN
 				  					  	   	 and CODE <> '02')
 				union all 
 				select
-					  A.COMP_ID
+					  '원자재출고' as DIV_MST
+					  ,A.COMP_ID
 					  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO
@@ -140,7 +142,8 @@ begIN
 				  					    and CODE = '02')
 				union all 
 				select
-					  A.COMP_ID
+					  '출고반품' as DIV_MST
+					  ,A.COMP_ID
 					  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO
@@ -168,7 +171,7 @@ begIN
 				inner join TB_ITEM_CODE I
 					on (X.ITEM_CODE = I.ITEM_CODE)
 			where X.COMP_ID = A_COMP_ID		
-			  and X.CUST_CODE like NVL(A_CUST_CODE, '%')
+			  and X.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
 			group by X.COMP_ID, X.CUST_CODE -- 거래처별로 합산한다.
 			order by X.CUST_CODE
 			;
@@ -282,7 +285,7 @@ begIN
 				inner join TB_ITEM_CODE I
 					on (X.ITEM_CODE = I.ITEM_CODE)
 			where X.COMP_ID = A_COMP_ID		
-			  and X.CUST_CODE like NVL(A_CUST_CODE, '%')
+			  and X.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
 			group by X.DIV_MST, X.COMP_ID, /*X.SET_DATE,*/ X.CUST_CODE, X.EMP_NO, 
 					 X.DEPT_CODE, X.RMK, X.SALES_TYPE, X.ITEM_CODE, X.MASTER_KEY
 			order by X.CUST_CODE, X.DIV_MST, X.MASTER_KEY
