@@ -22,7 +22,7 @@ begIN
 		
 		select distinct
 			  'N' as CHK
-			  ,NULL as DIV_MST
+			  ,'' AS DIV_MST
 			  ,A.COMP_ID
 			  ,A.TAX_NUMB
 			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
@@ -40,7 +40,7 @@ begIN
 			  ,SUM(B.SUPP_AMT) as AMT
 			  ,SUM(B.VAT) as VAT
 			  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
-			  ,NULL as MASTER_KEY
+			  ,'' AS MASTER_KEY
 		from TB_TAX_MST A
 			inner join TC_CUST_CODE C
 				on (A.COMP_ID = C.COMP_ID
@@ -65,9 +65,9 @@ begIN
 		
 			select 
 				  'N' as CHK
-			  	  ,NULL as DIV_MST
+			  	  ,'' AS DIV_MST
 				  ,X.COMP_ID
-				  ,null as TAX_NUMB
+				  ,'' AS TAX_NUMB
 				  ,date_format(null, '%Y%m%d') as SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
@@ -96,8 +96,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 1) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 1)) AS VAT
+					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
+					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
@@ -123,8 +123,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 1) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 1)) AS VAT
+					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
+					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
@@ -150,8 +150,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 1) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 1)) AS VAT
+					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
+					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B
@@ -178,7 +178,7 @@ begIN
 				  'N' as CHK
 			  	  ,X.DIV_MST
 				  ,X.COMP_ID
-				  ,null as TAX_NUMB
+				  ,'' AS TAX_NUMB
 				  ,X.SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
@@ -208,8 +208,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 1) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 1)) AS VAT
+					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
+					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
@@ -236,8 +236,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 1) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 1)) AS VAT
+					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
+					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
@@ -264,8 +264,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 1) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 1)) AS VAT
+					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
+					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B
