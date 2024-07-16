@@ -10,7 +10,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_SALE010$INSERT_TAX_MST`(
   	IN A_TAX_REQ bigint(20),
   	IN A_SALES_KIND bigint(20),
   	IN A_SLIP_NUMB VARCHAR(30),
-  	IN A_DIFF_AMT DECIMAL(20, 4),
+--   	IN A_DIFF_AMT DECIMAL(20, 4),
   	IN A_RMK VARCHAR(100),
   	IN A_SYS_EMP_NO varchar(10),
 	IN A_SYS_ID varchar(30),
@@ -57,7 +57,7 @@ begin
   		A_COMP_ID,
   		V_SET_DATE,
   		V_SET_SEQ,
-  		A_TAX_NUMB,
+  		V_TAX_NUMB,
   		A_CUST_CODE,
   		A_EMP_NO,
   		A_DEPT_CODE,
@@ -66,14 +66,12 @@ begin
   		A_TAX_REQ,
   		A_SALES_KIND,
   		A_SLIP_NUMB,
-  		A_DIFF_AMT,
+  		0, -- A_DIFF_AMT
   		A_RMK
   		,A_SYS_EMP_NO
     	,A_SYS_ID
     	,SYSDATE()
   	);
-  
-    -- 출고테이블 TAX_YN값 업데이트 필요할 듯?
   
     set A_TAX_NUMB = V_TAX_NUMB;
 	

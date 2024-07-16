@@ -19,46 +19,93 @@ begIN
 	
 	if A_CREATE_YN = 'Y' then -- 생성된 세금계산서를 호출하는 경우
 		
-		select distinct
-			  'N' as CHK
-			  ,'' AS DIV_MST
-			  ,A.COMP_ID
-			  ,A.TAX_NUMB
-			  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
-			  ,A.CUST_CODE
-			  ,C.CUST_NAME
-			  ,C.CUST_NUMB
-			  ,A.EMP_NO
-			  ,A.DEPT_CODE
-			  ,A.RMK
-			  ,A.SALES_KIND as SALES_TYPE
-			  ,B.ITEM_CODE
-			  ,I.ITEM_NAME
-			  ,SUM(B.QTY) as QTY
-			  ,SUM(B.COST) as COST
-			  ,SUM(B.SUPP_AMT) as AMT
-			  ,SUM(B.VAT) as VAT
-			  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
-			  ,'' AS MASTER_KEY
-		from TB_TAX_MST A
-			inner join TC_CUST_CODE C
-				on (A.COMP_ID = C.COMP_ID
-				and A.CUST_CODE = C.CUST_CODE)
-			inner join TB_TAX_DET B
-				on (A.COMP_ID = B.COMP_ID
-				and A.TAX_NUMB = B.TAX_NUMB)
-			inner join TB_ITEM_CODE I
-					on (B.ITEM_CODE = I.ITEM_CODE)
-		where A.COMP_ID = A_COMP_ID
-		  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
-		  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-		  and A.SALES_KIND = A_SALES_KIND
-		  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
-		group by A.COMP_ID, A.CUST_CODE, A.EMP_NO, A.DEPT_CODE, A.RMK,
-				 A.SALES_KIND, B.ITEM_CODE
-		order by A.CUST_CODE
-		;
+		if A_END_GUBUN = '0' then -- 합산마감인 경우 거래처별로 조회한다.
 		
+			select distinct
+				  'N' as CHK
+				  ,'' AS DIV_MST
+				  ,A.COMP_ID
+				  ,A.TAX_NUMB
+				  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
+				  ,A.CUST_CODE
+				  ,C.CUST_NAME
+				  ,C.CUST_NUMB
+				  ,A.EMP_NO
+				  ,A.DEPT_CODE
+				  ,A.RMK
+				  ,A.TAX_REQ
+				  ,A.SALES_KIND as SALES_TYPE
+				  ,B.ITEM_CODE
+				  ,I.ITEM_NAME
+				  ,SUM(B.QTY) as QTY
+				  ,SUM(B.COST) as COST
+				  ,SUM(B.SUPP_AMT) as AMT
+				  ,SUM(B.VAT) as VAT
+				  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
+				  ,'' AS MASTER_KEY
+				  ,'UPDATE' AS CUD_KEY
+			from TB_TAX_MST A
+				inner join TC_CUST_CODE C
+					on (A.COMP_ID = C.COMP_ID
+					and A.CUST_CODE = C.CUST_CODE)
+				inner join TB_TAX_DET B
+					on (A.COMP_ID = B.COMP_ID
+					and A.TAX_NUMB = B.TAX_NUMB)
+				inner join TB_ITEM_CODE I
+						on (B.ITEM_CODE = I.ITEM_CODE)
+			where A.COMP_ID = A_COMP_ID
+			  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
+			  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+			  and A.SALES_KIND = A_SALES_KIND
+			  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
+			group by A.COMP_ID, A.CUST_CODE
+			order by A.CUST_CODE
+			;
+		else -- if A_END_GUBUN = '1' then -- 개별마감일 경우 거래처별 + 매출 키값 별로 조회한다.
+		
+			select distinct
+				  'N' as CHK
+				  ,'' AS DIV_MST
+				  ,A.COMP_ID
+				  ,A.TAX_NUMB
+				  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
+				  ,A.CUST_CODE
+				  ,C.CUST_NAME
+				  ,C.CUST_NUMB
+				  ,A.EMP_NO
+				  ,A.DEPT_CODE
+				  ,A.RMK
+				  ,A.TAX_REQ
+				  ,A.SALES_KIND as SALES_TYPE
+				  ,B.ITEM_CODE
+				  ,I.ITEM_NAME
+				  ,SUM(B.QTY) as QTY
+				  ,SUM(B.COST) as COST
+				  ,SUM(B.SUPP_AMT) as AMT
+				  ,SUM(B.VAT) as VAT
+				  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
+				  ,'' AS MASTER_KEY
+				  ,'UPDATE' AS CUD_KEY
+			from TB_TAX_MST A
+				inner join TC_CUST_CODE C
+					on (A.COMP_ID = C.COMP_ID
+					and A.CUST_CODE = C.CUST_CODE)
+				inner join TB_TAX_DET B
+					on (A.COMP_ID = B.COMP_ID
+					and A.TAX_NUMB = B.TAX_NUMB)
+				inner join TB_ITEM_CODE I
+						on (B.ITEM_CODE = I.ITEM_CODE)
+			where A.COMP_ID = A_COMP_ID
+			  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
+			  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+			  and A.SALES_KIND = A_SALES_KIND
+			  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
+			group by A.COMP_ID, A.CUST_CODE, A.EMP_NO, A.DEPT_CODE, A.RMK,
+					 A.SALES_KIND, B.ITEM_CODE
+			order by A.CUST_CODE
+			;
+		end if
+		;	
 	else -- if A_CREATE_YN = 'N' then -- 세금계산서가 아직 생성되지 않은 내역을 호출하는 경우
 		
 		if A_END_GUBUN = '0' then -- 합산마감인 경우 거래처별로 조회한다.
@@ -75,6 +122,7 @@ begIN
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
+				  ,'REQ' as TAX_REQ
 				  ,X.SALES_TYPE
 				  ,X.ITEM_CODE
 				  ,I.ITEM_NAME
@@ -84,6 +132,7 @@ begIN
 				  ,SUM(X.VAT) as VAT
 				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
 				  ,X.MASTER_KEY
+				  ,'INSERT' as CUD_KEY
 			from (
 				select
 					  '출고' as DIV_MST
@@ -172,7 +221,7 @@ begIN
 					on (X.ITEM_CODE = I.ITEM_CODE)
 			where X.COMP_ID = A_COMP_ID		
 			  and X.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
-			group by X.COMP_ID, X.CUST_CODE -- 거래처별로 합산한다.
+			group by X.DIV_MST, X.COMP_ID, X.CUST_CODE -- 거래처별로 합산한다.
 			order by X.CUST_CODE
 			;
 		else -- if A_END_GUBUN = '1' then -- 개별마감일 경우 거래처별 + 매출 키값 별로 조회한다.
@@ -189,6 +238,7 @@ begIN
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
+				  ,'REQ' as TAX_REQ
 				  ,X.SALES_TYPE
 				  ,X.ITEM_CODE
 				  ,I.ITEM_NAME
@@ -198,6 +248,7 @@ begIN
 				  ,SUM(X.VAT) as VAT
 				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
 				  ,X.MASTER_KEY
+				  ,'INSERT' as CUD_KEY
 			from (
 				select
 					  '출고' as DIV_MST

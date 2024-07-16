@@ -9,7 +9,7 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_SALE010$INSERT_TAX_DET`(
   	IN A_VAT DECIMAL(20, 4),
   	IN A_CALL_KIND VARCHAR(10),
   	IN A_CALL_KEY VARCHAR(30),
-  	IN A_DIFF_AMT DECIMAL(20, 4),
+--   	IN A_DIFF_AMT DECIMAL(20, 4),
   	IN A_RMK VARCHAR(100),
   	IN A_SYS_EMP_NO varchar(10),
 	IN A_SYS_ID varchar(30),
@@ -61,13 +61,29 @@ begin
   		A_VAT,
   		A_CALL_KIND,
   		A_CALL_KEY,
-  		A_DIFF_AMT,
+  		0, -- A_DIFF_AMT
   		A_RMK
   		,A_SYS_EMP_NO
     	,A_SYS_ID
     	,SYSDATE()
   	)
     ;
+   
+    if A_CALL_KIND = 'REQ' then
+    
+    	update TB_OUT_DET
+    	   set TAX_YN = 'Y'
+    	where COMP_ID = A_COMP_ID
+    	  and OUT_MST_KEY = A_CALL_KEY
+    	;
+    else -- if A_CALL_KIND = 'RTN' then
+    
+    	update TB_OUT_RETURN_DET
+    	   set TAX_YN = 'Y'
+    	where COMP_ID = A_COMP_ID
+    	  and OUT_RETURN_MST_KEY = A_CALL_KEY
+    	;
+    end if;
 	
 	IF ROW_COUNT() = 0 THEN
   	  SET N_RETURN = -1;
