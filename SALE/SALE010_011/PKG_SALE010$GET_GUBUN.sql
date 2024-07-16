@@ -17,7 +17,7 @@ begin
 			  'N' as INTER_CODE
 			  ,'미생성' as INTER_NAME 
 		;
-	elseif A_GUBUN_KIND = 'END' then
+	else -- if A_GUBUN_KIND = 'END' then
 		select
 			  '0' as INTER_CODE
 			  ,'합산마감' as INTER_NAME
@@ -25,15 +25,6 @@ begin
 		select
 			  '1' as INTER_CODE
 			  ,'개별마감' as INTER_NAME 
-		;
-	else -- if A_GUBUN_KIND = 'REQ' then
-		select
-			  'REQ' as INTER_CODE
-			  ,'청구' as INTER_NAME
-		union all
-		select
-			  'REC' as INTER_CODE
-			  ,'영수' as INTER_NAME 
 		;
 	end if;
 

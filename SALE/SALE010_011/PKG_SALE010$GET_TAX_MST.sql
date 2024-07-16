@@ -43,6 +43,7 @@ begIN
 				  ,SUM(B.VAT) as VAT
 				  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
 				  ,'' AS MASTER_KEY
+				  ,B.TAX_SEQ as DET_KEY
 				  ,'UPDATE' AS CUD_KEY
 			from TB_TAX_MST A
 				inner join TC_CUST_CODE C
@@ -85,6 +86,7 @@ begIN
 				  ,SUM(B.VAT) as VAT
 				  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
 				  ,'' AS MASTER_KEY
+				  ,B.TAX_SEQ as DET_KEY
 				  ,'UPDATE' AS CUD_KEY
 			from TB_TAX_MST A
 				inner join TC_CUST_CODE C
@@ -122,7 +124,7 @@ begIN
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
-				  ,'REQ' as TAX_REQ
+				  ,206055 as TAX_REQ
 				  ,X.SALES_TYPE
 				  ,X.ITEM_CODE
 				  ,I.ITEM_NAME
@@ -132,6 +134,7 @@ begIN
 				  ,SUM(X.VAT) as VAT
 				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
 				  ,X.MASTER_KEY
+				  ,X.DET_KEY
 				  ,'INSERT' as CUD_KEY
 			from (
 				select
@@ -149,6 +152,7 @@ begIN
 					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
 					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
+					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -157,10 +161,10 @@ begIN
 				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 				  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 				  and A.TAX_YN = 'N'
-				  and B.SALES_TYPE not in (select DATA_ID
-				  					  	   from SYS_DATA
-				  					  	   where PATH = 'cfg.sale.S06'
-				  					  	   	 and CODE <> '02')
+				  and B.SALES_TYPE in (select DATA_ID
+						  				 from SYS_DATA
+						  				where PATH = 'cfg.sale.S06'
+						  				  and CODE <> '02')
 				union all 
 				select
 					  '원자재출고' as DIV_MST
@@ -177,6 +181,7 @@ begIN
 					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
 					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
+					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -186,9 +191,9 @@ begIN
 				  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 				  and A.TAX_YN = 'N'
 				  and B.SALES_TYPE = (select DATA_ID
-				  					  from SYS_DATA
-				  					  where PATH = 'cfg.sale.S06'
-				  					    and CODE = '02')
+						  			  from SYS_DATA
+						  			  where PATH = 'cfg.sale.S06'
+						  			  and CODE = '02')
 				union all 
 				select
 					  '출고반품' as DIV_MST
@@ -205,6 +210,7 @@ begIN
 					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
 					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
+					  ,A.OUT_RETURN_KEY as DET_KEY
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -238,7 +244,7 @@ begIN
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
-				  ,'REQ' as TAX_REQ
+				  ,206055 as TAX_REQ
 				  ,X.SALES_TYPE
 				  ,X.ITEM_CODE
 				  ,I.ITEM_NAME
@@ -248,6 +254,7 @@ begIN
 				  ,SUM(X.VAT) as VAT
 				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
 				  ,X.MASTER_KEY
+				  ,X.DET_KEY
 				  ,'INSERT' as CUD_KEY
 			from (
 				select
@@ -265,6 +272,7 @@ begIN
 					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
 					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
+					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -273,10 +281,10 @@ begIN
 				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 				  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 				  and A.TAX_YN = 'N'
-				  and B.SALES_TYPE not in (select DATA_ID
-				  					  	   from SYS_DATA
-				  					  	   where PATH = 'cfg.sale.S06'
-				  					  	   	 and CODE <> '02')
+				 and B.SALES_TYPE in (select DATA_ID
+						  				 from SYS_DATA
+						  				where PATH = 'cfg.sale.S06'
+						  				  and CODE <> '02')
 				union all 
 				select
 					  '원자재출고' as DIV_MST
@@ -293,6 +301,7 @@ begIN
 					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
 					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
+					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -302,9 +311,9 @@ begIN
 				  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 				  and A.TAX_YN = 'N'
 				  and B.SALES_TYPE = (select DATA_ID
-				  					  from SYS_DATA
-				  					  where PATH = 'cfg.sale.S06'
-				  					    and CODE = '02')
+						  			  from SYS_DATA
+						  			  where PATH = 'cfg.sale.S06'
+						  			  and CODE = '02')
 				union all 
 				select
 					  '출고반품' as DIV_MST
@@ -321,6 +330,7 @@ begIN
 					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
 					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
+					  ,A.OUT_RETURN_KEY as DET_KEY
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B
 						on (A.COMP_ID = B.COMP_ID

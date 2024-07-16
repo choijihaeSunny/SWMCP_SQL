@@ -4,12 +4,12 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE010$GET_TAX_DET`(
 	IN A_ST_DATE TIMESTAMP,
 	IN A_ED_DATE TIMESTAMP,
 	IN A_CREATE_YN VARCHAR(10), -- 생성구분 생성 미생성
-	IN A_SALES_KIND VARCHAR(10), -- -- 매출구분 cfg.sale.S02 내수 01 수출 02
+	IN A_SALES_KIND VARCHAR(10), -- 매출구분 cfg.sale.S02 내수 01 수출 02
 	IN A_END_GUBUN VARCHAR(10), -- 합산마감 0 /개별마감 1
 	IN A_CUST_CODE VARCHAR(300), -- 거래처
 	IN A_MASETR_KEY VARCHAR(50),
 	IN A_GUBUN VARCHAR(30),
-	IN A_SEARCH VARCHAR(10),
+	IN A_SEARCH VARCHAR(50),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
@@ -20,41 +20,96 @@ begin
 	-- 리텍의 PKG_SALE_TAX.GET_TAX_D 참조
 	
 	if A_CREATE_YN = 'Y' then
-		select
-			  'N' as CHK
-			  ,'' AS GUBUN
-			  ,A.COMP_ID
-			  ,A.TAX_NUMB
-			  ,A.TAX_SEQ
-			  ,STR_TO_DATE(A.ACT_DATE, '%Y%m%d') as SET_DATE
-			  ,B.CUST_CODE
-			  ,C.CUST_NAME
-			  ,B.EMP_NO
-			  ,B.DEPT_CODE
-			  ,A.ITEM_CODE
-			  ,I.ITEM_NAME
-			  ,A.QTY
-			  ,A.COST
-			  ,A.SUPP_AMT as AMT
-			  ,A.VAT
-			  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
-			  ,A.CALL_KIND
-			  ,A.CALL_KEY
-			  ,A.DIFF_AMT
-			  ,A.RMK
-		from TB_TAX_DET A
-			inner join TB_TAX_MST B 
-				on (A.COMP_ID = B.COMP_ID
-				and A.TAX_NUMB = B.TAX_NUMB)
-			inner join TC_CUST_CODE C 
-				on (A.COMP_ID = C.COMP_ID
-				and B.CUST_CODE = C.CUST_CODE)
-			inner join TB_ITEM_CODE I
-				on (A.ITEM_CODE = I.ITEM_CODE)
-		where A.COMP_ID = A_COMP_ID
-		  and A.TAX_NUMB = A_TAX_NUMB
-		order by A.TAX_SEQ
-		;
+	
+		if A_END_GUBUN = '0' then -- 합산마감인 경우 거래처별로 조회한다.
+		
+			select
+				  'N' as CHK
+				  ,(
+					case 
+						when A.CALL_KIND = 'REQ' then '출고'
+						else '출고반품' -- when A.CALL_KIND = 'RTN'
+					END
+				  ) AS GUBUN
+				  ,A.COMP_ID
+				  ,A.TAX_NUMB
+				  ,A.TAX_SEQ
+				  ,STR_TO_DATE(A.ACT_DATE, '%Y%m%d') as SET_DATE
+				  ,B.CUST_CODE
+				  ,C.CUST_NAME
+				  ,B.EMP_NO
+				  ,B.DEPT_CODE
+				  ,A.ITEM_CODE
+				  ,I.ITEM_NAME
+				  ,A.QTY
+				  ,A.COST
+				  ,A.SUPP_AMT as AMT
+				  ,A.VAT
+				  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
+				  ,A.CALL_KIND
+				  ,A.CALL_KEY
+				  ,'' as DET_KEY
+				  ,A.DIFF_AMT
+				  ,A.RMK
+			from TB_TAX_DET A
+				inner join TB_TAX_MST B 
+					on (A.COMP_ID = B.COMP_ID
+					and A.TAX_NUMB = B.TAX_NUMB)
+				inner join TC_CUST_CODE C 
+					on (A.COMP_ID = C.COMP_ID
+					and B.CUST_CODE = C.CUST_CODE)
+				inner join TB_ITEM_CODE I
+					on (A.ITEM_CODE = I.ITEM_CODE)
+			where A.COMP_ID = A_COMP_ID
+			  and A.TAX_NUMB = A_TAX_NUMB
+			order by A.TAX_SEQ
+			;
+		else -- if A_END_GUBUN = '1' then -- 개별마감일 경우 거래처별 + 매출 키값 별로 조회한다.
+		
+			select 
+				  'N' as CHK
+				  ,(
+					case 
+						when A.CALL_KIND = 'REQ' then '출고'
+						else '출고반품' -- when A.CALL_KIND = 'RTN'
+					END
+				  ) AS GUBUN
+				  ,A.COMP_ID
+				  ,A.TAX_NUMB
+				  ,A.TAX_SEQ
+				  ,STR_TO_DATE(A.ACT_DATE, '%Y%m%d') as SET_DATE
+				  ,B.CUST_CODE
+				  ,C.CUST_NAME
+				  ,B.EMP_NO
+				  ,B.DEPT_CODE
+				  ,A.ITEM_CODE
+				  ,I.ITEM_NAME
+				  ,A.QTY
+				  ,A.COST
+				  ,A.SUPP_AMT as AMT
+				  ,A.VAT
+				  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
+				  ,A.CALL_KIND
+				  ,A.CALL_KEY
+				  ,'' as DET_KEY
+				  ,A.DIFF_AMT
+				  ,A.RMK
+			from TB_TAX_DET A
+				inner join TB_TAX_MST B 
+					on (A.COMP_ID = B.COMP_ID
+					and A.TAX_NUMB = B.TAX_NUMB)
+				inner join TC_CUST_CODE C 
+					on (A.COMP_ID = C.COMP_ID
+					and B.CUST_CODE = C.CUST_CODE)
+				inner join TB_ITEM_CODE I
+					on (A.ITEM_CODE = I.ITEM_CODE)
+			where A.COMP_ID = A_COMP_ID
+			  and A.TAX_NUMB = A_TAX_NUMB
+			  and A.TAX_SEQ = A_SEARCH
+			order by A.TAX_SEQ
+			;
+		end if;
+		
 	else -- if A_CREATE_YN = 'N' then
 	
 		if A_END_GUBUN = '0' then -- 합산마감인 경우 거래처별로 조회한다.
@@ -78,6 +133,7 @@ begin
 				  ,(X.AMT + X.VAT) as TOT_AMT
 				  ,X.TABLE_KIND as CALL_KIND
 				  ,X.TABLE_KEY as CALL_KEY
+				  ,X.DET_KEY
 				  ,0 as DIFF_AMT
 				  ,X.RMK
 			from (
@@ -86,6 +142,7 @@ begin
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
 					  ,A.OUT_MST_KEY as TABLE_KEY
+					  ,A.OUT_KEY as DET_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -114,6 +171,7 @@ begin
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
 					  ,A.OUT_MST_KEY as TABLE_KEY
+					  ,A.OUT_KEY as DET_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -142,6 +200,7 @@ begin
 					  ,A.COMP_ID
 					  ,'RTN' as TABLE_KIND
 					  ,A.OUT_RETURN_MST_KEY as TABLE_KEY
+					  ,A.OUT_RETURN_KEY as DET_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -192,6 +251,7 @@ begin
 				  ,(X.AMT + X.VAT) as TOT_AMT
 				  ,X.TABLE_KIND as CALL_KIND
 				  ,X.TABLE_KEY as CALL_KEY
+				  ,X.DET_KEY
 				  ,0 as DIFF_AMT
 				  ,X.RMK
 			from (
@@ -200,6 +260,7 @@ begin
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
 					  ,A.OUT_MST_KEY as TABLE_KEY
+					  ,A.OUT_KEY as DET_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -228,6 +289,7 @@ begin
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
 					  ,A.OUT_MST_KEY as TABLE_KEY
+					  ,A.OUT_KEY as DET_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -256,6 +318,7 @@ begin
 					  ,A.COMP_ID
 					  ,'RTN' as TABLE_KIND
 					  ,A.OUT_RETURN_MST_KEY as TABLE_KEY
+					  ,A.OUT_RETURN_KEY as DET_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -284,6 +347,7 @@ begin
 			  and X.TAX_YN = 'N'
 			  and X.CUST_CODE = A_CUST_CODE
 			  and X.TABLE_KEY = A_MASETR_KEY
+			  and X.DET_KEY = A_SEARCH
 			order by X.GUBUN, X.TABLE_KEY, X.ITEM_CODE
 			;
 		end if -- if A_END_GUBUN = '0' then end
