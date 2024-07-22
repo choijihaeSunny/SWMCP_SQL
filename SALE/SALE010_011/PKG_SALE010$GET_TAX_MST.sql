@@ -124,7 +124,12 @@ begIN
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
-				  ,206055 as TAX_REQ
+				  ,(
+				  	select DATA_ID
+				    from SYS_DATA
+				    where path = 'cfg.sale.S07'
+				    and CODE = 'REQ'
+				  ) as TAX_REQ
 				  ,X.SALES_TYPE
 				  ,X.ITEM_CODE
 				  ,I.ITEM_NAME
@@ -244,7 +249,12 @@ begIN
 				  ,X.EMP_NO
 				  ,X.DEPT_CODE
 				  ,X.RMK
-				  ,206055 as TAX_REQ
+				  ,(
+				  	select DATA_ID
+				    from SYS_DATA
+				    where path = 'cfg.sale.S07'
+				    and CODE = 'REQ'
+				  ) as TAX_REQ
 				  ,X.SALES_TYPE
 				  ,X.ITEM_CODE
 				  ,I.ITEM_NAME

@@ -51,6 +51,7 @@ begin
 				  ,'' as DET_KEY
 				  ,A.DIFF_AMT
 				  ,A.RMK
+				  ,'UPDATE' AS CUD_KEY
 			from TB_TAX_DET A
 				inner join TB_TAX_MST B 
 					on (A.COMP_ID = B.COMP_ID
@@ -94,6 +95,7 @@ begin
 				  ,'' as DET_KEY
 				  ,A.DIFF_AMT
 				  ,A.RMK
+				  ,'UPDATE' AS CUD_KEY
 			from TB_TAX_DET A
 				inner join TB_TAX_MST B 
 					on (A.COMP_ID = B.COMP_ID
@@ -136,6 +138,7 @@ begin
 				  ,X.DET_KEY
 				  ,0 as DIFF_AMT
 				  ,X.RMK
+				  ,'INSERT' as CUD_KEY
 			from (
 				select 
 					  '출고' as GUBUN
@@ -254,6 +257,7 @@ begin
 				  ,X.DET_KEY
 				  ,0 as DIFF_AMT
 				  ,X.RMK
+				  ,'INSERT' as CUD_KEY
 			from (
 				select 
 					  '출고' as GUBUN
@@ -354,7 +358,8 @@ begin
 		;
 	
 		
-	end if; -- if A_CREATE_YN = 'Y' then end
+	end if -- if A_CREATE_YN = 'Y' then end
+	; 
 
 	
 	
