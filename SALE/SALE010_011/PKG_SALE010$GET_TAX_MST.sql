@@ -129,7 +129,7 @@ begIN
 			  	  ,X.DIV_MST
 				  ,X.COMP_ID
 				  ,'' AS TAX_NUMB
-				  ,date_format('', '%Y%m%d') as SET_DATE
+				  ,X.SET_DATE as SET_DATE
 				  ,X.CUST_CODE
 				  ,C.CUST_NAME
 				  ,C.CUST_NUMB
