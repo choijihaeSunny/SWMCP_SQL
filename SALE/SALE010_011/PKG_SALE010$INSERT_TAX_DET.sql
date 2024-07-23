@@ -1,314 +1,97 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE010$GET_TAX_DET`(	
-	IN A_COMP_ID VARCHAR(10),
-	IN A_TAX_NUMB VARCHAR(30),
-	IN A_ST_DATE TIMESTAMP,
-	IN A_ED_DATE TIMESTAMP,
-	IN A_CREATE_YN VARCHAR(10), -- 생성구분 생성 미생성
-	IN A_SALES_KIND VARCHAR(10), -- 매출구분 cfg.sale.S02 내수 01 수출 02
-	IN A_END_GUBUN VARCHAR(10), -- 합산마감 0 /개별마감 1
-	IN A_CUST_CODE VARCHAR(300), -- 거래처
-	IN A_MASETR_KEY VARCHAR(50),
-	IN A_GUBUN VARCHAR(30),
-	IN A_SEARCH VARCHAR(50),
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_SALE010$INSERT_TAX_DET`(		
+  	IN A_COMP_ID VARCHAR(10),
+  	IN A_CHK VARCHAR(1),
+  	IN A_TAX_NUMB VARCHAR(10),
+  	IN A_ACT_DATE TIMESTAMP,
+  	IN A_ITEM_CODE VARCHAR(30),
+  	IN A_QTY DECIMAL(20, 4),
+  	IN A_COST DECIMAL(20, 4),
+  	IN A_SUPP_AMT DECIMAL(20, 4),
+  	IN A_VAT DECIMAL(20, 4),
+  	IN A_CALL_KIND VARCHAR(10),
+  	IN A_CALL_KEY VARCHAR(30),
+--   	IN A_DIFF_AMT DECIMAL(20, 4),
+  	IN A_RMK VARCHAR(100),
+  	IN A_SYS_EMP_NO varchar(10),
+	IN A_SYS_ID varchar(30),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
-	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
-	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 	
-	-- 리텍의 PKG_SALE_TAX.GET_TAX_D 참조
-	
-	if A_CREATE_YN = 'Y' then
-		select
-			  'N' as CHK
-			  ,(
-				case 
-					when A.CALL_KIND = 'REQ' then '출고'
-					else '출고반품' -- when A.CALL_KIND = 'RTN'
-				END
-			  ) AS GUBUN
-			  ,A.COMP_ID
-			  ,A.TAX_NUMB
-			  ,A.TAX_SEQ
-			  ,STR_TO_DATE(A.ACT_DATE, '%Y%m%d') as SET_DATE
-			  ,B.CUST_CODE
-			  ,C.CUST_NAME
-			  ,B.EMP_NO
-			  ,B.DEPT_CODE
-			  ,A.ITEM_CODE
-			  ,I.ITEM_NAME
-			  ,A.QTY
-			  ,A.COST
-			  ,A.SUPP_AMT as AMT
-			  ,A.VAT
-			  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
-			  ,A.CALL_KIND
-			  ,A.CALL_KEY
-			  ,'' as DET_KEY
-			  ,A.DIFF_AMT
-			  ,A.RMK
-		from TB_TAX_DET A
-			inner join TB_TAX_MST B 
-				on (A.COMP_ID = B.COMP_ID
-				and A.TAX_NUMB = B.TAX_NUMB)
-			inner join TC_CUST_CODE C 
-				on (A.COMP_ID = C.COMP_ID
-				and B.CUST_CODE = C.CUST_CODE)
-			inner join TB_ITEM_CODE I
-				on (A.ITEM_CODE = I.ITEM_CODE)
-		where A.COMP_ID = A_COMP_ID
-		  and A.TAX_NUMB = A_TAX_NUMB
-		order by A.TAX_SEQ
-		;
-	else -- if A_CREATE_YN = 'N' then
-	
-		if A_END_GUBUN = '0' then -- 합산마감인 경우 거래처별로 조회한다.
-			select
-				  'N' as CHK
-				  ,X.GUBUN
-				  ,X.COMP_ID
-				  ,'' AS TAX_NUMB
-				  ,'' AS TAX_SEQ
-				  ,X.SET_DATE
-				  ,X.CUST_CODE
-				  ,C.CUST_NAME
-				  ,X.EMP_NO
-				  ,X.DEPT_CODE
-				  ,X.ITEM_CODE
-				  ,I.ITEM_NAME
-				  ,X.QTY
-				  ,X.COST
-				  ,X.AMT
-				  ,X.VAT
-				  ,(X.AMT + X.VAT) as TOT_AMT
-				  ,X.TABLE_KIND as CALL_KIND
-				  ,X.TABLE_KEY as CALL_KEY
-				  ,X.DET_KEY
-				  ,0 as DIFF_AMT
-				  ,X.RMK
-			from (
-				select 
-					  '출고' as GUBUN
-					  ,A.COMP_ID
-					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
-					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
-					  ,B.CUST_CODE
-					  ,B.EMP_NO 
-					  ,B.DEPT_CODE 
-					  ,A.ITEM_CODE
-					  ,A.TAX_YN
-					  ,A.QTY
-					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
-					  ,A.RMK
-				from TB_OUT_DET A
-					inner join TB_OUT_MST B 
-						on (A.COMP_ID = B.COMP_ID
-						and A.OUT_MST_KEY = B.OUT_MST_KEY)
-				where A.COMP_ID = A_COMP_ID
-				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
-						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE <> '02')
-				union all
-				select 
-					  '원자재출고' as GUBUN
-					  ,A.COMP_ID
-					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
-					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
-					  ,B.CUST_CODE
-					  ,B.EMP_NO 
-					  ,B.DEPT_CODE 
-					  ,A.ITEM_CODE
-					  ,A.TAX_YN
-					  ,A.QTY
-					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
-					  ,A.RMK
-				from TB_OUT_DET A
-					inner join TB_OUT_MST B 
-						on (A.COMP_ID = B.COMP_ID
-						and A.OUT_MST_KEY = B.OUT_MST_KEY)
-				where A.COMP_ID = A_COMP_ID
-				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
-						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE = '02')
-				union all
-				select 
-					  '출고반품' as GUBUN
-					  ,A.COMP_ID
-					  ,'RTN' as TABLE_KIND
-					  ,A.OUT_RETURN_MST_KEY as TABLE_KEY
-					  ,A.OUT_RETURN_KEY as DET_KEY
-					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
-					  ,B.CUST_CODE
-					  ,B.EMP_NO 
-					  ,B.DEPT_CODE 
-					  ,A.ITEM_CODE
-					  ,A.TAX_YN
-					  ,A.QTY
-					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
-					  ,A.RMK
-				from TB_OUT_RETURN_DET A
-					inner join TB_OUT_RETURN_MST B 
-						on (A.COMP_ID = B.COMP_ID
-						and A.OUT_RETURN_MST_KEY = B.OUT_RETURN_MST_KEY)
-				where A.COMP_ID = A_COMP_ID
-				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
-						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-			) X
-				inner join TC_CUST_CODE C
-					on (X.COMP_ID = C.COMP_ID
-					and X.CUST_CODE = C.CUST_CODE)
-				inner join TB_ITEM_CODE I
-					on (X.ITEM_CODE = I.ITEM_CODE)
-			where X.COMP_ID = A_COMP_ID
-			  and X.TAX_YN = 'N'
-			  and X.CUST_CODE = A_CUST_CODE
-			order by X.GUBUN, X.TABLE_KEY, X.ITEM_CODE
-			;
-		else -- if A_END_GUBUN = '1' then
-			select
-				  'N' as CHK
-				  ,X.GUBUN
-				  ,X.COMP_ID
-				  ,'' AS TAX_NUMB
-				  ,'' AS TAX_SEQ
-				  ,X.SET_DATE
-				  ,X.CUST_CODE
-				  ,C.CUST_NAME
-				  ,X.EMP_NO
-				  ,X.DEPT_CODE
-				  ,X.ITEM_CODE
-				  ,I.ITEM_NAME
-				  ,X.QTY
-				  ,X.COST
-				  ,X.AMT
-				  ,X.VAT
-				  ,(X.AMT + X.VAT) as TOT_AMT
-				  ,X.TABLE_KIND as CALL_KIND
-				  ,X.TABLE_KEY as CALL_KEY
-				  ,X.DET_KEY
-				  ,0 as DIFF_AMT
-				  ,X.RMK
-			from (
-				select 
-					  '출고' as GUBUN
-					  ,A.COMP_ID
-					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
-					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
-					  ,B.CUST_CODE
-					  ,B.EMP_NO 
-					  ,B.DEPT_CODE 
-					  ,A.ITEM_CODE
-					  ,A.TAX_YN
-					  ,A.QTY
-					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
-					  ,A.RMK
-				from TB_OUT_DET A
-					inner join TB_OUT_MST B 
-						on (A.COMP_ID = B.COMP_ID
-						and A.OUT_MST_KEY = B.OUT_MST_KEY)
-				where A.COMP_ID = A_COMP_ID
-				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
-						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE <> '02')
-				union all
-				select 
-					  '원자재출고' as GUBUN
-					  ,A.COMP_ID
-					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
-					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
-					  ,B.CUST_CODE
-					  ,B.EMP_NO 
-					  ,B.DEPT_CODE 
-					  ,A.ITEM_CODE
-					  ,A.TAX_YN
-					  ,A.QTY
-					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
-					  ,A.RMK
-				from TB_OUT_DET A
-					inner join TB_OUT_MST B 
-						on (A.COMP_ID = B.COMP_ID
-						and A.OUT_MST_KEY = B.OUT_MST_KEY)
-				where A.COMP_ID = A_COMP_ID
-				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
-						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE = '02')
-				union all
-				select 
-					  '출고반품' as GUBUN
-					  ,A.COMP_ID
-					  ,'RTN' as TABLE_KIND
-					  ,A.OUT_RETURN_MST_KEY as TABLE_KEY
-					  ,A.OUT_RETURN_KEY as DET_KEY
-					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
-					  ,B.CUST_CODE
-					  ,B.EMP_NO 
-					  ,B.DEPT_CODE 
-					  ,A.ITEM_CODE
-					  ,A.TAX_YN
-					  ,A.QTY
-					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
-					  ,A.RMK
-				from TB_OUT_RETURN_DET A
-					inner join TB_OUT_RETURN_MST B 
-						on (A.COMP_ID = B.COMP_ID
-						and A.OUT_RETURN_MST_KEY = B.OUT_RETURN_MST_KEY)
-				where A.COMP_ID = A_COMP_ID
-				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
-						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-			) X
-				inner join TC_CUST_CODE C
-					on (X.COMP_ID = C.COMP_ID
-					and X.CUST_CODE = C.CUST_CODE)
-				inner join TB_ITEM_CODE I
-					on (X.ITEM_CODE = I.ITEM_CODE)
-			where X.COMP_ID = A_COMP_ID
-			  and X.TAX_YN = 'N'
-			  and X.CUST_CODE = A_CUST_CODE
-			  and X.TABLE_KEY = A_MASETR_KEY
-			  and X.DET_KEY = A_SEARCH
-			order by X.GUBUN, X.TABLE_KEY, X.ITEM_CODE
-			;
-		end if -- if A_END_GUBUN = '0' then end
-		;
-	
-		
-	end if; -- if A_CREATE_YN = 'Y' then end
+	declare V_TAX_SEQ VARCHAR(3);
+	declare V_ACT_DATE VARCHAR(8);
 
-	
-	
 	SET N_RETURN = 0;
-    SET V_RETURN = '조회되었습니다.';
+  	SET V_RETURN = '저장되었습니다.';
+  
+  
+  	if A_CHK = 'Y' then
+  	
+  		set V_ACT_DATE = DATE_FORMAT(A_ACT_DATE, '%Y%m%d');
+  
+	  	set V_TAX_SEQ = (select LPAD(IFNULL(MAX(TAX_SEQ), 0) + 1, 3, 0)
+	  					 from TB_TAX_DET
+	  					 where COMP_ID = A_COMP_ID
+	  					   and ACT_DATE = V_ACT_DATE
+	  					   and TAX_NUMB = A_TAX_NUMB);
+	  
+	  	insert into TB_TAX_DET (
+	  		COMP_ID,
+	  		TAX_NUMB,
+	  		TAX_SEQ,
+	  		ACT_DATE,
+	  		ITEM_CODE,
+	  		QTY,
+	  		COST,
+	  		SUPP_AMT,
+	  		VAT,
+	  		CALL_KIND,
+	  		CALL_KEY,
+	  		DIFF_AMT,
+	  		RMK
+	  		,SYS_EMP_NO
+	    	,SYS_ID
+	    	,SYS_DATE
+	  	) values (
+	  		A_COMP_ID,
+	  		A_TAX_NUMB,
+	  		V_TAX_SEQ,
+	  		V_ACT_DATE,
+	  		A_ITEM_CODE,
+	  		A_QTY,
+	  		A_COST,
+	  		A_SUPP_AMT,
+	  		A_VAT,
+	  		A_CALL_KIND,
+	  		A_CALL_KEY,
+	  		0, -- A_DIFF_AMT
+	  		A_RMK
+	  		,A_SYS_EMP_NO
+	    	,A_SYS_ID
+	    	,SYSDATE()
+	  	)
+	    ;
+	   
+	    if A_CALL_KIND = 'REQ' then
+	    
+	    	update TB_OUT_DET
+	    	   set TAX_YN = 'Y'
+	    	where COMP_ID = A_COMP_ID
+	    	  and OUT_MST_KEY = A_CALL_KEY
+	    	;
+	    else -- if A_CALL_KIND = 'RTN' then
+	    
+	    	update TB_OUT_RETURN_DET
+	    	   set TAX_YN = 'Y'
+	    	where COMP_ID = A_COMP_ID
+	    	  and OUT_RETURN_MST_KEY = A_CALL_KEY
+	    	;
+	    end if;
+		
+		IF ROW_COUNT() = 0 THEN
+	  	  SET N_RETURN = -1;
+	      SET V_RETURN = '저장이 실패하였습니다.'; -- '저장이 실패하였습니다.'; 
+	  	END IF;
+  	end if;
 end

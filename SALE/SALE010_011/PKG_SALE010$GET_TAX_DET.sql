@@ -154,8 +154,8 @@ begin
 					  ,A.TAX_YN
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.RMK
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B 
@@ -183,8 +183,8 @@ begin
 					  ,A.TAX_YN
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.RMK
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B 
@@ -212,8 +212,8 @@ begin
 					  ,A.TAX_YN
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.RMK
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B 
@@ -273,8 +273,8 @@ begin
 					  ,A.TAX_YN
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.RMK
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B 
@@ -302,8 +302,8 @@ begin
 					  ,A.TAX_YN
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.RMK
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B 
@@ -331,8 +331,8 @@ begin
 					  ,A.TAX_YN
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.RMK
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B 

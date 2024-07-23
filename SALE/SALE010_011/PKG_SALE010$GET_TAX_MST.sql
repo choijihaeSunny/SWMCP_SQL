@@ -23,7 +23,13 @@ begIN
 		
 			select distinct
 				  'N' as CHK
-				  ,'' AS DIV_MST
+-- 				  ,'' AS DIV_MST
+				  ,(
+				  	case 
+					  	when B.CALL_KIND = 'REQ' then '출고'
+					  	else '반품' -- when B.CALL_KIND = 'RTN'
+					END
+				  ) as DIV_MST
 				  ,A.COMP_ID
 				  ,A.TAX_NUMB
 				  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
@@ -59,14 +65,20 @@ begIN
 			  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 			  and A.SALES_KIND = A_SALES_KIND
 			  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
-			group by A.COMP_ID, A.CUST_CODE
+			group by A.COMP_ID, A.CUST_CODE, B.CALL_KIND
 			order by A.CUST_CODE
 			;
 		else -- if A_END_GUBUN = '1' then -- 개별마감일 경우 거래처별 + 매출 키값 별로 조회한다.
 		
 			select distinct
 				  'N' as CHK
-				  ,'' AS DIV_MST
+-- 				  ,'' AS DIV_MST
+				  ,(
+				  	case 
+					  	when B.CALL_KIND = 'REQ' then '출고'
+					  	else '반품' -- when B.CALL_KIND = 'RTN'
+					END
+				  ) as DIV_MST
 				  ,A.COMP_ID
 				  ,A.TAX_NUMB
 				  ,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
@@ -103,7 +115,7 @@ begIN
 			  and A.SALES_KIND = A_SALES_KIND
 			  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
 			group by A.COMP_ID, A.CUST_CODE, A.EMP_NO, A.DEPT_CODE, A.RMK,
-					 A.SALES_KIND, B.ITEM_CODE
+					 A.SALES_KIND, B.ITEM_CODE, B.CALL_KIND
 			order by A.CUST_CODE
 			;
 		end if
@@ -154,8 +166,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
@@ -183,8 +195,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
@@ -212,8 +224,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
 					  ,A.OUT_RETURN_KEY as DET_KEY
 				from TB_OUT_RETURN_DET A
@@ -279,8 +291,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
@@ -291,7 +303,7 @@ begIN
 				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 				  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 				  and A.TAX_YN = 'N'
-				 and B.SALES_TYPE in (select DATA_ID
+				  and B.SALES_TYPE in (select DATA_ID
 						  				 from SYS_DATA
 						  				where PATH = 'cfg.sale.S06'
 						  				  and CODE <> '02')
@@ -308,8 +320,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
@@ -337,8 +349,8 @@ begIN
 					  ,A.ITEM_CODE
 					  ,A.QTY
 					  ,A.COST
-					  ,TRUNCATE(A.AMT / 1.1, 4) AS AMT
-					  ,(A.AMT - TRUNCATE(A.AMT / 1.1, 4)) AS VAT
+					  ,A.AMT
+					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
 					  ,A.OUT_RETURN_KEY as DET_KEY
 				from TB_OUT_RETURN_DET A

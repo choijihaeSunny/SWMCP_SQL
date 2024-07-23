@@ -1,56 +1,55 @@
-PKG_SALE011$GET_TAX_DET_LISTCREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE011$GET_TAX_DET_LIST`(	
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE011$GET_TAX_DET_LIST`(	
 	in A_COMP_ID VARCHAR(10),
-	in A_OID BIGINT(20),
-	in A_CUST_CODE VARCHAR(300),
-	in A_SEARCH VARCHAR(10),
-	in A_GUBUN VARCHAR(10),
+	IN A_TAX_NUMB VARCHAR(30),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
 begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
-	SELECT 
-		A.COMP_ID,
-		A.OID,
-		A.TAX_OID, 
-		A.VBILL_NUM,
-		str_to_date(A.SEND_DATE, '%Y%m%d') as SEND_DATE,
-		str_to_date(E.SET_DATE, '%Y%m%d') as SET_DATE,
-			E.SET_SEQ,
-		A.CUST_CODE,
-		B.CUST_NAME,
-		A.PROD_ID,
-		C.PROD_CD,
-		C.PROD_NM,
-		C.STAND_ID,
-		C.SPEC_ID,
-		C.COLOR_ID, 
-		C.UNIT_ID,
-		C.ETC_ID,
-		FN_SYS_DATA_NAME(E.ORDER_KIND)  as ORDER_KIND,
-		A.KIND,
-		A.SUPP_QTY,
-		A.SUPP_PRC,
-		A.SUPP_AMT,
-		A.SUPP_VAT,
-		A.ENG_AMT,
-		A.SEND_OID,
-		A.MODI_KEY,
-		A.INSERT_ID,
-		A.INSERT_DT,
-		A.UPDATE_ID,
-		A.UPDATE_DT,
-		Z.ORDER_NO
-    FROM   tax_det A
-    		inner join TC_CUST_CODE B on (A.CUST_CODE = B.CUST_CODE)
-    		inner join PROD_MST C on (A.PROD_ID = C.PROD_ID)
-    		inner join sale_send Z  on (A.SEND_OID = Z.OID)
-	    	inner join sale_order_det D on (Z.ORDER_OID = D.OID)
-    		inner join sale_order_mst E on (D.MST_OID  = E.OID) 	
-    WHERE 	A.COMP_ID = A_COMP_ID
-    	and A.TAX_OID = A_OID
-	 	and case when A_CUST_CODE != '' then FIND_IN_SET(A.CUST_CODE  , A_CUST_CODE) else A.CUST_CODE like '%' end;
+
+
+	select 
+		  (
+			case 
+				when A.CALL_KIND = 'REQ' then '출고'
+				else '출고반품' -- when A.CALL_KIND = 'RTN'
+			END
+		  ) AS GUBUN
+		  ,A.COMP_ID
+		  ,A.TAX_NUMB
+		  ,A.TAX_SEQ
+		  ,STR_TO_DATE(A.ACT_DATE, '%Y%m%d') as SET_DATE
+		  ,B.CUST_CODE
+		  ,C.CUST_NAME
+		  ,B.EMP_NO
+		  ,B.DEPT_CODE
+		  ,A.ITEM_CODE
+		  ,I.ITEM_NAME
+		  ,A.QTY
+		  ,A.COST
+		  ,A.SUPP_AMT as AMT
+		  ,A.VAT
+		  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
+		  ,A.CALL_KIND
+		  ,A.CALL_KEY
+		  ,'' as DET_KEY
+		  ,A.DIFF_AMT
+		  ,A.RMK
+	from TB_TAX_DET A
+		inner join TB_TAX_MST B 
+			on (A.COMP_ID = B.COMP_ID
+			and A.TAX_NUMB = B.TAX_NUMB)
+		inner join TC_CUST_CODE C 
+			on (A.COMP_ID = C.COMP_ID
+			and B.CUST_CODE = C.CUST_CODE)
+		inner join TB_ITEM_CODE I
+			on (A.ITEM_CODE = I.ITEM_CODE)
+	where A.COMP_ID = A_COMP_ID
+	  and A.TAX_NUMB = A_TAX_NUMB
+	order by A.TAX_SEQ
+	;
+	
 	
 	SET N_RETURN = 0;
     SET V_RETURN = '조회되었습니다.';
