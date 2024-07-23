@@ -164,10 +164,10 @@ begin
 				where A.COMP_ID = A_COMP_ID
 				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE <> '02')
+				  and B.SALES_TYPE in (select DATA_ID
+						  				 from SYS_DATA
+						  				where PATH = 'cfg.sale.S06'
+						  				  and CODE <> '02')
 				union all
 				select 
 					  '원자재출고' as GUBUN
@@ -193,10 +193,10 @@ begin
 				where A.COMP_ID = A_COMP_ID
 				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE = '02')
+				  and B.SALES_TYPE = (select DATA_ID
+						  			  from SYS_DATA
+						  			  where PATH = 'cfg.sale.S06'
+						  			  and CODE = '02')
 				union all
 				select 
 					  '출고반품' as GUBUN
@@ -231,6 +231,7 @@ begin
 			where X.COMP_ID = A_COMP_ID
 			  and X.TAX_YN = 'N'
 			  and X.CUST_CODE = A_CUST_CODE
+			  and X.TABLE_KEY = A_MASETR_KEY
 			order by X.GUBUN, X.TABLE_KEY, X.ITEM_CODE
 			;
 		else -- if A_END_GUBUN = '1' then
@@ -283,10 +284,10 @@ begin
 				where A.COMP_ID = A_COMP_ID
 				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE <> '02')
+				  and B.SALES_TYPE in (select DATA_ID
+						  				 from SYS_DATA
+						  				where PATH = 'cfg.sale.S06'
+						  				  and CODE <> '02')
 				union all
 				select 
 					  '원자재출고' as GUBUN
@@ -312,10 +313,10 @@ begin
 				where A.COMP_ID = A_COMP_ID
 				  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 						  		     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-				  and B.SALES_TYPE not in (select DATA_ID
-						  					 from SYS_DATA
-						  					where PATH = 'cfg.sale.S06'
-						  					  and CODE = '02')
+				  and B.SALES_TYPE = (select DATA_ID
+						  			  from SYS_DATA
+						  			  where PATH = 'cfg.sale.S06'
+						  			  and CODE = '02')
 				union all
 				select 
 					  '출고반품' as GUBUN
