@@ -25,7 +25,7 @@ PROC:begin
 	declare V_3PRE_YYMM VARCHAR(8);
 	declare V_3PRE_LAST_DAY VARCHAR(8);
 
-	-- 올해의 시작일
+	-- 올해의 시작일 (20xx.01.01)
 	declare V_FROM_DATE VARCHAR(8);	
 	
 	declare exit HANDLER for sqlexception
@@ -38,13 +38,13 @@ PROC:begin
 	set V_PPRE = SUBSTR(DATE_FORMAT(DATE_ADD(A_SET_DATE, interval -2 MONTH), '%Y%m%d'), 1, 6);
 	set V_3PRE = SUBSTR(DATE_FORMAT(DATE_ADD(A_SET_DATE, interval -3 MONTH), '%Y%m%d'), 1, 6);
 
-	set V_PRE_YYMM = CONCAT(V_PRE_YYMM, '01');
-	set V_PPRE_YYMM = CONCAT(V_PPRE_YYMM, '01');
-	set V_3PRE_YYMM = CONCAT(V_3PRE_YYMM, '01');
+	set V_PRE_YYMM = CONCAT(V_PRE, '01');
+	set V_PPRE_YYMM = CONCAT(V_PPRE, '01');
+	set V_3PRE_YYMM = CONCAT(V_3PRE, '01');
 
-	set V_PRE_LAST_DAY = CONCAT(V_PRE_YYMM, '31');
-	set V_PPRE_LAST_DAY = CONCAT(V_PPRE_YYMM, '31');
-	set V_3PRE_LAST_DAY = CONCAT(V_3PRE_YYMM, '31');
+	set V_PRE_LAST_DAY = CONCAT(V_PRE, '31');
+	set V_PPRE_LAST_DAY = CONCAT(V_PPRE, '31');
+	set V_3PRE_LAST_DAY = CONCAT(V_3PRE, '31');
 
 	set V_FROM_DATE = CONCAT(SUBSTR(V_DATE, 1, 4), '0101');
 
@@ -58,7 +58,7 @@ PROC:begin
 		  ,A.QTY
 		  ,A.SALE_AMT
 		  ,A.COLL_AMT
-	from vew_sales_coll_det A
+	from VEW_SALES_COLL_DET A
 	
 	;
 
