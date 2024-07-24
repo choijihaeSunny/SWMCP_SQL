@@ -9,9 +9,9 @@ begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
+	-- 개별조회
 
-	select 
-		  (
+	select(
 			case 
 				when A.CALL_KIND = 'REQ' then '출고'
 				else '출고반품' -- when A.CALL_KIND = 'RTN'
@@ -34,7 +34,7 @@ begin
 		  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
 		  ,A.CALL_KIND
 		  ,A.CALL_KEY
-		  ,'' as DET_KEY
+		  ,'' as MASTER_KEY
 		  ,A.DIFF_AMT
 		  ,A.RMK
 	from TB_TAX_DET A
@@ -48,7 +48,6 @@ begin
 			on (A.ITEM_CODE = I.ITEM_CODE)
 	where A.COMP_ID = A_COMP_ID
 	  and A.TAX_NUMB = A_TAX_NUMB
-	  and A.TAX_SEQ = A_SEARCH
 	order by A.TAX_SEQ
 	;
 	

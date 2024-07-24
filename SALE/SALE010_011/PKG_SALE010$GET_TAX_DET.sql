@@ -48,7 +48,7 @@ begin
 				  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
 				  ,A.CALL_KIND
 				  ,A.CALL_KEY
-				  ,'' as DET_KEY
+				  ,'' as MASTER_KEY
 				  ,A.DIFF_AMT
 				  ,A.RMK
 				  ,'UPDATE' AS CUD_KEY
@@ -92,7 +92,7 @@ begin
 				  ,(A.SUPP_AMT + A.VAT) as TOT_AMT
 				  ,A.CALL_KIND
 				  ,A.CALL_KEY
-				  ,'' as DET_KEY
+				  ,'' as MASTER_KEY
 				  ,A.DIFF_AMT
 				  ,A.RMK
 				  ,'UPDATE' AS CUD_KEY
@@ -107,7 +107,6 @@ begin
 					on (A.ITEM_CODE = I.ITEM_CODE)
 			where A.COMP_ID = A_COMP_ID
 			  and A.TAX_NUMB = A_TAX_NUMB
-			  and A.TAX_SEQ = A_SEARCH
 			order by A.TAX_SEQ
 			;
 		end if;
@@ -135,7 +134,7 @@ begin
 				  ,(X.AMT + X.VAT) as TOT_AMT
 				  ,X.TABLE_KIND as CALL_KIND
 				  ,X.TABLE_KEY as CALL_KEY
-				  ,X.DET_KEY
+				  ,X.MASTER_KEY
 				  ,0 as DIFF_AMT
 				  ,X.RMK
 				  ,'INSERT' as CUD_KEY
@@ -144,8 +143,8 @@ begin
 					  '출고' as GUBUN
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
+					  ,A.OUT_KEY as TABLE_KEY
+					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -173,8 +172,8 @@ begin
 					  '원자재출고' as GUBUN
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
+					  ,A.OUT_KEY as TABLE_KEY
+					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -202,8 +201,8 @@ begin
 					  '출고반품' as GUBUN
 					  ,A.COMP_ID
 					  ,'RTN' as TABLE_KIND
-					  ,A.OUT_RETURN_MST_KEY as TABLE_KEY
-					  ,A.OUT_RETURN_KEY as DET_KEY
+					  ,A.OUT_RETURN_KEY as TABLE_KEY
+					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -231,7 +230,6 @@ begin
 			where X.COMP_ID = A_COMP_ID
 			  and X.TAX_YN = 'N'
 			  and X.CUST_CODE = A_CUST_CODE
-			  and X.TABLE_KEY = A_MASETR_KEY
 			order by X.GUBUN, X.TABLE_KEY, X.ITEM_CODE
 			;
 		else -- if A_END_GUBUN = '1' then
@@ -255,7 +253,7 @@ begin
 				  ,(X.AMT + X.VAT) as TOT_AMT
 				  ,X.TABLE_KIND as CALL_KIND
 				  ,X.TABLE_KEY as CALL_KEY
-				  ,X.DET_KEY
+				  ,X.MASTER_KEY
 				  ,0 as DIFF_AMT
 				  ,X.RMK
 				  ,'INSERT' as CUD_KEY
@@ -264,8 +262,8 @@ begin
 					  '출고' as GUBUN
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
+					  ,A.OUT_KEY as TABLE_KEY
+					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -293,8 +291,8 @@ begin
 					  '원자재출고' as GUBUN
 					  ,A.COMP_ID
 					  ,'REQ' as TABLE_KIND
-					  ,A.OUT_MST_KEY as TABLE_KEY
-					  ,A.OUT_KEY as DET_KEY
+					  ,A.OUT_KEY as TABLE_KEY
+					  ,A.OUT_MST_KEY as MASTER_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -322,8 +320,8 @@ begin
 					  '출고반품' as GUBUN
 					  ,A.COMP_ID
 					  ,'RTN' as TABLE_KIND
-					  ,A.OUT_RETURN_MST_KEY as TABLE_KEY
-					  ,A.OUT_RETURN_KEY as DET_KEY
+					  ,A.OUT_RETURN_KEY as TABLE_KEY
+					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
 					  ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 					  ,B.CUST_CODE
 					  ,B.EMP_NO 
@@ -351,8 +349,7 @@ begin
 			where X.COMP_ID = A_COMP_ID
 			  and X.TAX_YN = 'N'
 			  and X.CUST_CODE = A_CUST_CODE
-			  and X.TABLE_KEY = A_MASETR_KEY
-			  and X.DET_KEY = A_SEARCH
+			  and X.MASTER_KEY = A_MASETR_KEY
 			order by X.GUBUN, X.TABLE_KEY, X.ITEM_CODE
 			;
 		end if -- if A_END_GUBUN = '0' then end

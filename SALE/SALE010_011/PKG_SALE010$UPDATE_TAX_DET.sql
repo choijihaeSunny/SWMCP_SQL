@@ -34,14 +34,14 @@ begin
 		    update TB_OUT_DET
 		       set TAX_YN = 'N'
 		     where COMP_ID = A_COMP_ID
-		       and OUT_MST_KEY = A_CALL_KEY
+		       and OUT_KEY = A_CALL_KEY
 		    ;
 		else -- if A_CALL_KIND = 'RTN' then
 		    
 		    update TB_OUT_RETURN_DET
 		       set TAX_YN = 'N'
 		     where COMP_ID = A_COMP_ID
-		       and OUT_RETURN_MST_KEY = A_CALL_KEY
+		       and OUT_RETURN_KEY = A_CALL_KEY
 		    ;
 		end if;
 	  	

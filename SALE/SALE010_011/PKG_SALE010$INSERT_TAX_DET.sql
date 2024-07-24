@@ -12,8 +12,8 @@ CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_SALE010$INSERT_TAX_DET`(
   	IN A_CALL_KEY VARCHAR(30),
 --   	IN A_DIFF_AMT DECIMAL(20, 4),
   	IN A_RMK VARCHAR(100),
-  	IN A_SYS_EMP_NO varchar(10),
-	IN A_SYS_ID varchar(30),
+  	IN A_SYS_EMP_NO VARCHAR(10),
+	IN A_SYS_ID VARCHAR(30),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
@@ -78,14 +78,14 @@ begin
 	    	update TB_OUT_DET
 	    	   set TAX_YN = 'Y'
 	    	where COMP_ID = A_COMP_ID
-	    	  and OUT_MST_KEY = A_CALL_KEY
+	    	  and OUT_KEY = A_CALL_KEY
 	    	;
 	    else -- if A_CALL_KIND = 'RTN' then
 	    
 	    	update TB_OUT_RETURN_DET
 	    	   set TAX_YN = 'Y'
 	    	where COMP_ID = A_COMP_ID
-	    	  and OUT_RETURN_MST_KEY = A_CALL_KEY
+	    	  and OUT_RETURN_KEY = A_CALL_KEY
 	    	;
 	    end if;
 		

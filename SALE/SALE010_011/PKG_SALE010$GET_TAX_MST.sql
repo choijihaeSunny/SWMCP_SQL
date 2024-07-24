@@ -13,7 +13,6 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_SALE010$GET_TAX_MST`(
 begIN
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
-	
 
 	-- 리텍의 PKG_SALE_TAX.GET_TAX_M 참조
 	
@@ -41,15 +40,13 @@ begIN
 				  ,A.RMK
 				  ,A.TAX_REQ
 				  ,A.SALES_KIND as SALES_TYPE
-				  ,B.ITEM_CODE
-				  ,I.ITEM_NAME
 				  ,SUM(B.QTY) as QTY
 				  ,SUM(B.COST) as COST
 				  ,SUM(B.SUPP_AMT) as AMT
 				  ,SUM(B.VAT) as VAT
 				  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
-				  ,'' AS MASTER_KEY
-				  ,B.TAX_SEQ as DET_KEY
+				  ,B.CALL_KEY AS CALL_KEY
+				  ,'' as MASTER_KEY
 				  ,'UPDATE' AS CUD_KEY
 			from TB_TAX_MST A
 				inner join TC_CUST_CODE C
@@ -58,8 +55,6 @@ begIN
 				inner join TB_TAX_DET B
 					on (A.COMP_ID = B.COMP_ID
 					and A.TAX_NUMB = B.TAX_NUMB)
-				inner join TB_ITEM_CODE I
-						on (B.ITEM_CODE = I.ITEM_CODE)
 			where A.COMP_ID = A_COMP_ID
 			  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 			  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
@@ -90,15 +85,13 @@ begIN
 				  ,A.RMK
 				  ,A.TAX_REQ
 				  ,A.SALES_KIND as SALES_TYPE
-				  ,B.ITEM_CODE
-				  ,I.ITEM_NAME
 				  ,SUM(B.QTY) as QTY
 				  ,SUM(B.COST) as COST
 				  ,SUM(B.SUPP_AMT) as AMT
 				  ,SUM(B.VAT) as VAT
 				  ,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
-				  ,'' AS MASTER_KEY
-				  ,B.TAX_SEQ as DET_KEY
+				  ,B.CALL_KEY AS CALL_KEY
+				  ,'' as MASTER_KEY
 				  ,'UPDATE' AS CUD_KEY
 			from TB_TAX_MST A
 				inner join TC_CUST_CODE C
@@ -107,15 +100,13 @@ begIN
 				inner join TB_TAX_DET B
 					on (A.COMP_ID = B.COMP_ID
 					and A.TAX_NUMB = B.TAX_NUMB)
-				inner join TB_ITEM_CODE I
-						on (B.ITEM_CODE = I.ITEM_CODE)
 			where A.COMP_ID = A_COMP_ID
 			  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 			  				     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
 			  and A.SALES_KIND = A_SALES_KIND
 			  and A.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
 			group by A.COMP_ID, A.CUST_CODE, A.EMP_NO, A.DEPT_CODE, A.RMK,
-					 A.SALES_KIND, B.ITEM_CODE, B.CALL_KIND
+					 A.SALES_KIND, B.CALL_KIND
 			order by A.CUST_CODE
 			;
 		end if
@@ -143,15 +134,13 @@ begIN
 				    and CODE = 'REQ'
 				  ) as TAX_REQ
 				  ,X.SALES_TYPE
-				  ,X.ITEM_CODE
-				  ,I.ITEM_NAME
 				  ,SUM(X.QTY) as QTY
 				  ,SUM(X.COST) as COST
 				  ,SUM(X.AMT) as AMT
 				  ,SUM(X.VAT) as VAT
 				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
+				  ,X.CALL_KEY
 				  ,X.MASTER_KEY
-				  ,X.DET_KEY
 				  ,'INSERT' as CUD_KEY
 			from (
 				select
@@ -168,8 +157,8 @@ begIN
 					  ,A.COST
 					  ,A.AMT
 					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
+					  ,A.OUT_KEY as CALL_KEY
 					  ,A.OUT_MST_KEY as MASTER_KEY
-					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -181,7 +170,7 @@ begIN
 				  and B.SALES_TYPE in (select DATA_ID
 						  				 from SYS_DATA
 						  				where PATH = 'cfg.sale.S06'
-						  				  and CODE <> '02')
+						  				  and CODE <> '02') -- 원자재를 제외한 내역을 출력한다.
 				union all 
 				select
 					  '원자재출고' as DIV_MST
@@ -197,8 +186,8 @@ begIN
 					  ,A.COST
 					  ,A.AMT
 					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
+					  ,A.OUT_KEY as CALL_KEY
 					  ,A.OUT_MST_KEY as MASTER_KEY
-					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -210,7 +199,7 @@ begIN
 				  and B.SALES_TYPE = (select DATA_ID
 						  			  from SYS_DATA
 						  			  where PATH = 'cfg.sale.S06'
-						  			  and CODE = '02')
+						  			  and CODE = '02') -- 원자재를 출력한다
 				union all 
 				select
 					  '출고반품' as DIV_MST
@@ -226,8 +215,8 @@ begIN
 					  ,A.COST
 					  ,A.AMT
 					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
+					  ,A.OUT_RETURN_KEY as CALL_KEY
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
-					  ,A.OUT_RETURN_KEY as DET_KEY
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -240,11 +229,9 @@ begIN
 				inner join TC_CUST_CODE C 
 					on (X.COMP_ID = C.COMP_ID
 					and X.CUST_CODE = C.CUST_CODE)
-				inner join TB_ITEM_CODE I
-					on (X.ITEM_CODE = I.ITEM_CODE)
 			where X.COMP_ID = A_COMP_ID		
 			  and X.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
-			group by X.DIV_MST, X.COMP_ID, X.CUST_CODE -- 거래처별로 합산한다.
+			group by X.COMP_ID, X.CUST_CODE -- 거래처별로 합산한다.
 			order by X.CUST_CODE
 			;
 		else -- if A_END_GUBUN = '1' then -- 개별마감일 경우 거래처별 + 매출 키값 별로 조회한다.
@@ -268,15 +255,13 @@ begIN
 				    and CODE = 'REQ'
 				  ) as TAX_REQ
 				  ,X.SALES_TYPE
-				  ,X.ITEM_CODE
-				  ,I.ITEM_NAME
 				  ,SUM(X.QTY) as QTY
 				  ,SUM(X.COST) as COST
 				  ,SUM(X.AMT) as AMT
 				  ,SUM(X.VAT) as VAT
 				  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
+				  ,X.CALL_KEY
 				  ,X.MASTER_KEY
-				  ,X.DET_KEY
 				  ,'INSERT' as CUD_KEY
 			from (
 				select
@@ -293,8 +278,8 @@ begIN
 					  ,A.COST
 					  ,A.AMT
 					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
+					  ,A.OUT_KEY as CALL_KEY
 					  ,A.OUT_MST_KEY as MASTER_KEY
-					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -322,8 +307,8 @@ begIN
 					  ,A.COST
 					  ,A.AMT
 					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
+					  ,A.OUT_KEY as CALL_KEY
 					  ,A.OUT_MST_KEY as MASTER_KEY
-					  ,A.OUT_KEY as DET_KEY
 				from TB_OUT_DET A
 					inner join TB_OUT_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -351,8 +336,8 @@ begIN
 					  ,A.COST
 					  ,A.AMT
 					  ,TRUNCATE(A.AMT / 10, 4) AS VAT
+					  ,A.OUT_RETURN_KEY as CALL_KEY
 					  ,A.OUT_RETURN_MST_KEY as MASTER_KEY
-					  ,A.OUT_RETURN_KEY as DET_KEY
 				from TB_OUT_RETURN_DET A
 					inner join TB_OUT_RETURN_MST B
 						on (A.COMP_ID = B.COMP_ID
@@ -365,13 +350,11 @@ begIN
 				inner join TC_CUST_CODE C 
 					on (X.COMP_ID = C.COMP_ID
 					and X.CUST_CODE = C.CUST_CODE)
-				inner join TB_ITEM_CODE I
-					on (X.ITEM_CODE = I.ITEM_CODE)
 			where X.COMP_ID = A_COMP_ID		
 			  and X.CUST_CODE like CONCAT('%', A_CUST_CODE, '%')
-			group by X.DIV_MST, X.COMP_ID, /*X.SET_DATE,*/ X.CUST_CODE, X.EMP_NO, 
-					 X.DEPT_CODE, X.RMK, X.SALES_TYPE, X.ITEM_CODE, X.MASTER_KEY
-			order by X.CUST_CODE, X.DIV_MST, X.MASTER_KEY
+			group by X.COMP_ID, /*X.SET_DATE,*/ X.CUST_CODE, X.EMP_NO, 
+					 X.DEPT_CODE, X.RMK, X.SALES_TYPE, X.MASTER_KEY
+			order by X.CUST_CODE, X.DIV_MST, X.CALL_KEY
 			;
 		end if; -- if A_END_GUBUN = '0' then end
 	end if; -- if A_CREATE_YN = 'Y' then end
