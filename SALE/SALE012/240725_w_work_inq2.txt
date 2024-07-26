@@ -1,0 +1,34 @@
+
+Us_Openwin	 stru_help
+string   ls_data, ls_matr, ls_matr_nm
+
+ls_data = trim(this.text)
+
+//제상품 호출...2012.05.04
+stru_help.ArgValue[1] = '' 
+stru_help.ArgValue[2] = ls_data
+stru_help.ArgValue[3] = ''
+stru_help.ArgValue[4] = ''
+Uf_OpenWithParm('w_item_code_goods_pop', dw_detail, dw_detail, stru_help)
+
+stru_help = Message.PowerObjectParm
+
+If  stru_help.bSelect = True Then	
+	This.Text = Trim(stru_help.RtnValue[2])
+	This.Tag  = trim(stru_help.RtnValue[1])
+	sle_code.text = trim(stru_help.RtnValue[1])
+	ls_matr = trim(stru_help.RtnValue[7])
+	SELECT INTER_NAME INTO :ls_matr_nm
+	FROM   TBL_USE_CODE 
+	WHERE  CODE = 'R020' AND INTER_CODE = :ls_matr ;
+	sle_matr.text = ls_matr_nm
+	sle_spec.text = trim(stru_help.RtnValue[22])
+Else
+	This.Text = ''
+	This.Tag  = ''
+	sle_code.text = ''
+	sle_matr.text = ''
+	sle_spec.text = ''
+End If
+
+return 1
