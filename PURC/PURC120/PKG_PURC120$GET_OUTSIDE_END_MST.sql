@@ -28,7 +28,7 @@ begin
 		  ,(SUM(X.AMT) + SUM(X.VAT)) as TOT_AMT
 		  ,X.CALL_KEY
 		  ,'' as RMKS
-		  ,'' as INPUT_END_KEY
+		  ,'' as OUTSIDE_END_KEY
 	from (
 		select 
 			  '외주가공입고' as DIV_MST
