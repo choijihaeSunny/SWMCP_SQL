@@ -1,4 +1,4 @@
-CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC119$GET_INPUT_END_POP`(	
+CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC120$GET_OUTSIDE_END_POP`(	
 	IN A_COMP_ID VARCHAR(10),
 	IN A_ST_DATE TIMESTAMP,
 	IN A_ED_DATE TIMESTAMP,
@@ -24,18 +24,16 @@ begin
 		  A.VAT,
 		  A.CALL_KIND,
 		  A.CALL_KEY,
-		  A.ITEM_KIND,
 		  A.RMKS,
 		  (case
-			   when CALL_KIND = 'INP' then '구매입고'
-			   when CALL_KIND = 'RTN' then '입고반품'
-			   when CALL_KIND = 'ETC' then '기타매입'
-			   else '구매할인' -- when CALL_KIND = 'DIS'
+			   when CALL_KIND = 'INP' then '외주가공입고'
+			   when CALL_KIND = 'RTN' then '외주가공재고반품'
+			   else '외주가공재고반품입고' -- CALL_KIND = 'RIN'
 		   end) as GUBUN
-	from TB_INPUT_END_DET A
-		inner join TB_INPUT_END B
+	from TB_OUTSIDE_END_DET A
+		inner join TB_OUTSIDE_END B
 			on (B.COMP_ID = A.COMP_ID
-			and B.INPUT_END_KEY = A.INPUT_END_KEY)
+			and B.OUTSIDE_END_KEY = A.OUTSIDE_END_KEY)
 		inner join TC_CUST_CODE C
 			on (A.COMP_ID = C.COMP_ID
 			and B.CUST_CODE = C.CUST_CODE)
