@@ -26,7 +26,7 @@ begin
 	
 		set V_ACT_DATE = DATE_FORMAT(A_ACT_DATE, '%Y%m%d');
 
-		set V_DET_SEQ = (select LPAD(IFNULL(MAX(TAX_SEQ), 0) + 1, 3, 0)
+		set V_DET_SEQ = (select LPAD(IFNULL(MAX(DET_SEQ), 0) + 1, 3, 0)
 						 from TB_INPUT_END_DET
 						 where COMP_ID = A_COMP_ID
 						   and ACT_DATE = V_ACT_DATE
@@ -52,7 +52,7 @@ begin
 		) values (
 			A_COMP_ID,
 			A_INPUT_END_KEY,
-			A_DET_SEQ,
+			V_DET_SEQ,
 			V_ACT_DATE,
 			A_ITEM_CODE,
 			A_QTY,

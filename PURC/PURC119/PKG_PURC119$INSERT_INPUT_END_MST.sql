@@ -52,7 +52,7 @@ begin
 	    	,SYS_DATE
 	    ) values (
 	    	A_COMP_ID,
-	    	A_SET_DATE,
+	    	V_SET_DATE,
 	    	V_SET_SEQ,
 	    	V_INPUT_END_KEY,
 	    	A_CUST_CODE,
