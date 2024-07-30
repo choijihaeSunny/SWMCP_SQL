@@ -21,28 +21,17 @@ begin
 	declare V_DS_KEY varchar(30);
 	declare V_SET_NO varchar(5);
 
-	declare V_DUP_CNT INT;
-
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	CALL USP_SYS_GET_ERRORINFO_ALL(V_RETURN, N_RETURN); 
 
 	SET N_RETURN = 0;
   	SET V_RETURN = '저장되었습니다.'; 
 
-	set V_SET_NO = (select COUNT(*) + 1
-					from TB_INPUT_DISCOUNT
+	set V_SET_NO = (select LPAD(SUBSTR(DS_KEY, 11, 3) + 1, 3, '0')
+					from TB_INPUT_DISCOUNT 
 					where SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d'));
 
-	set V_DS_KEY = CONCAT('DM', DATE_FORMAT(A_SET_DATE, '%Y%m%d'), LPAD(V_SET_NO, 3, '0'));
-   					  
-	set V_DUP_CNT = (select COUNT(*)
-					 from TB_INPUT_DISCOUNT
-					 where DS_KEY = V_DS_KEY);
-					
-	if V_DUP_CNT <> 0 then
-		set V_SET_NO = V_SET_NO + 1;
-		set V_DS_KEY = CONCAT('DM', DATE_FORMAT(A_SET_DATE, '%Y%m%d'), LPAD(V_SET_NO, 3, '0'));
-	end if;
+	set V_DS_KEY = CONCAT('DM', DATE_FORMAT(A_SET_DATE, '%Y%m%d'), V_SET_NO);
 
 	set A_DS_KEY = V_DS_KEY;
 
