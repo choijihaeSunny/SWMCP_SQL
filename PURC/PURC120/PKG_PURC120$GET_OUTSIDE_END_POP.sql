@@ -12,6 +12,7 @@ begin
 	select 
 		  A.COMP_ID,
 		  STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE,
+		  B.SET_SEQ,
 		  B.CUST_CODE,
 		  C.CUST_NAME,
 		  B.EMP_NO,
