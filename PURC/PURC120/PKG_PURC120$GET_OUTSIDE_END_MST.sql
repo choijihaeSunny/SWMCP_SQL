@@ -86,6 +86,7 @@ begin
 			where A.COMP_ID = A_COMP_ID
 			  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 							     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+			  and A.END_YN = 'N'
 			union all 
 			select 
 				  '외주가공재고반품' as DIV_MST
@@ -103,6 +104,7 @@ begin
 			where A.COMP_ID = A_COMP_ID
 			  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 							     and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+			  and A.END_YN = 'N'
 			union all 
 			select 
 				  '외주가공재고반품입고' as DIV_MST
@@ -120,6 +122,7 @@ begin
 			where A.COMP_ID = A_COMP_ID
 			  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
 							  	 and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
+			  and A.END_YN = 'N'
 		) X
 			inner join TC_CUST_CODE C
 				on (X.COMP_ID = C.COMP_ID

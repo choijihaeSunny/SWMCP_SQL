@@ -43,7 +43,7 @@ begin
 			,SUM(B.VAT) as VAT
 			,(SUM(B.SUPP_AMT) + SUM(B.VAT)) as TOT_AMT
 			,B.CALL_KEY
-			,'' as MST_KEY
+			,A.INPUT_END_KEY as MST_KEY
 			,A.RMKS
 			,A.INPUT_END_KEY
 		from TB_INPUT_END A

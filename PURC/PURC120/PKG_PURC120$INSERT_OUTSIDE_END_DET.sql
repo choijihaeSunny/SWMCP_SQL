@@ -66,30 +66,37 @@ begin
 		)
 		;
 	
-	/*
+
 		if A_CALL_KIND = 'INP' then
 			
 			update TB_INPUT_OUTSIDE
-				set END_AMT = A_SUPP_AMT
+				set END_YN = 'Y'
+					,END_EMP_NO = A_SYS_EMP_NO
+					,END_DT = DATE_FORMAT(SYSDATE(), '%Y%m%d')
 			where COMP_ID = A_COMP_ID
 			  and INPUT_OUTSIDE_KEY = A_CALL_KEY
 			;
 		elseif A_CALL_KIND = 'RTN' then
 			
 			update TB_OUTSIDE_RETURN
-				set END_AMT = A_SUPP_AMT
+				set END_YN = 'Y'
+					,END_EMP_NO = A_SYS_EMP_NO
+					,END_DT = DATE_FORMAT(SYSDATE(), '%Y%m%d')
 			where COMP_ID = A_COMP_ID
 			  and TB_OUTSIDE_RETURN = A_CALL_KEY
 			;
 		else -- A_CALL_KIND = 'RIN' then
 			
 			update TB_OUTSIDE_RETURN_INPUT
-				set END_AMT = A_SUPP_AMT
+				set END_YN = 'Y'
+					,END_EMP_NO = A_SYS_EMP_NO
+					,END_DT = DATE_FORMAT(SYSDATE(), '%Y%m%d')
 			where COMP_ID = A_COMP_ID
 			  and OUT_RETURN_INPUT_KEY = A_CALL_KEY
 			;
 		end if;
-	*/
+	
+	
 		SET N_RETURN = 0;
   		SET V_RETURN = '저장되었습니다.';
 	end if;
