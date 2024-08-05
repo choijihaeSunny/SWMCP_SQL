@@ -1,0 +1,25 @@
+CREATE DEFINER=`ubidom`@`%` PROCEDURE `swmcp`.`PKG_DIST006$DELETE_SCM_NOTICE`(		
+	IN A_COMP_ID VARCHAR(10),
+	IN A_NOTICE_MST_KEY VARCHAR(30),
+	IN A_NOTICE_EMP_NO VARCHAR(10),
+	OUT N_RETURN INT,
+	OUT V_RETURN VARCHAR(4000)
+	)
+begin
+	
+	SET N_RETURN = 0;
+  	SET V_RETURN = '저장되었습니다.';
+  
+  
+  	delete FROM TB_SCM_NOTICE
+  	where COMP_ID = A_COMP_ID
+  	  and NOTICE_MST_KEY = A_NOTICE_MST_KEY
+  	  and NOTICE_EMP_NO = A_NOTICE_EMP_NO
+  	;
+			
+  	IF ROW_COUNT() = 0 THEN
+		SET N_RETURN = -1;
+		SET V_RETURN = '저장이 실패하였습니다.'; -- '저장이 실패하였습니다.'; 
+	END IF;
+  	
+end
