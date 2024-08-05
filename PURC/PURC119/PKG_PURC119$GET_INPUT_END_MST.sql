@@ -4,6 +4,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC119$GET_INPUT_END_MST`(
 	IN A_ST_DATE TIMESTAMP,
 	IN A_ED_DATE TIMESTAMP,
 	IN A_SET_DATE TIMESTAMP,
+	IN A_SET_SEQ VARCHAR(3),
 	OUT N_RETURN INT,
 	OUT V_RETURN VARCHAR(4000)
 	)
@@ -32,6 +33,7 @@ begin
 			) as DIV_MST
 			,A.COMP_ID
 			,STR_TO_DATE(A.SET_DATE, '%Y%m%d') as SET_DATE
+			,A.SET_SEQ
 			,A.CUST_CODE
 			,C.CUST_NAME
 			,A.EMP_NO
@@ -55,6 +57,7 @@ begin
 				and A.CUST_CODE = C.CUST_CODE)
 		where A.COMP_ID = A_COMP_ID
 		  and A.SET_DATE = DATE_FORMAT(A_SET_DATE, '%Y%m%d')
+		  and A.SET_SEQ = A_SET_SEQ 
 		;
 	else -- if A_SAVED_YN = 'N' THEN
 		
@@ -63,6 +66,7 @@ begin
 			  ,X.DIV_MST
 			  ,X.COMP_ID
 			  ,X.SET_DATE
+			  ,'' as SET_SEQ
 			  ,X.CUST_CODE
 			  ,C.CUST_NAME
 			  ,X.EMP_NO

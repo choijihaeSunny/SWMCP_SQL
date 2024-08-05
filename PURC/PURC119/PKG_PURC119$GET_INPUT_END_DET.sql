@@ -2,7 +2,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_PURC119$GET_INPUT_END_DET`(
 	IN A_COMP_ID VARCHAR(10),
 	IN A_SAVED_YN VARCHAR(1),
 	IN A_CUST_CODE VARCHAR(10),
-	IN A_CALL_KEY VARCHAR(30),
+	IN A_MST_KEY VARCHAR(30),
 	IN A_ST_DATE TIMESTAMP,
 	IN A_ED_DATE TIMESTAMP,
 	IN A_SET_DATE TIMESTAMP,
@@ -33,7 +33,7 @@ begin
 				  END
 				) as DIV_MST
 			   ,A.COMP_ID
-			   ,B.SET_DATE
+			   ,STR_TO_DATE(B.SET_DATE, '%Y%m%d') as SET_DATE
 			   ,B.CUST_CODE
 			   ,C.CUST_NAME
 			   ,B.EMP_NO
@@ -60,7 +60,7 @@ begin
 				on (A.ITEM_CODE = I.ITEM_CODE)
 		where A.COMP_ID = A_COMP_ID
 		  and B.CUST_CODE = A_CUST_CODE
-		  and B.CALL_KEY = A_CALL_KEY
+		  and A.INPUT_END_KEY = A_MST_KEY
 		;
 	else -- if A_SAVED_YN = 'N' THEN
 		select 
@@ -185,7 +185,8 @@ begin
 		  and X.MST_KEY = A_MST_KEY
 		order by X.DIV_MST, X.MST_KEY, X.ITEM_CODE
 		;
-	end if;
+	end if
+	;
 	
 
 
