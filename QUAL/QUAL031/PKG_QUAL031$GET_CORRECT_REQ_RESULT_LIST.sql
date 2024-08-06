@@ -2,6 +2,7 @@ CREATE DEFINER=`root`@`%` PROCEDURE `swmcp`.`PKG_QUAL031$GET_CORRECT_REQ_RESULT_
 			IN A_ST_DATE 		TIMESTAMP,
 			IN A_ED_DATE		TIMESTAMP,
 			IN A_ACT_RESULT 	bigint(20), 
+			in A_DEPT_CODE		VARCHAR(10),
             OUT N_RETURN      	INT,
             OUT V_RETURN      	VARCHAR(4000)
 )
@@ -49,9 +50,13 @@ PROC:begin
 			  (select KOR_NAME
 			   from INSA_MST
 			   where EMP_NO = A.CONF_EMP_NO) as CONF_EMP_NAME,
-			  A.SYS_DATE
+			   A.DEPT_CODE,
+			   A.ACT_DEPT,
+			  A.SYS_DATE,
+			  A.ACT_EMP_NO
 		from TB_CORRECT_REQ_RESULT A -- 20240618 요청상태 내역일 경우 날짜 불문하고 조회하도록 수정.
 		where A.ACT_RESULT = A_ACT_RESULT
+			and A.DEPT_CODE = A_DEPT_CODE
 		;
 	else -- V_ACT_RESULT = 1 -- 조치완료
 		select
@@ -86,10 +91,14 @@ PROC:begin
 			  (select KOR_NAME
 			   from INSA_MST
 			   where EMP_NO = A.CONF_EMP_NO) as CONF_EMP_NAME,
-			  A.SYS_DATE
+			   A.DEPT_CODE,
+			   A.ACT_DEPT,
+			  A.SYS_DATE,
+			  A.ACT_EMP_NO
 		from TB_CORRECT_REQ_RESULT A
 		where A.REQ_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d') and DATE_FORMAT(A_ED_DATE, '%Y%m%d')
-		  and A.ACT_RESULT = A_ACT_RESULT
+			and A.ACT_RESULT = A_ACT_RESULT
+			and A.DEPT_CODE = A_DEPT_CODE
 		;
 	end if;
 				

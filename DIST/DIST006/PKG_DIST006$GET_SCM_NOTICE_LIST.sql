@@ -20,6 +20,9 @@ begin
 		  ,A.NOTICE_TITLE
 		  ,A.NOTICE_COMMENT
 		  ,A.NOTICE_EMP_NO
+		  ,(select KOR_NAME
+			  from INSA_MST
+			 where EMP_NO = A.NOTICE_EMP_NO) as NOTICE_EMP_NAME
 	from TB_SCM_NOTICE A
 	where A.COMP_ID = A_COMP_ID
 	  and A.SET_DATE between DATE_FORMAT(A_ST_DATE, '%Y%m%d')
